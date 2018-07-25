@@ -1,0 +1,48 @@
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+#        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        implicit-strategy: top.xuguoliang.common.config.CustomNamingStrategy
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+
+  datasource:
+    url: jdbc:mysql://120.26.166.137:3307/zscp?characterEncoding=UTF-8&useSSL=false
+    username: sureme
+    password: t19QPva1646GxXfkBMZN
+    tomcat:
+      test-while-idle: true
+      max-active: 3
+      initial-size: 1
+
+
+  redis:
+    host: 120.26.166.137
+    password: q7FIqKnrILC98sTeb2Z2
+    port: 6380
+    pool.maxIdle: 8
+    pool.minIdle: 0
+    database: 4
+  messages.basename: messages
+  jackson:
+    default-property-inclusion: always
+
+
+qiniu:
+  access-key: zH9N02ZJp872fd6mwjNQ2Xnz9KFIkxJ0x-RywJ9y
+  bucket: image
+  link-address: http://p29q0qqy4.bkt.clouddn.com/
+  secret-key: pUyTNFfVU2hFSu6pJiKhSFDNrmQvpVz1zN8DCoBY
+
+
+image:
+  path: /data2/html/zscp/build/image
+  host: http://zscp-cms.test.xuguoliang.top/image
+
+wx:
+  url: https://api.weixin.qq.com/sns/jscode2session
+  app-id: wx8181a9f9593f0cf0
+  app-secret: 5484416086b15bf423311f0f0cc28e4e

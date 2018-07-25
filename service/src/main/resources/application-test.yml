@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/zscp?characterEncoding=UTF-8&useSSL=false
+    username: zscp
+    password: t19QPva1646GxXfkBMZN
+
+  redis:
+    host: 127.0.0.1
+    password: q7FIqKnrILC98sTeb2Z2
+    port: 6380
+
+image:
+  path: /data2/html/zscp/build/image
+  host: http://cms.kamiao.net/image
+
+wx:
+  app-id: wx4cd05b6bdde7b5eb
+  app-secret: 0ac5a8b2b4ef4229036126dd8b70b240
