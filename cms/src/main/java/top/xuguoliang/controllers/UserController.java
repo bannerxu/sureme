@@ -8,10 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.constants.RoleConstant;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserCmsService;
@@ -36,4 +33,17 @@ public class UserController {
                                @PageableDefault(sort = "userId", direction = Sort.Direction.DESC) Pageable pageable) {
         return userCmsService.findPage(nickName, pageable);
     }
+
+    @ApiOperation("修改")
+    @PutMapping
+    public User updateUser(@RequestBody User user) {
+        return userCmsService.updateUser(user);
+    }
+
+    @ApiOperation("删除")
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable Integer userId) {
+        userCmsService.deleteUser(userId);
+    }
+
 }

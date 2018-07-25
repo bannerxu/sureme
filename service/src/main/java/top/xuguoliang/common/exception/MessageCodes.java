@@ -32,4 +32,6 @@ public class MessageCodes {
     public final static String NEXT_QUESTION_IS_NULL = "next.question.is.null";//没有下一题
 
 
+    public static final String USER_ID_EMPTY = "user.id.empty";
+    public static final String OLD_USER_EMPTY = "old.user.empty";
 }

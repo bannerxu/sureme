@@ -6,6 +6,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * @author jinguoguo
+ */
 @Entity
 @Data
 public class User {
@@ -35,6 +38,9 @@ public class User {
 
     @ApiModelProperty("创建时间")
     private Date createTime;
+
+    @ApiModelProperty("删除")
+    private boolean deleted;
 
     @Transient
     @ApiModelProperty("token")
