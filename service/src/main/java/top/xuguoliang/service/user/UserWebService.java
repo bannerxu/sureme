@@ -27,8 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserWebService {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(UserWebService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserWebService.class);
 
     @Resource
     private UserDao userDao;

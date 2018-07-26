@@ -24,8 +24,7 @@ import javax.annotation.Resource;
 @Service
 public class ManagerService {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(ManagerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagerService.class);
 
     @Resource
     private ManagerDao managerDao;

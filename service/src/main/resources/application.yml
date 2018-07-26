@@ -10,9 +10,9 @@ spring:
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
   datasource:
-    url: jdbc:mysql://120.26.166.137:3307/zscp?characterEncoding=UTF-8&useSSL=false
-    username: sureme
-    password: t19QPva1646GxXfkBMZN
+    url: jdbc:mysql://120.78.196.233:3306/sureme?characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
     tomcat:
       test-while-idle: true
       max-active: 3

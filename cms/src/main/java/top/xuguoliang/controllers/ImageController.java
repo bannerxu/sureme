@@ -22,8 +22,7 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("api/image")
 public class ImageController {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(ImageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
     @Resource
     private ImageService imageService;

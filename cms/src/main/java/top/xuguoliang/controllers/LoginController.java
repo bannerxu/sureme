@@ -33,8 +33,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("api/login")
 public class LoginController {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Resource
     private LoginService loginService;

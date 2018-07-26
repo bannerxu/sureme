@@ -22,8 +22,7 @@ import javax.annotation.Resource;
 @Service
 public class UserCmsService {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(UserCmsService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserCmsService.class);
 
     @Resource
     private UserDao userDao;

@@ -31,8 +31,7 @@ import javax.validation.Valid;
 @RequestMapping("api/manager")
 public class ManagerController {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(ManagerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
 
     @Resource
     private ManagerService managerService;

@@ -25,8 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class LoginService {
 
-    @Resource
-    private Logger logger = LoggerFactory.getLogger(LoginService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
