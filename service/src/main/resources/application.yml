@@ -20,29 +20,29 @@ spring:
 
 
   redis:
-    host: 120.26.166.137
-    password: q7FIqKnrILC98sTeb2Z2
-    port: 6380
+    host: 127.0.0.1
+    password: root
+    port: 6379
     pool.maxIdle: 8
     pool.minIdle: 0
-    database: 4
+    database: 5
   messages.basename: messages
   jackson:
     default-property-inclusion: always
 
 
 qiniu:
-  access-key: zH9N02ZJp872fd6mwjNQ2Xnz9KFIkxJ0x-RywJ9y
+  access-key:
   bucket: image
-  link-address: http://p29q0qqy4.bkt.clouddn.com/
-  secret-key: pUyTNFfVU2hFSu6pJiKhSFDNrmQvpVz1zN8DCoBY
+  link-address:
+  secret-key:
 
 
 image:
-  path: /data2/html/zscp/build/image
-  host: http://zscp-cms.test.xuguoliang.top/image
+  path: /data2/html/sureme/build/image
+  host:
 
 wx:
   url: https://api.weixin.qq.com/sns/jscode2session
-  app-id: wx8181a9f9593f0cf0
-  app-secret: 5484416086b15bf423311f0f0cc28e4e
+  app-id:
+  app-secret:

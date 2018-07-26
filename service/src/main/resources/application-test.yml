@@ -1,21 +1,48 @@
+
 spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+#        strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        implicit-strategy: top.xuguoliang.common.config.CustomNamingStrategy
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+
   datasource:
     url: jdbc:mysql://localhost:3306/sureme?characterEncoding=UTF-8&useSSL=false
     username: root
     password: root
+    tomcat:
+      test-while-idle: true
+      max-active: 3
+      initial-size: 1
+
 
   redis:
-      host: 127.0.0.1
-      password: root
-      port: 6379
-      pool.maxIdle: 8
-      pool.minIdle: 0
-      database: 6
+    host: 127.0.0.1
+    password: root
+    port: 6379
+    pool.maxIdle: 8
+    pool.minIdle: 0
+    database: 5
+  messages.basename: messages
+  jackson:
+    default-property-inclusion: always
+
+
+qiniu:
+  access-key:
+  bucket: image
+  link-address:
+  secret-key:
+
 
 image:
   path: /data2/html/sureme/build/image
   host:
 
 wx:
+  url: https://api.weixin.qq.com/sns/jscode2session
   app-id:
   app-secret:
