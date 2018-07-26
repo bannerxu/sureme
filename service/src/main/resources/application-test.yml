@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3307/zscp?characterEncoding=UTF-8&useSSL=false
-    username: zscp
-    password: t19QPva1646GxXfkBMZN
+    url: jdbc:mysql://localhost:3306/sureme?characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
 
   redis:
     host: 127.0.0.1
@@ -10,8 +10,8 @@ spring:
     port: 6380
 
 image:
-  path: /data2/html/zscp/build/image
-  host: http://cms.kamiao.net/image
+  path: /data2/html/sureme/build/image
+  host:
 
 wx:
   app-id: wx4cd05b6bdde7b5eb
