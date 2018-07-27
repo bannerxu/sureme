@@ -22,7 +22,6 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "七牛图片上传")
-@ApiIgnore
 @RequestMapping("/api/qiniu/")
 public class QiNiuController {
 
