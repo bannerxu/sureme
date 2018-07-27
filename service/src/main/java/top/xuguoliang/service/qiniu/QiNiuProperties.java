@@ -3,6 +3,9 @@ package top.xuguoliang.service.qiniu;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author jinguoguo
+ */
 @Component
 @ConfigurationProperties(prefix = "qiniu")
 public class QiNiuProperties {
