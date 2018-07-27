@@ -28,10 +28,8 @@ public class MessageCodes {
     public final static String AUTH_PICCAPTCHA_LOST = "auth.captcha.lost";//验证码已失效
     public final static String AUTH_PICCAPTCHA_WRONG = "auth.captcha.wrong";//验证码错误
 
-    /*问题相关*/
-    public final static String NEXT_QUESTION_IS_NULL = "next.question.is.null";//没有下一题
-
 
     public static final String USER_ID_EMPTY = "user.id.empty";
     public static final String OLD_USER_EMPTY = "old.user.empty";
+    public static final String CMS_ID_EMPTY = "cms.id.empty";
 }

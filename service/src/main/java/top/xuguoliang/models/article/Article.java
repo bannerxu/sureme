@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -33,5 +34,11 @@ public class Article {
 
     @ApiModelProperty("发表文章的用户id")
     private Integer userId;
+
+    @ApiModelProperty("发布时间")
+    private Date publishedTime;
+
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
 
 }
