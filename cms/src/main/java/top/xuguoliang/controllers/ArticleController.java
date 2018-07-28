@@ -7,12 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.Article;
 import top.xuguoliang.service.article.ArticleCmsService;
+import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
+import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
 import javax.annotation.Resource;
 
@@ -31,15 +30,23 @@ public class ArticleController {
 
     @GetMapping("page")
     @ApiOperation("分页查询文章")
-    public Page<Article> findPage(@PageableDefault Pageable pageable) {
+    public Page<ArticleCmsResultVO> findPage(@PageableDefault Pageable pageable) {
         logger.debug("调用接口：分页查询文章");
         return articleCmsService.findPage(pageable);
     }
 
     @GetMapping
     @ApiOperation("单个查询")
-    public Article getArticle(@RequestParam Integer articleId) {
+    public ArticleCmsResultVO getArticle(@RequestParam Integer articleId) {
+        logger.debug("调用接口：查询单个文章");
         return articleCmsService.getArticle(articleId);
+    }
+
+    @PutMapping
+    @ApiOperation("修改")
+    public ArticleCmsResultVO updateArticle(@RequestBody ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
+        logger.debug("调用接口：修改文章");
+        return articleCmsService.updateArticle(articleCmsUpdateParamVO);
     }
 
 }

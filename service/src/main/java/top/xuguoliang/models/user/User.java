@@ -1,17 +1,17 @@
 package top.xuguoliang.models.user;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import top.xuguoliang.common.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * @author jinguoguo
  */
 @Entity
-@Data
-public class User {
+@ApiModel("用户")
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,19 +36,17 @@ public class User {
     @ApiModelProperty("openId")
     private String openId;
 
-    @ApiModelProperty("创建时间")
-    private Date createTime;
-
-    @ApiModelProperty("删除")
-    private boolean deleted;
-
     @Transient
     @ApiModelProperty("token")
     private String token;
 
-    /*
+    /**
         用户信息，针对项目资料
         收货地址
      */
+    @ApiModelProperty("收货地址")
+    private String receiveAddress;
 
+    @ApiModelProperty("积分")
+    private String integral;
 }

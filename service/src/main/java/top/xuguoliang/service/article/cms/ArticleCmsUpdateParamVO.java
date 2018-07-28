@@ -1,27 +1,28 @@
-package top.xuguoliang.models.article;
+package top.xuguoliang.service.article.cms;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.xuguoliang.common.BaseEntity;
+import top.xuguoliang.models.article.Article;
+import top.xuguoliang.models.article.ArticleBanner;
 
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.List;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("文章")
-public class Article extends BaseEntity {
+public class ArticleCmsUpdateParamVO {
 
     @Id
     @ApiModelProperty("文章id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer articleId;
+
+    @ApiModelProperty("文章轮播图url")
+    private String articleBannerUrl;
 
     @ApiModelProperty("文章标题")
     private String articleTitle;
@@ -31,5 +32,8 @@ public class Article extends BaseEntity {
 
     @ApiModelProperty("发表文章的用户id")
     private Integer userId;
+
+    @ApiModelProperty("数组：文章Banner轮播")
+    private List<ArticleBanner> articleBanners;
 
 }

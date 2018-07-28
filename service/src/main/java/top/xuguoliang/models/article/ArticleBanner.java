@@ -2,7 +2,6 @@ package top.xuguoliang.models.article;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import top.xuguoliang.common.BaseEntity;
 
 import javax.persistence.Entity;
@@ -13,23 +12,19 @@ import javax.persistence.Id;
 /**
  * @author jinguoguo
  */
-@Data
 @Entity
-@ApiModel("文章")
-public class Article extends BaseEntity {
+@ApiModel("文章Banner轮播")
+public class ArticleBanner extends BaseEntity {
 
     @Id
-    @ApiModelProperty("文章id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty("banner id")
+    private Integer articleBannerId;
+
+    @ApiModelProperty("banner url")
+    private String articleBannerUrl;
+
+    @ApiModelProperty("对应文章id")
     private Integer articleId;
-
-    @ApiModelProperty("文章标题")
-    private String articleTitle;
-
-    @ApiModelProperty("文章内容")
-    private String articleContent;
-
-    @ApiModelProperty("发表文章的用户id")
-    private Integer userId;
 
 }
