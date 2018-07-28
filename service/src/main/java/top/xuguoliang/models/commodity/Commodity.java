@@ -3,6 +3,7 @@ package top.xuguoliang.models.commodity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.common.BaseEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -10,10 +11,9 @@ import java.math.BigDecimal;
 /**
  * @author jinguoguo
  */
-@ApiModel("商品")
 @Entity
-@Data
-public class Commodity {
+@ApiModel("商品")
+public class Commodity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
