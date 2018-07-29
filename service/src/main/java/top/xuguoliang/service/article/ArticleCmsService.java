@@ -17,11 +17,13 @@ import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
+import top.xuguoliang.service.article.cms.ArticleCmsAddParamVO;
 import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
 import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,7 +91,7 @@ public class ArticleCmsService {
         }
 
         // 设置商品到VO
-        articleCmsResultVO.setCommodities(commodities);
+//        articleCmsResultVO.setCommodities(commodities);
 
         return articleCmsResultVO;
     }
@@ -97,6 +99,7 @@ public class ArticleCmsService {
 
     /**
      * 查询单个文章(包含Banner）
+     *
      * @param articleId 文章id
      * @return 文章（包含Banner）
      */
@@ -121,8 +124,77 @@ public class ArticleCmsService {
         return articleCmsResultVO;
     }
 
+    /**
+     * 修改文章
+     *
+     * @param articleCmsUpdateParamVO 修改信息
+     * @return 修改后的文章
+     */
     public ArticleCmsResultVO updateArticle(ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
         List<ArticleBanner> articleBanners = articleCmsUpdateParamVO.getArticleBanners();
         return null;
+    }
+
+    /**
+     * 添加文章
+     *
+     * @param articleCmsAddParamVO 添加信息
+     * @return 成功添加后的文章
+     */
+    public ArticleCmsResultVO addArticle(Integer managerId, ArticleCmsAddParamVO articleCmsAddParamVO) {
+
+        Date date = new Date();
+
+        // 方法需要返回的VO以及VO中的属性对象
+        ArticleCmsResultVO resultVO = new ArticleCmsResultVO();
+        List<ArticleBanner> resultBanners = new ArrayList<>();
+
+        // 创建文章对象，复制VO属性到此对象，设置VO中不包含的属性
+        Article article = new Article();
+        BeanUtils.copyProperties(articleCmsAddParamVO, article);
+        article.setCreateTime(date);
+        article.setUpdateTime(date);
+        article.setManagerId(managerId);
+        Article articleSave = articleDao.save(article);
+        // 保存后的文章id
+        Integer articleId = articleSave.getArticleId();
+
+
+        // 遍历并创建文章轮播
+        List<String> articleBanners = articleCmsAddParamVO.getArticleBanners();
+        articleBanners.forEach(str -> {
+            ArticleBanner articleBanner = new ArticleBanner();
+            articleBanner.setArticleBannerUrl(str);
+            articleBanner.setCreateTime(date);
+            articleBanner.setUpdateTime(date);
+            articleBanner.setArticleId(articleId);
+            ArticleBanner bannerSave = articleBannerDao.save(articleBanner);
+            // 添加成功，把banner添加到resultBanners里
+            resultBanners.add(bannerSave);
+        });
+
+        // 遍历商品，将商品和文章建立关联
+        List<Integer> commodityIds = articleCmsAddParamVO.getCommodityIds();
+        commodityIds.forEach(commodityId -> {
+            // 根据文章id和商品id查找关系
+            List<RelationArticleCommodity> relation =
+                    relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
+            if (ObjectUtils.isEmpty(relation)) {
+                // 如果关系不存在，建立关系
+                RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
+                relationArticleCommodity.setArticleId(articleId);
+                relationArticleCommodity.setCommodityId(commodityId);
+                relationArticleCommodity.setCreateTime(date);
+                relationArticleCommodity.setUpdateTime(date);
+                relationArticleCommodityDao.save(relationArticleCommodity);
+            }
+        });
+
+        // 设置返回的VO
+        BeanUtils.copyProperties(articleSave, resultVO);
+        resultVO.setArticleBanners(resultBanners);
+        resultVO.setCommodityIds(commodityIds);
+
+        return resultVO;
     }
 }

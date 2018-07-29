@@ -29,8 +29,8 @@ public class Article {
     @ApiModelProperty("文章内容")
     private String articleContent;
 
-    @ApiModelProperty("发表文章的用户id")
-    private Integer userId;
+    @ApiModelProperty("发表文章的管理员id")
+    private Integer managerId;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

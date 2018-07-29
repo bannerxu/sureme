@@ -42,7 +42,6 @@ public class CmsRealm extends AuthorizingRealm {
         return token != null && Token.class.isAssignableFrom(token.getClass());
     }
 
-    //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         Token token = (Token) authenticationToken;
@@ -52,7 +51,6 @@ public class CmsRealm extends AuthorizingRealm {
         return !StringUtils.isEmpty(userId) ? new SimpleAuthenticationInfo(userId, tokenString, this.getName()) : null;
     }
 
-    //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String userId = (String) principals.getPrimaryPrincipal();

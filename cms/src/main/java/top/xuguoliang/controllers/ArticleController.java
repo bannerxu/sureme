@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.Article;
 import top.xuguoliang.service.article.ArticleCmsService;
+import top.xuguoliang.service.article.cms.ArticleCmsAddParamVO;
 import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
 import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
@@ -47,6 +48,12 @@ public class ArticleController {
     public ArticleCmsResultVO updateArticle(@RequestBody ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
         logger.debug("调用接口：修改文章");
         return articleCmsService.updateArticle(articleCmsUpdateParamVO);
+    }
+
+    public ArticleCmsResultVO addArticle(ArticleCmsAddParamVO articleCmsAddParamVO) {
+        Integer managerId = ManagerHelper.getManagerId();
+        logger.debug("-> 管理员 {} 调用接口：添加文章", managerId);
+        return articleCmsService.addArticle(managerId, articleCmsAddParamVO);
     }
 
 }

@@ -2,12 +2,10 @@ package top.xuguoliang.service.article.cms;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.xuguoliang.models.article.Article;
+import org.hibernate.validator.constraints.NotBlank;
 import top.xuguoliang.models.article.ArticleBanner;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,24 +14,26 @@ import java.util.List;
 @Data
 public class ArticleCmsUpdateParamVO {
 
-    @Id
+    @NotNull
     @ApiModelProperty("文章id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer articleId;
 
-    @ApiModelProperty("文章轮播图url")
-    private String articleBannerUrl;
-
+    @NotBlank
     @ApiModelProperty("文章标题")
     private String articleTitle;
 
+    @NotBlank
     @ApiModelProperty("文章内容")
     private String articleContent;
 
-    @ApiModelProperty("发表文章的用户id")
-    private Integer userId;
+    @NotNull
+    @ApiModelProperty("发表文章的管理员id")
+    private Integer managerId;
 
     @ApiModelProperty("数组：文章Banner轮播")
     private List<ArticleBanner> articleBanners;
+
+    @ApiModelProperty("数组：商品")
+    private List<Integer> commodityIds;
 
 }
