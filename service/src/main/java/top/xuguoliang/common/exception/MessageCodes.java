@@ -32,4 +32,5 @@ public class MessageCodes {
     public static final String USER_ID_EMPTY = "user.id.empty";
     public static final String OLD_USER_EMPTY = "old.user.empty";
     public static final String CMS_ID_EMPTY = "cms.id.empty";
+    public static final String CMS_ARTICLE_NOT_EXIST = "cms.article_not_exist";
 }

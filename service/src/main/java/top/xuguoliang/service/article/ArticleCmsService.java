@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
+import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.article.Article;
 import top.xuguoliang.models.article.ArticleBanner;
 import top.xuguoliang.models.article.ArticleBannerDao;
@@ -51,6 +53,9 @@ public class ArticleCmsService {
     @Resource
     private ManagerDao managerDao;
 
+    @Resource
+    private CommonSpecUtil<Article> commonSpecUtil;
+
     /**
      * 分页查询文章，和文章banner
      *
@@ -58,7 +63,9 @@ public class ArticleCmsService {
      * @return 文章分页
      */
     public Page<ArticleCmsResultVO> findPage(Pageable pageable) {
-        return articleDao.findAll(pageable).map(this::convert);
+        // 添加查询条件
+        Specification<Article> specification = commonSpecUtil.equal("deleted", false);
+        return articleDao.findAll(specification, pageable).map(this::convert);
     }
 
     /**
@@ -68,8 +75,15 @@ public class ArticleCmsService {
      * @return ArticleCmsResultVO
      */
     private ArticleCmsResultVO convert(Article article) {
+
+        // 如果文章为空，直接返回
+        if (ObjectUtils.isEmpty(article)) {
+            return null;
+        }
+
+        // 返回的VO
         ArticleCmsResultVO articleCmsResultVO = new ArticleCmsResultVO();
-        // 复制文章实体属性到VO
+        // 复制文章属性到VO
         BeanUtils.copyProperties(article, articleCmsResultVO);
 
         // 文章id
@@ -94,8 +108,12 @@ public class ArticleCmsService {
             });
         }
 
+        // 设置文章中发布者的名称
+        Manager manager = managerDao.findOne(article.getManagerId());
+        articleCmsResultVO.setName(manager.getName());
+
         // 设置商品到VO
-//        articleCmsResultVO.setCommodities(commodities);
+        articleCmsResultVO.setCommodities(commodities);
 
         return articleCmsResultVO;
     }
@@ -214,4 +232,20 @@ public class ArticleCmsService {
 
         return resultVO;
     }
+
+    /**
+     * 删除文章
+     *
+     * @param articleId 文章id
+     */
+    public void deleteArticle(Integer articleId) {
+        Article article = articleDao.findOne(articleId);
+        if (ObjectUtils.isEmpty(article)) {
+            logger.error("---> 调用文章删除业务：参数id对应的文章不存在");
+            throw new ValidationException(MessageCodes.CMS_ARTICLE_NOT_EXIST, "文章id对应文章不存在");
+        }
+        article.setDeleted(true);
+        articleDao.saveAndFlush(article);
+    }
+
 }
