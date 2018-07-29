@@ -52,7 +52,7 @@ public class ArticleController {
 
     @PostMapping
     @ApiOperation("添加")
-    public ArticleCmsResultVO addArticle(ArticleCmsAddParamVO articleCmsAddParamVO) {
+    public ArticleCmsResultVO addArticle(@RequestBody ArticleCmsAddParamVO articleCmsAddParamVO) {
         Integer managerId = ManagerHelper.getManagerId();
         logger.debug("-> 管理员 {} 调用接口：添加文章", managerId);
         return articleCmsService.addArticle(managerId, articleCmsAddParamVO);
