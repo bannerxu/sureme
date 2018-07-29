@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import top.xuguoliang.models.article.ArticleBanner;
+import top.xuguoliang.models.article.ArticleTypeEnum;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -25,6 +26,10 @@ public class ArticleCmsUpdateParamVO {
     @NotBlank
     @ApiModelProperty("文章内容")
     private String articleContent;
+
+    @NotNull
+    @ApiModelProperty("文章类型")
+    private ArticleTypeEnum articleType;
 
     @NotNull
     @ApiModelProperty("发表文章的管理员id")

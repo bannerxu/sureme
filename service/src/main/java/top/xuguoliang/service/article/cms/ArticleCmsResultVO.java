@@ -3,6 +3,7 @@ package top.xuguoliang.service.article.cms;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import top.xuguoliang.models.article.ArticleBanner;
+import top.xuguoliang.models.article.ArticleTypeEnum;
 import top.xuguoliang.models.commodity.Commodity;
 
 import javax.persistence.GeneratedValue;
@@ -24,6 +25,9 @@ public class ArticleCmsResultVO {
 
     @ApiModelProperty("文章内容")
     private String articleContent;
+
+    @ApiModelProperty("文章类型")
+    private ArticleTypeEnum articleType;
 
     @ApiModelProperty("发表文章的管理员id")
     private Integer managerId;
