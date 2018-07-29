@@ -35,5 +35,5 @@ public class ArticleCmsResultVO {
     private List<ArticleBanner> articleBanners;
 
     @ApiModelProperty("数组：商品")
-    private List<Integer> commodityIds;
+    private List<Commodity> commodities;
 }

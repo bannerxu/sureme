@@ -15,6 +15,8 @@ import top.xuguoliang.models.article.ArticleBannerDao;
 import top.xuguoliang.models.article.ArticleDao;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.manager.Manager;
+import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
 import top.xuguoliang.service.article.cms.ArticleCmsAddParamVO;
@@ -46,6 +48,8 @@ public class ArticleCmsService {
     @Resource
     private RelationArticleCommodityDao relationArticleCommodityDao;
 
+    @Resource
+    private ManagerDao managerDao;
 
     /**
      * 分页查询文章，和文章banner
@@ -148,6 +152,7 @@ public class ArticleCmsService {
         // 方法需要返回的VO以及VO中的属性对象
         ArticleCmsResultVO resultVO = new ArticleCmsResultVO();
         List<ArticleBanner> resultBanners = new ArrayList<>();
+        List<Commodity> commodities = new ArrayList<>();
 
         // 创建文章对象，复制VO属性到此对象，设置VO中不包含的属性
         Article article = new Article();
@@ -176,24 +181,36 @@ public class ArticleCmsService {
         // 遍历商品，将商品和文章建立关联
         List<Integer> commodityIds = articleCmsAddParamVO.getCommodityIds();
         commodityIds.forEach(commodityId -> {
-            // 根据文章id和商品id查找关系
-            List<RelationArticleCommodity> relation =
-                    relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
-            if (ObjectUtils.isEmpty(relation)) {
-                // 如果关系不存在，建立关系
-                RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
-                relationArticleCommodity.setArticleId(articleId);
-                relationArticleCommodity.setCommodityId(commodityId);
-                relationArticleCommodity.setCreateTime(date);
-                relationArticleCommodity.setUpdateTime(date);
-                relationArticleCommodityDao.save(relationArticleCommodity);
+
+            // 通过id查找商品，如果商品不存在直接跳过，商品存在才执行后面操作
+            Commodity commodity = commodityDao.findOne(commodityId);
+            if (!ObjectUtils.isEmpty(commodity)) {
+                commodities.add(commodity);
+
+                // 根据文章id和商品id查找关系
+                List<RelationArticleCommodity> relation =
+                        relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
+                if (ObjectUtils.isEmpty(relation)) {
+                    // 如果关系不存在，建立关系
+                    RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
+                    relationArticleCommodity.setArticleId(articleId);
+                    relationArticleCommodity.setCommodityId(commodityId);
+                    relationArticleCommodity.setCreateTime(date);
+                    relationArticleCommodity.setUpdateTime(date);
+                    relationArticleCommodityDao.save(relationArticleCommodity);
+                }
             }
         });
+
+        // 获取管理员姓名
+        Manager manager = managerDao.findOne(managerId);
+        String name = manager.getName();
 
         // 设置返回的VO
         BeanUtils.copyProperties(articleSave, resultVO);
         resultVO.setArticleBanners(resultBanners);
-        resultVO.setCommodityIds(commodityIds);
+        resultVO.setCommodities(commodities);
+        resultVO.setName(name);
 
         return resultVO;
     }
