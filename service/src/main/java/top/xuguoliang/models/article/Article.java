@@ -29,6 +29,9 @@ public class Article {
     @ApiModelProperty("文章内容")
     private String articleContent;
 
+    @ApiModelProperty("文章类型")
+    private ArticleTypeEnum articleType;
+
     @ApiModelProperty("发表文章的管理员id")
     private Integer managerId;
 
