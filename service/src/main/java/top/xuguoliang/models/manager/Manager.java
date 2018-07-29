@@ -6,7 +6,11 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 @Entity
 public class Manager {
@@ -29,12 +33,17 @@ public class Manager {
     @NotNull
     private Integer role = 0;
 
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
-
     @Transient
     @ApiModelProperty("token")
     private String token;
 
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
+
+    @ApiModelProperty("删除")
+    private Boolean deleted = false;
 
 }

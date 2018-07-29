@@ -3,12 +3,12 @@ package top.xuguoliang.models.article;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.xuguoliang.common.BaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -16,7 +16,7 @@ import javax.persistence.Id;
 @Data
 @Entity
 @ApiModel("文章")
-public class Article extends BaseEntity {
+public class Article {
 
     @Id
     @ApiModelProperty("文章id")
@@ -32,4 +32,12 @@ public class Article extends BaseEntity {
     @ApiModelProperty("发表文章的用户id")
     private Integer userId;
 
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
+
+    @ApiModelProperty("删除")
+    private Boolean deleted = false;
 }

@@ -3,17 +3,18 @@ package top.xuguoliang.models.commodity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.xuguoliang.common.BaseEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author jinguoguo
  */
+@Data
 @Entity
 @ApiModel("商品")
-public class Commodity extends BaseEntity {
+public class Commodity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +33,15 @@ public class Commodity extends BaseEntity {
 
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
+
+
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+
+    @ApiModelProperty("更新时间")
+    private Date updateTime;
+
+    @ApiModelProperty("删除")
+    private Boolean deleted = false;
 
 }
