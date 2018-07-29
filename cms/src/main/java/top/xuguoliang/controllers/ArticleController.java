@@ -32,24 +32,26 @@ public class ArticleController {
     @GetMapping("page")
     @ApiOperation("分页查询文章")
     public Page<ArticleCmsResultVO> findPage(@PageableDefault Pageable pageable) {
-        logger.debug("调用接口：分页查询文章");
+        logger.debug("-> 调用接口：分页查询文章");
         return articleCmsService.findPage(pageable);
     }
 
     @GetMapping
     @ApiOperation("单个查询")
     public ArticleCmsResultVO getArticle(@RequestParam Integer articleId) {
-        logger.debug("调用接口：查询单个文章");
+        logger.debug("-> 调用接口：查询单个文章");
         return articleCmsService.getArticle(articleId);
     }
 
     @PutMapping
     @ApiOperation("修改")
     public ArticleCmsResultVO updateArticle(@RequestBody ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
-        logger.debug("调用接口：修改文章");
+        logger.debug("-> 调用接口：修改文章");
         return articleCmsService.updateArticle(articleCmsUpdateParamVO);
     }
 
+    @PostMapping
+    @ApiOperation("添加")
     public ArticleCmsResultVO addArticle(ArticleCmsAddParamVO articleCmsAddParamVO) {
         Integer managerId = ManagerHelper.getManagerId();
         logger.debug("-> 管理员 {} 调用接口：添加文章", managerId);
