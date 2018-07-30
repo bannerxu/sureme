@@ -143,6 +143,20 @@ public class ArticleCmsService {
         // 设置轮播图
         articleCmsResultVO.setArticleBanners(articleBanners);
 
+        // 通过文章id查找对应的商品，并设置到VO
+        List<RelationArticleCommodity> relations = relationArticleCommodityDao.findByArticleIdIsAndDeletedIsFalse(articleId);
+        final List<Commodity> commodities = new ArrayList<>();
+        if (!ObjectUtils.isEmpty(relations)) {
+            relations.forEach((relation) -> {
+                Integer commodityId = relation.getCommodityId();
+                if (!ObjectUtils.isEmpty(commodityId)) {
+                    Commodity commodity = commodityDao.findOne(commodityId);
+                    commodities.add(commodity);
+                }
+            });
+        }
+        articleCmsResultVO.setCommodities(commodities);
+
         return articleCmsResultVO;
     }
 
@@ -153,8 +167,77 @@ public class ArticleCmsService {
      * @return 修改后的文章
      */
     public ArticleCmsResultVO updateArticle(ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
+        // 构建返回值
+        ArticleCmsResultVO vo = new ArticleCmsResultVO();
+        List<ArticleBanner> resultArticleBanner = new ArrayList<>();
+        List<Commodity> resultCommodities = new ArrayList<>();
+        vo.setArticleBanners(resultArticleBanner);
+        vo.setCommodities(resultCommodities);
+
+        // 非空判断，避免空指针
+        Integer articleId = articleCmsUpdateParamVO.getArticleId();
+        if (ObjectUtils.isEmpty(articleId) || articleId.equals(0)) {
+            logger.error("调用文章修改业务：文章id不能为空");
+            throw new ValidationException(MessageCodes.ARTICLE_ID_EMPTY, "文章id不能为空");
+        }
+
+        // 非空判断，避免空指针
+        Article article = articleDao.findOne(articleId);
+        if (ObjectUtils.isEmpty(article)) {
+            logger.error("调用文章修改业务：articleId对应的文章不存在");
+            throw new ValidationException(MessageCodes.CMS_ARTICLE_NOT_EXIST, "文章不存在");
+        }
+
         List<ArticleBanner> articleBanners = articleCmsUpdateParamVO.getArticleBanners();
-        return null;
+        List<Integer> commodityIds = articleCmsUpdateParamVO.getCommodityIds();
+
+        if (!ObjectUtils.isEmpty(articleBanners)) {
+            // 遍历，保存到文章轮播
+            articleBanners.forEach(articleBanner -> {
+                Date date = new Date();
+                Integer articleBannerId = articleBanner.getArticleBannerId();
+                if (ObjectUtils.isEmpty(articleBannerId)) {
+                    // 如果文章轮播id为空，表示不存在，则设置创建时间和更新时间
+                    articleBanner.setCreateTime(date);
+                    articleBanner.setUpdateTime(date);
+                } else {
+                    // 文章轮播id不为空，存在，则设置更新时间
+                    articleBanner.setUpdateTime(date);
+                }
+                ArticleBanner articleBannerSave = articleBannerDao.saveAndFlush(articleBanner);
+                resultArticleBanner.add(articleBannerSave);
+            });
+        }
+
+        if (!ObjectUtils.isEmpty(commodityIds)) {
+            // 遍历，保存
+            for (Integer commodityId : commodityIds) {
+                List<RelationArticleCommodity> relation =
+                        relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
+                if (ObjectUtils.isEmpty(relation)) {
+                    // 如果关联不存在则创建关联
+                    Commodity commodity = commodityDao.findOne(commodityId);
+                    if (!ObjectUtils.isEmpty(commodity)) {
+                        RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
+                        Date date = new Date();
+                        relationArticleCommodity.setCreateTime(date);
+                        relationArticleCommodity.setUpdateTime(date);
+                        relationArticleCommodityDao.saveAndFlush(relationArticleCommodity);
+                        if (!commodity.getDeleted()) {
+                            resultCommodities.add(commodity);
+                        }
+                    }
+                } else {
+                    // 如果关联已经存在直接查出商品放到放回值里
+                    Commodity commodity = commodityDao.findOne(commodityId);
+                    if (!commodity.getDeleted()) {
+                        resultCommodities.add(commodity);
+                    }
+                }
+            }
+        }
+
+        return vo;
     }
 
     /**

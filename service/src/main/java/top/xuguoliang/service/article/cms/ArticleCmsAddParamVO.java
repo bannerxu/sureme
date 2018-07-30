@@ -2,7 +2,6 @@ package top.xuguoliang.service.article.cms;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.xuguoliang.models.article.ArticleBanner;
 import top.xuguoliang.models.article.ArticleTypeEnum;
 
 import java.util.List;
