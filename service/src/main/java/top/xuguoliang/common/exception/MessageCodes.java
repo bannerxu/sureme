@@ -35,4 +35,5 @@ public class MessageCodes {
     public static final String CMS_ARTICLE_NOT_EXIST = "cms.article_not_exist";
     public static final String ARTICLE_ID_EMPTY = "article.id.empty";
 
+    public static final String CMS_COMMODITY_NOT_EXIST = "cms.commodity.not.exist";
 }

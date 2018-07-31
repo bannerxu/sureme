@@ -1,23 +1,20 @@
-package top.xuguoliang.models.commodity;
+package top.xuguoliang.service.commodity.cms;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.commodity.CommodityBanner;
+import top.xuguoliang.models.commodity.StockKeepingUnit;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("商品")
-public class Commodity {
+public class CommodityCmsResultVO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("商品id")
     private Integer commodityId;
 
@@ -27,12 +24,17 @@ public class Commodity {
     @ApiModelProperty("销量")
     private Integer salesVolume;
 
-    @Lob
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
+
+    @ApiModelProperty("数组：商品轮播")
+    private List<CommodityBanner> commodityBanners;
+
+    @ApiModelProperty("商品规格")
+    private List<StockKeepingUnit> stockKeepingUnits;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

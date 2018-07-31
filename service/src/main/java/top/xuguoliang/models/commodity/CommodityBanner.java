@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -16,24 +15,17 @@ import java.util.Date;
  */
 @Data
 @Entity
-@ApiModel("最小库存单元，规格，SKU")
-public class StockKeepingUnit {
-
+@ApiModel("商品轮播")
+public class CommodityBanner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty("规格id")
-    private Integer stockKeepingUnitId;
+    @ApiModelProperty("banner id")
+    private Integer commodityBannerId;
 
-    @ApiModelProperty("规格名称")
-    private String skuName;
+    @ApiModelProperty("banner url")
+    private String commodityBannerUrl;
 
-    @ApiModelProperty("单价")
-    private BigDecimal unitPrice;
-
-    @ApiModelProperty("折扣价")
-    private BigDecimal discountPrice;
-
-    @ApiModelProperty("商品id")
+    @ApiModelProperty("对应商品id")
     private Integer commodityId;
 
     @ApiModelProperty("创建时间")
@@ -44,5 +36,4 @@ public class StockKeepingUnit {
 
     @ApiModelProperty("删除")
     private Boolean deleted = false;
-
 }
