@@ -27,6 +27,9 @@ public class Commodity {
     @ApiModelProperty("销量")
     private Integer salesVolume;
 
+    @ApiModelProperty("商品简介")
+    private String commodityIntroduction;
+
     @Lob
     @ApiModelProperty("商品详情")
     private String commodityDetail;

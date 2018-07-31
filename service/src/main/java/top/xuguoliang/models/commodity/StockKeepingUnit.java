@@ -33,6 +33,9 @@ public class StockKeepingUnit {
     @ApiModelProperty("折扣价")
     private BigDecimal discountPrice;
 
+    @ApiModelProperty("库存")
+    private Integer stock;
+
     @ApiModelProperty("商品id")
     private Integer commodityId;
 
