@@ -2,7 +2,6 @@ package top.xuguoliang.service.article;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
+import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.article.Article;
 import top.xuguoliang.models.article.ArticleBanner;
@@ -22,6 +22,7 @@ import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
 import top.xuguoliang.service.article.cms.ArticleCmsAddParamVO;
+import top.xuguoliang.service.article.cms.ArticleCmsDeleteRelationVO;
 import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
 import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
@@ -84,7 +85,7 @@ public class ArticleCmsService {
         // 返回的VO
         ArticleCmsResultVO articleCmsResultVO = new ArticleCmsResultVO();
         // 复制文章属性到VO
-        BeanUtils.copyProperties(article, articleCmsResultVO);
+        BeanUtils.copyNonNullProperties(article, articleCmsResultVO);
 
         // 文章id
         Integer articleId = article.getArticleId();
@@ -138,7 +139,7 @@ public class ArticleCmsService {
         List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalse(articleId);
 
         // 复制文章属性到VO
-        BeanUtils.copyProperties(article, articleCmsResultVO);
+        BeanUtils.copyNonNullProperties(article, articleCmsResultVO);
 
         // 设置轮播图
         articleCmsResultVO.setArticleBanners(articleBanners);
@@ -167,6 +168,7 @@ public class ArticleCmsService {
      * @return 修改后的文章
      */
     public ArticleCmsResultVO updateArticle(ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
+        Date date = new Date();
         // 构建返回值
         ArticleCmsResultVO vo = new ArticleCmsResultVO();
         List<ArticleBanner> resultArticleBanner = new ArrayList<>();
@@ -174,68 +176,73 @@ public class ArticleCmsService {
         vo.setArticleBanners(resultArticleBanner);
         vo.setCommodities(resultCommodities);
 
-        // 非空判断，避免空指针
         Integer articleId = articleCmsUpdateParamVO.getArticleId();
-        if (ObjectUtils.isEmpty(articleId) || articleId.equals(0)) {
-            logger.error("调用文章修改业务：文章id不能为空");
-            throw new ValidationException(MessageCodes.ARTICLE_ID_EMPTY, "文章id不能为空");
-        }
-
-        // 非空判断，避免空指针
         Article article = articleDao.findOne(articleId);
         if (ObjectUtils.isEmpty(article)) {
-            logger.error("调用文章修改业务：articleId对应的文章不存在");
+            logger.error("调用文章修改业务：id对应的文章不存在");
             throw new ValidationException(MessageCodes.CMS_ARTICLE_NOT_EXIST, "文章不存在");
         }
 
         List<ArticleBanner> articleBanners = articleCmsUpdateParamVO.getArticleBanners();
         List<Integer> commodityIds = articleCmsUpdateParamVO.getCommodityIds();
 
-        if (!ObjectUtils.isEmpty(articleBanners)) {
-            // 遍历，保存到文章轮播
-            articleBanners.forEach(articleBanner -> {
-                Date date = new Date();
-                Integer articleBannerId = articleBanner.getArticleBannerId();
-                if (ObjectUtils.isEmpty(articleBannerId)) {
-                    // 如果文章轮播id为空，表示不存在，则设置创建时间和更新时间
-                    articleBanner.setCreateTime(date);
-                    articleBanner.setUpdateTime(date);
-                } else {
-                    // 文章轮播id不为空，存在，则设置更新时间
-                    articleBanner.setUpdateTime(date);
-                }
-                ArticleBanner articleBannerSave = articleBannerDao.saveAndFlush(articleBanner);
-                resultArticleBanner.add(articleBannerSave);
-            });
-        }
+        List<ArticleBanner> needSaveArticleBanner = new ArrayList<>();
+        List<RelationArticleCommodity> needSaveRelation = new ArrayList<>();
 
-        if (!ObjectUtils.isEmpty(commodityIds)) {
-            // 遍历，保存
-            for (Integer commodityId : commodityIds) {
-                List<RelationArticleCommodity> relation =
-                        relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
-                if (ObjectUtils.isEmpty(relation)) {
-                    // 如果关联不存在则创建关联
-                    Commodity commodity = commodityDao.findOne(commodityId);
-                    if (!ObjectUtils.isEmpty(commodity)) {
-                        RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
-                        Date date = new Date();
-                        relationArticleCommodity.setCreateTime(date);
-                        relationArticleCommodity.setUpdateTime(date);
-                        relationArticleCommodityDao.saveAndFlush(relationArticleCommodity);
-                        if (!commodity.getDeleted()) {
-                            resultCommodities.add(commodity);
-                        }
-                    }
-                } else {
-                    // 如果关联已经存在直接查出商品放到放回值里
-                    Commodity commodity = commodityDao.findOne(commodityId);
-                    if (!commodity.getDeleted()) {
-                        resultCommodities.add(commodity);
-                    }
-                }
+        // 遍历VO文章轮播列表，根据id判断新增还是修改
+        articleBanners.forEach(articleBanner -> {
+            Integer articleBannerId = articleBanner.getArticleBannerId();
+            if (ObjectUtils.isEmpty(articleBannerId)) {
+                // id为空，增加文章轮播
+                articleBanner.setCreateTime(date);
+                articleBanner.setUpdateTime(date);
+                articleBanner.setArticleId(articleId);
+                // 加入保存列表
+                needSaveArticleBanner.add(articleBanner);
+                // 添加到返回值
+                resultArticleBanner.add(articleBanner);
+            } else {
+                // id不为空，修改文章轮播
+                ArticleBanner update = articleBannerDao.findOne(articleBannerId);
+                update.setUpdateTime(date);
+                update.setArticleId(articleId);
+                // 加入保存列表
+                needSaveArticleBanner.add(update);
+                // 添加到返回值
+                resultArticleBanner.add(articleBanner);
             }
-        }
+        });
+
+        // 遍历商品id列表，生成文章与商品的关联
+        commodityIds.forEach(commodityId -> {
+            Commodity commodity = commodityDao.findOne(commodityId);
+            if (ObjectUtils.isEmpty(commodity)) {
+                logger.error("调用修改文章业务：id对应的商品不存在");
+                throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "id对应的商品不存在");
+            }
+            RelationArticleCommodity relation =
+                    relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
+            if (ObjectUtils.isEmpty(relation)) {
+                // 关联不存在，创建关联
+                RelationArticleCommodity relationArticleCommodity = new RelationArticleCommodity();
+                relationArticleCommodity.setArticleId(articleId);
+                relationArticleCommodity.setCommodityId(commodityId);
+                relationArticleCommodity.setCreateTime(date);
+                relationArticleCommodity.setUpdateTime(date);
+                // 加入保存列表
+                needSaveRelation.add(relation);
+                // 添加到返回值
+                resultCommodities.add(commodity);
+            }
+        });
+
+        BeanUtils.copyNonNullProperties(articleCmsUpdateParamVO, article);
+        article.setUpdateTime(date);
+
+        // 统一保存
+        articleDao.save(article);
+        articleBannerDao.save(needSaveArticleBanner);
+        relationArticleCommodityDao.save(needSaveRelation);
 
         return vo;
     }
@@ -257,14 +264,13 @@ public class ArticleCmsService {
 
         // 创建文章对象，复制VO属性到此对象，设置VO中不包含的属性
         Article article = new Article();
-        BeanUtils.copyProperties(articleCmsAddParamVO, article);
+        BeanUtils.copyNonNullProperties(articleCmsAddParamVO, article);
         article.setCreateTime(date);
         article.setUpdateTime(date);
         article.setManagerId(managerId);
         Article articleSave = articleDao.save(article);
         // 保存后的文章id
         Integer articleId = articleSave.getArticleId();
-
 
         // 遍历并创建文章轮播
         List<String> articleBanners = articleCmsAddParamVO.getArticleBanners();
@@ -289,7 +295,7 @@ public class ArticleCmsService {
                 commodities.add(commodity);
 
                 // 根据文章id和商品id查找关系
-                List<RelationArticleCommodity> relation =
+                RelationArticleCommodity relation =
                         relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
                 if (ObjectUtils.isEmpty(relation)) {
                     // 如果关系不存在，建立关系
@@ -308,7 +314,7 @@ public class ArticleCmsService {
         String name = manager.getName();
 
         // 设置返回的VO
-        BeanUtils.copyProperties(articleSave, resultVO);
+        BeanUtils.copyNonNullProperties(articleSave, resultVO);
         resultVO.setArticleBanners(resultBanners);
         resultVO.setCommodities(commodities);
         resultVO.setName(name);
@@ -331,4 +337,40 @@ public class ArticleCmsService {
         articleDao.saveAndFlush(article);
     }
 
+    /**
+     * 根据id删除文章轮播
+     *
+     * @param articleBannerId 文章轮播id
+     * @return 是否成功
+     */
+    public boolean deleteArticleBanner(Integer articleBannerId) {
+        ArticleBanner articleBanner = articleBannerDao.findOne(articleBannerId);
+        if (ObjectUtils.isEmpty(articleBanner)) {
+            logger.error("调用删除文章轮播业务，id对应的文章轮播不存在");
+            return false;
+        }
+        articleBanner.setDeleted(true);
+        articleBannerDao.saveAndFlush(articleBanner);
+        return true;
+    }
+
+    /**
+     * 移除文章与商品的关联
+     *
+     * @return 是否成功
+     */
+    public boolean removeArticleCommodityRelation(ArticleCmsDeleteRelationVO vo) {
+        Integer articleId = vo.getArticleId();
+        Integer commodityId = vo.getCommodityId();
+
+        RelationArticleCommodity relation =
+                relationArticleCommodityDao.findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(articleId, commodityId);
+        if (ObjectUtils.isEmpty(relation)) {
+            logger.error("文章与商品没有关联");
+        }
+        relation.setDeleted(true);
+        relationArticleCommodityDao.saveAndFlush(relation);
+
+        return true;
+    }
 }

@@ -11,5 +11,5 @@ import java.util.List;
 public interface RelationArticleCommodityDao extends JpaSpecificationExecutor<RelationArticleCommodity>, JpaRepository<RelationArticleCommodity, Integer> {
     List<RelationArticleCommodity> findByArticleIdIsAndDeletedIsFalse(Integer articleId);
     List<RelationArticleCommodity> findByCommodityIdIsAndDeletedIsFalse(Integer commodityId);
-    List<RelationArticleCommodity> findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(Integer articleId, Integer commodity);
+    RelationArticleCommodity findByArticleIdIsAndCommodityIdIsAndDeletedIsFalse(Integer articleId, Integer commodity);
 }

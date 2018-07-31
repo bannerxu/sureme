@@ -15,25 +15,21 @@ import java.util.List;
 @Data
 public class ArticleCmsUpdateParamVO {
 
-    @NotNull
+    @NotNull(message = "文章id不能为空")
     @ApiModelProperty("文章id")
     private Integer articleId;
 
-    @NotBlank
+    @NotBlank(message = "文章标题不能为空")
     @ApiModelProperty("文章标题")
     private String articleTitle;
 
-    @NotBlank
+    @NotBlank(message = "文章内容不能为空")
     @ApiModelProperty("文章内容")
     private String articleContent;
 
-    @NotNull
+    @NotNull(message = "文章类型不能为空")
     @ApiModelProperty("文章类型")
     private ArticleTypeEnum articleType;
-
-    @NotNull
-    @ApiModelProperty("发表文章的管理员id")
-    private Integer managerId;
 
     @ApiModelProperty("数组：文章Banner轮播")
     private List<ArticleBanner> articleBanners;

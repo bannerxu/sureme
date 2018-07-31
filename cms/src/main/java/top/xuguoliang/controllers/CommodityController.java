@@ -1,6 +1,7 @@
 package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -61,6 +62,20 @@ public class CommodityController {
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public CommodityCmsResultVO update(@RequestBody CommodityCmsUpdateParamVO commodityCmsUpdateParamVO) {
         return commodityCmsService.update(commodityCmsUpdateParamVO);
+    }
+
+    @DeleteMapping("banner/{commodityBannerId")
+    @ApiModelProperty("删除轮播")
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
+    public boolean deleteCommodityBanner(@PathVariable @NotNull Integer commodityBannerId) {
+        return commodityCmsService.deleteCommodityBanner(commodityBannerId);
+    }
+
+    @DeleteMapping("sku/{skuId}")
+    @ApiModelProperty("删除规格")
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
+    public boolean deleteSKU(@PathVariable @NotNull Integer skuId) {
+        return commodityCmsService.deleteSKU(skuId);
     }
 
 }

@@ -9,5 +9,18 @@ import java.util.List;
  * @author jinguoguo
  */
 public interface ArticleBannerDao extends JpaSpecificationExecutor<ArticleBanner>, JpaRepository<ArticleBanner, Integer> {
+    /**
+     * 通过文章id查询未删除的文章轮播
+     * @param articleId 文章id
+     * @return 文章轮播list
+     */
     List<ArticleBanner> findByArticleIdIsAndDeletedIsFalse(Integer articleId);
+
+    /**
+     * 通过文章id查询文章轮播，忽略deleted
+     *
+     * @param articleId 文章id
+     * @return 文章轮播list
+     */
+    List<ArticleBanner> findByArticleIdIs(Integer articleId);
 }

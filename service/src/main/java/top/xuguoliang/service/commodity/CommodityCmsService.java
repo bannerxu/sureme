@@ -17,10 +17,7 @@ import top.xuguoliang.service.commodity.cms.CommodityCmsResultVO;
 import top.xuguoliang.service.commodity.cms.CommodityCmsUpdateParamVO;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -168,71 +165,50 @@ public class CommodityCmsService {
         List<CommodityBanner> voCommodityBanners = commodityCmsUpdateParamVO.getCommodityBanners();
         List<StockKeepingUnit> voStockKeepingUnits = commodityCmsUpdateParamVO.getStockKeepingUnits();
 
-        // 数据库中的轮播和规格
-        List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIs(commodityId);
-        List<StockKeepingUnit> stockKeepingUnits = stockKeepingUnitDao.findByCommodityIdIs(commodityId);
-        // VO轮播id和VO规格id
-        Set<Integer> commodityBannerIds = voCommodityBanners.stream().map(CommodityBanner::getCommodityBannerId).collect(Collectors.toSet());
-        Set<Integer> stockKeepingUnitIds = voStockKeepingUnits.stream().map(StockKeepingUnit::getStockKeepingUnitId).collect(Collectors.toSet());
-
         List<CommodityBanner> needSaveCommodityBanners = new ArrayList<>();
         List<StockKeepingUnit> needSaveStockKeepingUnits = new ArrayList<>();
 
-        commodityBanners.forEach(commodityBanner -> {
-            // 所有的全部设置成删除
-            commodityBanner.setDeleted(true);
+        voCommodityBanners.forEach(commodityBanner -> {
             Integer commodityBannerId = commodityBanner.getCommodityBannerId();
             if (ObjectUtils.isEmpty(commodityBannerId)) {
-                // id为空，需要新增
-                commodityBanner.setCreateTime(date);
+                // id为空，新增
                 commodityBanner.setUpdateTime(date);
-                commodityBanner.setDeleted(false);
+                commodityBanner.setCreateTime(date);
                 commodityBanner.setCommodityId(commodityId);
+                // 添加到保存列表
                 needSaveCommodityBanners.add(commodityBanner);
             } else {
-                // id不为空，需要修改或者删除
-                if (commodityBannerIds.contains(commodityBannerId)) {
-                    // 包含，需要修改
-                    CommodityBanner update = commodityBannerDao.findOne(commodityBannerId);
-                    BeanUtils.copyNonNullProperties(commodityBanner, update);
-                    update.setUpdateTime(date);
-                    update.setDeleted(false);
-                    update.setCommodityBannerUrl(commodityBanner.getCommodityBannerUrl());
-                    needSaveCommodityBanners.add(update);
-                } else {
-                    needSaveCommodityBanners.add(commodityBanner);
-                }
+                // id非空，修改
+                CommodityBanner update = commodityBannerDao.findOne(commodityBannerId);
+                BeanUtils.copyNonNullProperties(commodityBanner, update);
+                update.setUpdateTime(date);
+                update.setCommodityId(commodityId);
+                // 添加到保存列表
+                needSaveCommodityBanners.add(update);
             }
         });
 
-        stockKeepingUnits.forEach(stockKeepingUnit -> {
-            stockKeepingUnit.setDeleted(true);
+        voStockKeepingUnits.forEach(stockKeepingUnit -> {
             Integer stockKeepingUnitId = stockKeepingUnit.getStockKeepingUnitId();
             if (ObjectUtils.isEmpty(stockKeepingUnitId)) {
-                // id为空，需要新增
-                stockKeepingUnit.setCommodityId(commodityId);
+                // id为空，新增
                 stockKeepingUnit.setCreateTime(date);
                 stockKeepingUnit.setUpdateTime(date);
-                stockKeepingUnit.setDeleted(false);
+                stockKeepingUnit.setCommodityId(commodityId);
+                // 添加到保存列表
                 needSaveStockKeepingUnits.add(stockKeepingUnit);
             } else {
-                // id不为空，需要修改或者删除
-                if (stockKeepingUnitIds.contains(stockKeepingUnitId)) {
-                    // 包含，需要修改
-                    StockKeepingUnit update = stockKeepingUnitDao.findOne(stockKeepingUnitId);
-                    BeanUtils.copyNonNullProperties(stockKeepingUnit, update);
-                    update.setDeleted(false);
-                    update.setUpdateTime(date);
-                    update.setCommodityId(commodityId);
-                    needSaveStockKeepingUnits.add(update);
-                } else {
-                    // 不包含，需要删除
-                    needSaveStockKeepingUnits.add(stockKeepingUnit);
-                }
+                // id非空，修改
+                StockKeepingUnit update = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+                BeanUtils.copyNonNullProperties(stockKeepingUnit, update);
+                update.setUpdateTime(date);
+                update.setCommodityId(commodityId);
+                // 添加到保存列表
+                needSaveStockKeepingUnits.add(update);
             }
         });
 
-        // 保存所有操作
+        // 统一保存
         commodityBannerDao.save(needSaveCommodityBanners);
         stockKeepingUnitDao.save(needSaveStockKeepingUnits);
 
@@ -242,6 +218,7 @@ public class CommodityCmsService {
         Commodity commoditySave = commodityDao.saveAndFlush(commodity);
 
         // 封装返回VO对象
+        BeanUtils.copyNonNullProperties(commodityCmsUpdateParamVO, commodityCmsResultVO);
         BeanUtils.copyNonNullProperties(commoditySave, commodityCmsResultVO);
 
         return commodityCmsResultVO;
@@ -265,5 +242,39 @@ public class CommodityCmsService {
         commodityCmsResultVO.setCommodityBanners(commodityBanners);
 
         return commodityCmsResultVO;
+    }
+
+    /**
+     * 通过轮播id删除轮播
+     *
+     * @param commodityBannerId 轮播id
+     * @return 是否成功
+     */
+    public boolean deleteCommodityBanner(Integer commodityBannerId) {
+        CommodityBanner commodityBanner = commodityBannerDao.findOne(commodityBannerId);
+        if (ObjectUtils.isEmpty(commodityBanner)) {
+            logger.error("id对应的商品轮播图不存在");
+            return false;
+        }
+        commodityBanner.setDeleted(true);
+        commodityBannerDao.saveAndFlush(commodityBanner);
+        return true;
+    }
+
+    /**
+     * 通过规格id删除规格
+     *
+     * @param skuId 规格id
+     * @return 是否成功
+     */
+    public boolean deleteSKU(Integer skuId) {
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(skuId);
+        if (ObjectUtils.isEmpty(stockKeepingUnit)) {
+            logger.error("id对应的规格不存在");
+            return false;
+        }
+        stockKeepingUnit.setDeleted(true);
+        stockKeepingUnitDao.saveAndFlush(stockKeepingUnit);
+        return true;
     }
 }

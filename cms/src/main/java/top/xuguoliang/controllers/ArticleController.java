@@ -1,6 +1,7 @@
 package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -11,13 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.constants.RoleConstant;
-import top.xuguoliang.models.article.Article;
 import top.xuguoliang.service.article.ArticleCmsService;
 import top.xuguoliang.service.article.cms.ArticleCmsAddParamVO;
+import top.xuguoliang.service.article.cms.ArticleCmsDeleteRelationVO;
 import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
 import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author jinguoguo
@@ -70,6 +72,20 @@ public class ArticleController {
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public void deleteArticle(@PathVariable Integer articleId) {
         articleCmsService.deleteArticle(articleId);
+    }
+
+    @DeleteMapping("banner/{articleBannerId}")
+    @ApiModelProperty("删除文章轮播")
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
+    public boolean deleteArticleBanner(@PathVariable @NotNull Integer articleBannerId) {
+        return articleCmsService.deleteArticleBanner(articleBannerId);
+    }
+
+    @DeleteMapping("commodity")
+    @ApiModelProperty("删除文章与商品的关联")
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
+    public boolean removeArticleCommodityRelation(@RequestBody ArticleCmsDeleteRelationVO articleCmsDeleteRelationVO) {
+        return articleCmsService.removeArticleCommodityRelation(articleCmsDeleteRelationVO);
     }
 
 }
