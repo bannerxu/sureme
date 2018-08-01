@@ -16,31 +16,28 @@ import java.util.Date;
  */
 @Data
 @Entity
-@ApiModel("卡券")
-public class Coupon {
+@ApiModel("个人卡券")
+public class PersonalCoupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ApiModelProperty("卡券id")
+    @ApiModelProperty("个人卡券id")
+    private Integer personalCouponId;
+
+    @ApiModelProperty("对应的卡券id")
     private Integer couponId;
 
-    @ApiModelProperty("卡券名")
+    @ApiModelProperty("卡券对应的商品id，为零全适用，非零针对单一商品")
+    private Integer commodityId;
+
+    @ApiModelProperty("用户id")
+    private Integer userId;
+
+    @ApiModelProperty("对应的卡券名")
     private String couponName;
 
     @ApiModelProperty("对应折扣")
     private BigDecimal couponDiscount;
-
-    @ApiModelProperty("领取开始时间")
-    private Date pullBeginTime;
-
-    @ApiModelProperty("领取结束时间")
-    private Date pullEndTime;
-
-    @ApiModelProperty("使用开始时间")
-    private Date useBeginTime;
-
-    @ApiModelProperty("使用结束时间")
-    private Date useEndTime;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
@@ -49,6 +46,6 @@ public class Coupon {
     private Date updateTime;
 
     @ApiModelProperty("删除")
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
 }

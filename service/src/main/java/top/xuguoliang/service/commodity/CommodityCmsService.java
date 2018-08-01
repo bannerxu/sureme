@@ -224,8 +224,15 @@ public class CommodityCmsService {
         return commodityCmsResultVO;
     }
 
+    /**
+     * 通过id查询单个商品
+     *
+     * @param commodityId 商品id
+     * @return 商品信息
+     */
     public CommodityCmsResultVO getCommodity(Integer commodityId) {
         CommodityCmsResultVO commodityCmsResultVO = new CommodityCmsResultVO();
+        // 通过传入的id查询商品
         Commodity commodity = commodityDao.findOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品单个查询业务：商品不存在");

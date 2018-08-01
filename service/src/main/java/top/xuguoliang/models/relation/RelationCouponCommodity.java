@@ -1,4 +1,4 @@
-package top.xuguoliang.models.coupon;
+package top.xuguoliang.models.relation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -16,31 +15,18 @@ import java.util.Date;
  */
 @Data
 @Entity
-@ApiModel("卡券")
-public class Coupon {
-
+@ApiModel("卡券与商品关系")
+public class RelationCouponCommodity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty("关系id")
+    private Integer relationCouponCommodityId;
+
     @ApiModelProperty("卡券id")
     private Integer couponId;
 
-    @ApiModelProperty("卡券名")
-    private String couponName;
-
-    @ApiModelProperty("对应折扣")
-    private BigDecimal couponDiscount;
-
-    @ApiModelProperty("领取开始时间")
-    private Date pullBeginTime;
-
-    @ApiModelProperty("领取结束时间")
-    private Date pullEndTime;
-
-    @ApiModelProperty("使用开始时间")
-    private Date useBeginTime;
-
-    @ApiModelProperty("使用结束时间")
-    private Date useEndTime;
+    @ApiModelProperty("商品id")
+    private Integer commodityId;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
@@ -49,6 +35,5 @@ public class Coupon {
     private Date updateTime;
 
     @ApiModelProperty("删除")
-    private boolean deleted = false;
-
+    private boolean deleted;
 }

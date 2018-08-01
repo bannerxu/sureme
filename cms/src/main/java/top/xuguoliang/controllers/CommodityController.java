@@ -64,7 +64,7 @@ public class CommodityController {
         return commodityCmsService.update(commodityCmsUpdateParamVO);
     }
 
-    @DeleteMapping("banner/{commodityBannerId")
+    @DeleteMapping("banner/{commodityBannerId}")
     @ApiModelProperty("删除轮播")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public boolean deleteCommodityBanner(@PathVariable @NotNull Integer commodityBannerId) {

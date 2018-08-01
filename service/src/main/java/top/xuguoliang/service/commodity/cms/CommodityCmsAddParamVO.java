@@ -25,6 +25,10 @@ public class CommodityCmsAddParamVO {
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
+    @NotBlank(message = "商品简介不能为空")
+    @ApiModelProperty("商品简介")
+    private String commodityIntroduction;
+
     @NotNull(message = "商品价格不能为空")
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
