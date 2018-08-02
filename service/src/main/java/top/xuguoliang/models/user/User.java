@@ -52,8 +52,8 @@ public class User {
     private Boolean deleted = false;
 
     /**
-        用户信息，针对项目资料
-        收货地址
+     * 用户信息，针对项目资料
+     * 收货地址
      */
     @ApiModelProperty("收货地址")
     private String receiveAddress;

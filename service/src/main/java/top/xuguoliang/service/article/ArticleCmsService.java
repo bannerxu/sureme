@@ -30,6 +30,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author jinguoguo
@@ -98,16 +100,11 @@ public class ArticleCmsService {
 
         // 通过文章id查找对应的商品，并设置到VO
         List<RelationArticleCommodity> relations = relationArticleCommodityDao.findByArticleIdIsAndDeletedIsFalse(articleId);
-        final List<Commodity> commodities = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(relations)) {
-            relations.forEach((relation) -> {
-                Integer commodityId = relation.getCommodityId();
-                if (!ObjectUtils.isEmpty(commodityId)) {
-                    Commodity commodity = commodityDao.findOne(commodityId);
-                    commodities.add(commodity);
-                }
-            });
-        }
+        List<Commodity> commodities = relations.stream()
+                .map(RelationArticleCommodity::getCommodityId)
+                .filter(Objects::nonNull)
+                .map((commodityId) -> commodityDao.findOne(commodityId))
+                .collect(Collectors.toList());
 
         // 设置文章中发布者的名称
         Manager manager = managerDao.findOne(article.getManagerId());
@@ -146,16 +143,11 @@ public class ArticleCmsService {
 
         // 通过文章id查找对应的商品，并设置到VO
         List<RelationArticleCommodity> relations = relationArticleCommodityDao.findByArticleIdIsAndDeletedIsFalse(articleId);
-        final List<Commodity> commodities = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(relations)) {
-            relations.forEach((relation) -> {
-                Integer commodityId = relation.getCommodityId();
-                if (!ObjectUtils.isEmpty(commodityId)) {
-                    Commodity commodity = commodityDao.findOne(commodityId);
-                    commodities.add(commodity);
-                }
-            });
-        }
+        List<Commodity> commodities = relations.stream()
+                .map(RelationArticleCommodity::getCommodityId)
+                .filter(Objects::nonNull)
+                .map((commodityId) -> commodityDao.findOne(commodityId))
+                .collect(Collectors.toList());
         articleCmsResultVO.setCommodities(commodities);
 
         return articleCmsResultVO;

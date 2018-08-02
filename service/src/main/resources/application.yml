@@ -20,7 +20,7 @@ spring:
 
 
   redis:
-    host: 127.0.0.1
+    host: 120.78.196.233
     password: root
     port: 6379
     pool.maxIdle: 8

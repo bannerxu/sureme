@@ -4,10 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -26,6 +23,7 @@ public class Article {
     @ApiModelProperty("文章标题")
     private String articleTitle;
 
+    @Lob
     @ApiModelProperty("文章内容")
     private String articleContent;
 

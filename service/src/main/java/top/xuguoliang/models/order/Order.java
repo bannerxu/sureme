@@ -5,13 +5,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
+ * 订单需要冗余多张表的字段
  * @author jinguoguo
  */
 @ApiModel("订单")
@@ -24,13 +23,28 @@ public class Order {
     @ApiModelProperty("订单id")
     private Integer orderId;
 
+    @ApiModelProperty("订单状态")
+    private Integer orderStatus;
+
+    @ApiModelProperty("商品id")
+    private Integer commodityId;
+
     @ApiModelProperty("商品标题")
     private String commodityTitle;
 
+    @ApiModelProperty("商品简介")
+    private String commodityIntroduction;
+
+    @Lob
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
-    @ApiModelProperty("收货地址")
+    @ApiModelProperty("商品价格")
+    private BigDecimal commodityPrice;
+
+    // 用户信息
+
+    @ApiModelProperty("下单时用户的收货地址")
     private String receiveAddress;
 
     @ApiModelProperty("创建时间")
