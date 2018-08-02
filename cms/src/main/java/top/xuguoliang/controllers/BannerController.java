@@ -26,7 +26,7 @@ public class BannerController {
 
     @GetMapping
     @ApiOperation("查询指定类型的轮播图")
-    public List<BannerCmsResultVO> getBanners(@ApiParam(name = "轮播类型") @NotNull @RequestParam BannerTypeEnum bannerType) {
+    public List<BannerCmsResultVO> getBanners(@NotNull @RequestParam BannerTypeEnum bannerType) {
         return bannerCmsService.getBanners(bannerType);
     }
 
