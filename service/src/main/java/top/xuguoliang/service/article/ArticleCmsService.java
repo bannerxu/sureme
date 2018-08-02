@@ -222,7 +222,7 @@ public class ArticleCmsService {
                 relationArticleCommodity.setCreateTime(date);
                 relationArticleCommodity.setUpdateTime(date);
                 // 加入保存列表
-                needSaveRelation.add(relation);
+                needSaveRelation.add(relationArticleCommodity);
                 // 添加到返回值
                 resultCommodities.add(commodity);
             }
