@@ -40,4 +40,7 @@ public class MessageCodes {
     public static final String CMS_STOCK_KEEPING_UNIT_NOT_EXIST = "cms.stock.keeping.unit.not.exist";
     public static final String CMS_COUPON_NOT_EXIST = "cms.coupon.not.exist";
     public static final String CMS_BANNER_ERROR = "cms.banner.error";
+    public static final String CMS_ORDER_NOT_EXIST = "cms.order.not.exist";
+    public static final String WEB_ADDRESS_NOT_EXIST = "web.address.not.exist";
+    public static final String WEB_COMMODITY_NOT_EXIST = "web.commodity.not.exist";
 }

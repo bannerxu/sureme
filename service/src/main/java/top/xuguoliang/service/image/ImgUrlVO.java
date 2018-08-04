@@ -1,4 +1,4 @@
-package top.xuguoliang.service.Image;
+package top.xuguoliang.service.image;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package top.xuguoliang.service.order.cms;
+package top.xuguoliang.service.order.web;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.Date;
  * @author jinguoguo
  */
 @Data
-public class OrderCmsResultVO {
+public class OrderWebResultVO {
 
     @ApiModelProperty("订单id")
     private Integer orderId;
@@ -42,8 +42,6 @@ public class OrderCmsResultVO {
 
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
-
-    // 用户信息
 
     @ApiModelProperty("下单时用户的收货地址")
     private String receiveAddress;

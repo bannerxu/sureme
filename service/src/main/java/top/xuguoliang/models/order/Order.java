@@ -23,8 +23,14 @@ public class Order {
     @ApiModelProperty("订单id")
     private Integer orderId;
 
+    @ApiModelProperty("订单编号")
+    private String orderNumber;
+
     @ApiModelProperty("订单状态")
-    private Integer orderStatus;
+    private OrderStatusEnum orderStatus;
+
+    @ApiModelProperty("订单类型")
+    private OrderTypeEnum orderType;
 
     @ApiModelProperty("商品id")
     private Integer commodityId;
