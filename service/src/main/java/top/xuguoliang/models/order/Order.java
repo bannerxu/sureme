@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * 订单需要冗余多张表的字段
+ *
  * @author jinguoguo
  */
 @ApiModel("订单")
@@ -48,10 +49,32 @@ public class Order {
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
 
-    // 用户信息
+    @ApiModelProperty("用户id")
+    private Integer userId;
 
-    @ApiModelProperty("下单时用户的收货地址")
-    private String receiveAddress;
+    @ApiModelProperty("地址")
+    private String address;
+
+    @ApiModelProperty("地址：省")
+    private String addressProvince;
+
+    @ApiModelProperty("地址：市")
+    private String addressCity;
+
+    @ApiModelProperty("地址：区")
+    private String addressArea;
+
+    @ApiModelProperty("地址：街道")
+    private String addressStreet;
+
+    @ApiModelProperty("详细地址")
+    private String addressDetail;
+
+    @ApiModelProperty("收货人手机号码")
+    private String receiverPhoneNumber;
+
+    @ApiModelProperty("收货人姓名")
+    private String receiverName;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

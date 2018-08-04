@@ -49,7 +49,7 @@ public class OrderWebService {
      * @param orderWebCreateParamVO 订单创建需要的信息
      * @return 创建后的订单
      */
-    public OrderWebResultVO createOrder(OrderWebCreateParamVO orderWebCreateParamVO) {
+    public OrderWebResultVO createOrder(Integer userId, OrderWebCreateParamVO orderWebCreateParamVO) {
         Date date = new Date();
         // 返回值
         OrderWebResultVO vo = new OrderWebResultVO();
@@ -81,17 +81,37 @@ public class OrderWebService {
         order.setUpdateTime(date);
         order.setDeleted(false);
         order.setOrderNumber(generateOrderNumber());
+        order.setUserId(userId);
 
         return vo;
     }
 
     /**
      * 生成订单号：时间戳 + 随机6位数字
-     * @return
+     *
+     * @return 订单号
      */
     private String generateOrderNumber() {
         String time = String.valueOf(System.currentTimeMillis());
         int number = (int) ((Math.random() * 9 + 1) * 100000);
         return time + number;
+    }
+
+    /**
+     * 通过订单号查询订单
+     *
+     * @param orderNumber 订单号
+     * @return 订单信息
+     */
+    public OrderWebResultVO findByOrderNumber(String orderNumber) {
+        Order order = orderDao.findByOrderNumberEquals(orderNumber);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.warn("通过订单号查询订单业务错误：订单不存在或已被删除，编号：{}", orderNumber);
+            throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST, "订单不存在");
+        }else {
+            OrderWebResultVO vo = new OrderWebResultVO();
+            BeanUtils.copyNonNullProperties(order, vo);
+            return vo;
+        }
     }
 }

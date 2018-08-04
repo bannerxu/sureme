@@ -44,4 +44,5 @@ public class MessageCodes {
     public static final String WEB_ADDRESS_NOT_EXIST = "web.address.not.exist";
     public static final String WEB_COMMODITY_NOT_EXIST = "web.commodity.not.exist";
     public static final String WEB_USER_NOT_EXIST = "web.user.not.exist";
+    public static final String WEB_ORDER_NOT_EXIST = "web.order.not.exist";
 }
