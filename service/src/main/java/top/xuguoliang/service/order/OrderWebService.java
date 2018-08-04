@@ -80,7 +80,18 @@ public class OrderWebService {
         order.setCreateTime(date);
         order.setUpdateTime(date);
         order.setDeleted(false);
+        order.setOrderNumber(generateOrderNumber());
 
         return vo;
+    }
+
+    /**
+     * 生成订单号：时间戳 + 随机6位数字
+     * @return
+     */
+    private String generateOrderNumber() {
+        String time = String.valueOf(System.currentTimeMillis());
+        int number = (int) ((Math.random() * 9 + 1) * 100000);
+        return time + number;
     }
 }
