@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
@@ -24,6 +25,7 @@ import javax.annotation.Resource;
 /**
  * @author jinguoguo
  */
+@Service
 public class OrderCmsService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderCmsService.class);
