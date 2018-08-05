@@ -31,9 +31,12 @@ public class BrokerageController {
     @Resource
     private BrokerageWebService brokerageWebService;
 
+    // TODO: 2018-08-05 缺少累计收益接口
+
+
     @ApiOperation("佣金明细")
     @GetMapping("page")
-    public Page<BrokerageVO> findPage(@PageableDefault(sort = "brokerageId",direction = Sort.Direction.ASC) Pageable pageable){
+    public Page<BrokerageVO> findPage(@PageableDefault(sort = "brokerageId", direction = Sort.Direction.ASC) Pageable pageable) {
         return brokerageWebService.findPage(UserHelper.getUserId(), pageable);
     }
 

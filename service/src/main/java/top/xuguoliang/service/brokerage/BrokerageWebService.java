@@ -52,4 +52,6 @@ public class BrokerageWebService {
         BeanUtils.copyNonNullProperties(brokerage, brokerageVO);
         return brokerageVO;
     }
+
+    // TODO: 2018-08-05  订单支付后要记录佣金
 }
