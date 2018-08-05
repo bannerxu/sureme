@@ -2,6 +2,9 @@ package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.order.OrderWebService;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
@@ -19,6 +22,13 @@ public class OrderController {
 
     @Resource
     private OrderWebService orderWebService;
+
+    @GetMapping
+    @ApiOperation("分页查询")
+    public Page<OrderWebResultVO> findPage(@PageableDefault Pageable pageable) {
+        Integer userId = UserHelper.getUserId();
+        return orderWebService.findPage(userId, pageable);
+    }
 
     @ApiOperation("下单")
     @PostMapping

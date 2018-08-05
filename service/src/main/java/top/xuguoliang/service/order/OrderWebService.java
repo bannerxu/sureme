@@ -3,11 +3,16 @@ package top.xuguoliang.service.order;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
+import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.order.Order;
@@ -29,6 +34,9 @@ import java.util.Date;
 public class OrderWebService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderWebService.class);
+
+    @Resource
+    private CommonSpecUtil<Order> commonSpecUtil;
 
     @Resource
     private OrderDao orderDao;
@@ -108,10 +116,27 @@ public class OrderWebService {
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.warn("通过订单号查询订单业务错误：订单不存在或已被删除，编号：{}", orderNumber);
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST, "订单不存在");
-        }else {
+        } else {
             OrderWebResultVO vo = new OrderWebResultVO();
             BeanUtils.copyNonNullProperties(order, vo);
             return vo;
         }
+    }
+
+    /**
+     * 分页查询指定用户id的订单
+     *
+     * @param userId   用户id
+     * @param pageable 分页信息
+     * @return 订单信息
+     */
+    public Page<OrderWebResultVO> findPage(Integer userId, Pageable pageable) {
+        Specification<Order> specification = commonSpecUtil.equal("userId", userId);
+
+        return orderDao.findAll(specification, pageable).map(order -> {
+            OrderWebResultVO vo = new OrderWebResultVO();
+            BeanUtils.copyNonNullProperties(order, vo);
+            return vo;
+        });
     }
 }

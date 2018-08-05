@@ -28,4 +28,8 @@ public class OrderWebCreateParamVO {
     @ApiModelProperty("收货地址id")
     private Integer addressId;
 
+    @NotNull(message = "商品规格不能为空")
+    @ApiModelProperty("商品规格id")
+    private Integer stockKeepingUnitId;
+
 }
