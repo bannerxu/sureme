@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 @RequestMapping("/api/test")
 public class TestController {
 
-    @Resource
     private Logger logger = LoggerFactory.getLogger(TestController.class);
 
     @Resource

@@ -25,7 +25,6 @@ import javax.validation.Valid;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Resource
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
