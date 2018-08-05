@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 
+/**
+ * @author jinguoguo
+ */
 @Data
 @Entity
 @ApiModel("分销记录表")

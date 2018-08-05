@@ -3,6 +3,9 @@ package top.xuguoliang.service.shareitem.web;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 public class ShareItemVO {
     @ApiModelProperty("用户id")

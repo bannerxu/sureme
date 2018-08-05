@@ -41,6 +41,7 @@ public class MessageCodes {
     public static final String CMS_COUPON_NOT_EXIST = "cms.coupon.not.exist";
     public static final String CMS_BANNER_ERROR = "cms.banner.error";
     public static final String CMS_ORDER_NOT_EXIST = "cms.order.not.exist";
+    public static final String CMS_GROUP_BUYING_NOT_EXIST = "web.group.buying.not.exist";
     public static final String WEB_ADDRESS_NOT_EXIST = "web.address.not.exist";
     public static final String WEB_COMMODITY_NOT_EXIST = "web.commodity.not.exist";
     public static final String WEB_USER_NOT_EXIST = "web.user.not.exist";

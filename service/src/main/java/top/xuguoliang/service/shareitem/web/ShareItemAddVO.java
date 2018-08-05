@@ -6,6 +6,9 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 @ApiModel("分享下线记录添加")
 public class ShareItemAddVO {

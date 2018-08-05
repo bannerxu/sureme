@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 @Entity
 @ApiModel("佣金记录")

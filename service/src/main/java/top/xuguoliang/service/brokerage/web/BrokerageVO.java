@@ -8,6 +8,9 @@ import top.xuguoliang.models.order.OrderTypeEnum;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 public class BrokerageVO {
     @ApiModelProperty("佣金记录id")

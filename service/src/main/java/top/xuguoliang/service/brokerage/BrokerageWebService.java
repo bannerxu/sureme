@@ -16,6 +16,9 @@ import top.xuguoliang.service.brokerage.web.BrokerageVO;
 
 import javax.annotation.Resource;
 
+/**
+ * @author jinguoguo
+ */
 @Service
 public class BrokerageWebService {
     @Resource
