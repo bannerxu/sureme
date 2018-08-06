@@ -36,13 +36,10 @@ public class CommodityCmsResultVO {
     @ApiModelProperty("商品规格")
     private List<StockKeepingUnit> stockKeepingUnits;
 
-    @ApiModelProperty("创建时间")
-    private Date createTime;
+    @ApiModelProperty("分类id")
+    private Integer categoryId;
 
-    @ApiModelProperty("更新时间")
-    private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
+    @ApiModelProperty("分类名称")
+    private String categoryName;
 
 }

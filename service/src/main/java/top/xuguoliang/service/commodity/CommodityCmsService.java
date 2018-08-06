@@ -7,10 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
+import top.xuguoliang.models.category.Category;
+import top.xuguoliang.models.category.CategoryDao;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.service.commodity.cms.CommodityCmsAddParamVO;
 import top.xuguoliang.service.commodity.cms.CommodityCmsResultVO;
@@ -30,6 +33,9 @@ public class CommodityCmsService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CategoryDao categoryDao;
 
     @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
@@ -52,6 +58,11 @@ public class CommodityCmsService {
             CommodityCmsResultVO commodityCmsResultVO = new CommodityCmsResultVO();
             // 复制商品的属性到返回值
             BeanUtils.copyProperties(commodity, commodityCmsResultVO);
+
+            // 设置分类
+            if (commodity.getCategoryId().equals(0)) {
+                commodity.setCategoryName("未分类");
+            }
 
             Integer commodityId = commodity.getCommodityId();
             // 根据商品id查找商品规格，并放到返回值里
@@ -107,10 +118,19 @@ public class CommodityCmsService {
         commodityCmsResultVO.setCommodityBanners(resultCommodityBanners);
         commodityCmsResultVO.setStockKeepingUnits(resultStockKeepingUnit);
 
+        // 判断商品分类是否存在
+        Integer categoryId = commodityCmsAddParamVO.getCategoryId();
+        Category category = categoryDao.findOne(categoryId);
+        if (ObjectUtils.isEmpty(category) || category.getDeleted()) {
+            logger.error("添加商品错误：分类不存在");
+            throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
+        }
+
         // 创建商品类，把参数复制到商品类中
         Commodity commodity = new Commodity();
         BeanUtils.copyNonNullProperties(commodityCmsAddParamVO, commodity);
         // 设置商品属性并保存
+        commodity.setCategoryName(category.getCategoryName());
         commodity.setCreateTime(date);
         commodity.setUpdateTime(date);
         commodity.setSalesVolume(0);
@@ -159,6 +179,17 @@ public class CommodityCmsService {
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品修改业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
+        }
+        Integer categoryId = commodityCmsUpdateParamVO.getCategoryId();
+        String categoryName = null;
+        if (!categoryId.equals(commodity.getCategoryId())) {
+            Category category = categoryDao.findOne(categoryId);
+            if (ObjectUtils.isEmpty(category) || category.getDeleted()) {
+                logger.error("修改商品错误：分类不存在");
+                throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
+            } else {
+                categoryName = category.getCategoryName();
+            }
         }
 
         // 传入的轮播和规格
@@ -212,9 +243,13 @@ public class CommodityCmsService {
         commodityBannerDao.save(needSaveCommodityBanners);
         stockKeepingUnitDao.save(needSaveStockKeepingUnits);
 
-        // 设置更新时间
         BeanUtils.copyNonNullProperties(commodityCmsUpdateParamVO, commodity);
+        // 设置更新时间
         commodity.setUpdateTime(date);
+        // 设置分类名称
+        if (StringUtils.isEmpty(categoryName)) {
+            commodity.setCategoryName(categoryName);
+        }
         Commodity commoditySave = commodityDao.saveAndFlush(commodity);
 
         // 封装返回VO对象
@@ -237,6 +272,10 @@ public class CommodityCmsService {
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品单个查询业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
+        }
+        // 设置分类
+        if (commodity.getCategoryId().equals(0)) {
+            commodity.setCategoryName("未分类");
         }
 
         BeanUtils.copyNonNullProperties(commodity, commodityCmsResultVO);

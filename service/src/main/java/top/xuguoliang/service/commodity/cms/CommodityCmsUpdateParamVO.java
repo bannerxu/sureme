@@ -8,7 +8,6 @@ import top.xuguoliang.models.commodity.StockKeepingUnit;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,12 +39,6 @@ public class CommodityCmsUpdateParamVO {
     @ApiModelProperty("数组：商品规格")
     private List<StockKeepingUnit> stockKeepingUnits;
 
-    @ApiModelProperty("创建时间")
-    private Date createTime;
-
-    @ApiModelProperty("更新时间")
-    private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
+    @ApiModelProperty("分类id")
+    private Integer categoryId;
 }

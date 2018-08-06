@@ -37,6 +37,12 @@ public class Commodity {
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
 
+    @ApiModelProperty("分类id")
+    private Integer categoryId;
+
+    @ApiModelProperty("分类名")
+    private String categoryName;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 
