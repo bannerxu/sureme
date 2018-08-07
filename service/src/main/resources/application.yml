@@ -46,3 +46,5 @@ wx:
   url: https://api.weixin.qq.com/sns/jscode2session
   app-id:
   app-secret:
+  mchId:
+  mchKey:
