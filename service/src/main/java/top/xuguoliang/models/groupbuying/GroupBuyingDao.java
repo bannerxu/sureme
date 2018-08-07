@@ -1,4 +1,4 @@
-package top.xuguoliang.service.groupbuying;
+package top.xuguoliang.models.groupbuying;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

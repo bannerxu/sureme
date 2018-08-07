@@ -33,6 +33,7 @@ public class Order {
     @ApiModelProperty("订单类型")
     private OrderTypeEnum orderType;
 
+
     @ApiModelProperty("商品id")
     private Integer commodityId;
 
@@ -48,6 +49,20 @@ public class Order {
 
     @ApiModelProperty("商品价格")
     private BigDecimal commodityPrice;
+
+
+    @ApiModelProperty("规格id")
+    private Integer stockKeepingUnitId;
+
+    @ApiModelProperty("规格名称")
+    private String skuName;
+
+    @ApiModelProperty("单价")
+    private BigDecimal unitPrice;
+
+    @ApiModelProperty("折扣价")
+    private BigDecimal discountPrice;
+
 
     @ApiModelProperty("用户id")
     private Integer userId;
@@ -75,6 +90,7 @@ public class Order {
 
     @ApiModelProperty("收货人姓名")
     private String receiverName;
+
 
     @ApiModelProperty("创建时间")
     private Date createTime;

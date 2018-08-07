@@ -1,4 +1,4 @@
-package top.xuguoliang.models.groupbuying;
+package top.xuguoliang.models.relation;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -16,28 +15,22 @@ import java.util.Date;
  */
 @Data
 @Entity
-@ApiModel("拼团，团购")
-public class GroupBuying {
+@ApiModel("用户、拼团关系")
+public class RelationUserGroupBuying {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("主键id")
+    private Integer relationUserGroupBuyingId;
+
+    @ApiModelProperty("用户id")
+    private Integer userId;
+
+    @ApiModelProperty("拼团id")
     private Integer groupBuyingId;
 
-    @ApiModelProperty("商品id")
-    private Integer commodityId;
-
-    @ApiModelProperty("规格id")
-    private Integer stockKeepingUnitId;
-
-    @ApiModelProperty("拼团价格")
-    private BigDecimal groupPrice;
-
-    @ApiModelProperty("开始时间")
-    private Date beginTime;
-
-    @ApiModelProperty("结束时间")
-    private Date endTime;
+    @ApiModelProperty("已支付")
+    private Boolean paid;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

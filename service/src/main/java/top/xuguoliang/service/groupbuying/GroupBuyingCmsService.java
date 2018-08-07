@@ -10,6 +10,7 @@ import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.models.groupbuying.GroupBuying;
+import top.xuguoliang.models.groupbuying.GroupBuyingDao;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsAddParamVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
@@ -36,8 +37,7 @@ public class GroupBuyingCmsService {
     public Page<GroupBuyingCmsResultVO> findPage(Pageable pageable) {
         return groupBuyingDao.findAll(pageable).map(groupBuying -> {
             GroupBuyingCmsResultVO vo = new GroupBuyingCmsResultVO();
-            // todo 执行业务
-
+            BeanUtils.copyNonNullProperties(groupBuying, vo);
             return vo;
         });
     }

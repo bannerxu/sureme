@@ -48,4 +48,6 @@ public class MessageCodes {
     public static final String WEB_USER_NOT_EXIST = "web.user.not.exist";
     public static final String WEB_ORDER_NOT_EXIST = "web.order.not.exist";
     public static final String SHAREITEM_IS_EXIST = "shareItem.is.exist";
+    public static final String WEB_GROUP_BUYING_NOT_EXIST = "web.group.buying.not.exist";
+    public static final String WEB_SKU_NOT_EXIST = "web.sku.not.exist";
 }
