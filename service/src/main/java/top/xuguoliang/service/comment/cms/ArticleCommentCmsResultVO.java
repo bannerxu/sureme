@@ -1,22 +1,16 @@
-package top.xuguoliang.models.comment;
+package top.xuguoliang.service.comment.cms;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.Lob;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("文章评论")
-public class ArticleComment {
+public class ArticleCommentCmsResultVO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("文章评论id")
     private Integer articleCommentId;
 
@@ -33,14 +27,5 @@ public class ArticleComment {
     @Lob
     @ApiModelProperty("评论回复")
     private String commentReply;
-
-    @ApiModelProperty("创建时间")
-    private Date createTime;
-
-    @ApiModelProperty("更新时间")
-    private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
 
 }

@@ -31,6 +31,9 @@ public class CommodityComment {
     @ApiModelProperty("评论内容")
     private String commentContent;
 
+    @ApiModelProperty("评论回复")
+    private String commentReply;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 
