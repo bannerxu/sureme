@@ -64,7 +64,7 @@ public class CommodityCmsService {
             // 设置分类
             Integer categoryId = commodity.getCategoryId();
             if (ObjectUtils.isEmpty(categoryId) || categoryId.equals(0)) {
-                commodity.setCategoryName("未分类");
+                commodityCmsResultVO.setCategoryName("未分类");
             }
 
             Integer commodityId = commodity.getCommodityId();
