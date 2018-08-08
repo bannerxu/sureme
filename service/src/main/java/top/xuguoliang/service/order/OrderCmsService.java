@@ -42,18 +42,19 @@ public class OrderCmsService {
     @Resource
     private CommonSpecUtil<Order> commonSpecUtil;
 
+    /**
+     * 分页查询订单
+     *
+     * @param orderCmsPageParamVO 分页参数
+     * @return 分页订单
+     */
     public Page<OrderCmsResultVO> findPage(OrderCmsPageParamVO orderCmsPageParamVO) {
         OrderStatusEnum orderStatus = orderCmsPageParamVO.getOrderStatus();
         Pageable pageable = orderCmsPageParamVO.getPageable();
         Specification<Order> specification = commonSpecUtil.equal("orderStatus", orderStatus);
         Page<Order> orders = orderDao.findAll(specification, pageable);
-        Page<OrderCmsResultVO> vos = orders.map(order -> {
-            OrderCmsResultVO vo = new OrderCmsResultVO();
-            BeanUtils.copyNonNullProperties(order, vo);
-            return vo;
-        });
 
-        return vos;
+        return orders.map(this::convertOrderToVO);
     }
 
     /**
@@ -63,8 +64,6 @@ public class OrderCmsService {
      * @return 订单结果
      */
     public OrderCmsResultVO getOrder(Integer orderId) {
-        // 返回值
-        OrderCmsResultVO vo = new OrderCmsResultVO();
 
         Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order)) {
@@ -72,6 +71,17 @@ public class OrderCmsService {
             throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST, "订单不存在");
         }
 
+        return convertOrderToVO(order);
+    }
+
+    /**
+     * 订单转VO
+     *
+     * @param order 订单
+     * @return VO
+     */
+    private OrderCmsResultVO convertOrderToVO(Order order) {
+        OrderCmsResultVO vo = new OrderCmsResultVO();
         BeanUtils.copyNonNullProperties(order, vo);
 
         return vo;

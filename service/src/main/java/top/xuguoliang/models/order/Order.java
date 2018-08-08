@@ -92,6 +92,25 @@ public class Order {
     private String receiverName;
 
 
+    @ApiModelProperty("邮费")
+    private BigDecimal postage;
+
+    @ApiModelProperty("订单发货时间")
+    private Date sendTime;
+
+    @ApiModelProperty("确认收货时间")
+    private Date receiveTime;
+
+    @ApiModelProperty("支付时间")
+    private Date payTime;
+
+    @ApiModelProperty("订单总金额")
+    private BigDecimal totalMoney;
+
+    @ApiModelProperty("实际支付金额")
+    private BigDecimal realPayMoney;
+
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 
