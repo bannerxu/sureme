@@ -62,7 +62,8 @@ public class CommodityCmsService {
             BeanUtils.copyNonNullProperties(commodity, commodityCmsResultVO);
 
             // 设置分类
-            if (commodity.getCategoryId().equals(0)) {
+            Integer categoryId = commodity.getCategoryId();
+            if (ObjectUtils.isEmpty(categoryId) || categoryId.equals(0)) {
                 commodity.setCategoryName("未分类");
             }
 
