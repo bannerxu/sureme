@@ -21,7 +21,6 @@ import top.xuguoliang.service.commodity.cms.CommodityCmsUpdateParamVO;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author jinguoguo
@@ -55,9 +54,12 @@ public class CommodityCmsService {
     public Page<CommodityCmsResultVO> findPage(Pageable pageable) {
         Specification<Commodity> specification = commonSpecUtil.equal("deleted", false);
         return commodityDao.findAll(specification, pageable).map(commodity -> {
+            if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
+                return null;
+            }
             CommodityCmsResultVO commodityCmsResultVO = new CommodityCmsResultVO();
             // 复制商品的属性到返回值
-            BeanUtils.copyProperties(commodity, commodityCmsResultVO);
+            BeanUtils.copyNonNullProperties(commodity, commodityCmsResultVO);
 
             // 设置分类
             if (commodity.getCategoryId().equals(0)) {
@@ -84,7 +86,7 @@ public class CommodityCmsService {
      */
     public void deleteCommodity(Integer commodityId) {
         Commodity commodity = commodityDao.findOne(commodityId);
-        if (ObjectUtils.isEmpty(commodity)) {
+        if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品删除业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
         }
