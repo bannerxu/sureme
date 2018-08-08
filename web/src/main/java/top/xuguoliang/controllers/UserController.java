@@ -5,10 +5,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import top.xuguoliang.common.utils.WeChatUtil;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserWebService;
 import top.xuguoliang.service.user.web.AuthorizeVO;
@@ -24,6 +22,8 @@ import javax.validation.Valid;
 @Api(tags = "用户模块")
 @RequestMapping("/api/user")
 public class UserController {
+    @Resource
+    private WeChatUtil weChatUtil;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -35,6 +35,12 @@ public class UserController {
     public User authorize(@RequestBody @Valid AuthorizeVO authorizeVO) {
         logger.debug("调用接口：用户授权：{}", authorizeVO);
         return userWebService.authorize(authorizeVO);
+    }
+
+    @ApiOperation("获取小程序")
+    @GetMapping("getAccessToken")
+    public String getAccessToken() {
+        return weChatUtil.getAccessToken();
     }
 }
 

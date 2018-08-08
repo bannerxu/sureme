@@ -50,4 +50,5 @@ public class MessageCodes {
     public static final String SHAREITEM_IS_EXIST = "shareItem.is.exist";
     public static final String WEB_GROUP_BUYING_NOT_EXIST = "web.group.buying.not.exist";
     public static final String WEB_SKU_NOT_EXIST = "web.sku.not.exist";
+    public static final String WECHAT_AUTHORIZE_FAILE = "wechat.auth.fail";//微信授权失败
 }

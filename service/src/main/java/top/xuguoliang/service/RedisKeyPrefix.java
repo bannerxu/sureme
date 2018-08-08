@@ -54,5 +54,9 @@ public class RedisKeyPrefix {
     public static String userQuestionHistory(Integer userId) {
         return "user.question.history:" + userId;
     }
+
+    public static String WebWXAccessToken() {
+        return "web.wx.accessToken";
+    }
 }
 

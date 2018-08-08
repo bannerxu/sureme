@@ -5,35 +5,42 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
+import top.xuguoliang.common.exception.MessageCodes;
+import top.xuguoliang.common.exception.ValidationException;
+import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.user.web.AuthorizeVO;
 import top.xuguoliang.service.user.web.WeChatUser;
 
-
 import javax.annotation.Resource;
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.security.AlgorithmParameters;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 @Component
 public class WeChatUtil {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     //todo : 修改配置
 
     private final Logger logger = LoggerFactory.getLogger(WeChatUtil.class);
+
 
     @Value("${wx.url}")
     private String url;
@@ -347,6 +354,49 @@ public class WeChatUtil {
 
         String s = new String(tempArr);
         return s;
+    }
+
+    /**
+     * 获取access_token
+     */
+    public String getAccessToken() {
+        logger.info("Start get cache token");
+        ValueOperations<String, String> redis = stringRedisTemplate.opsForValue();
+
+
+        String token = redis.get(RedisKeyPrefix.WebWXAccessToken());
+        if (StringUtils.isEmpty(token)) {
+            final String url = "https://api.weixin.qq.com/cgi-bin/token";
+            Map<String, Object> params = new HashMap<>(3);
+            params.put("grant_type", "client_credential");
+            params.put("appid", appId);
+            params.put("secret", appSecret);
+
+            Map<String, Object> tokenMap = getWeChatReturn(params, url);
+            token = (String) tokenMap.get("access_token");
+
+            logger.info("token:{}-----------------", token);
+            logger.info("End get wx token");
+            redis.set(RedisKeyPrefix.WebWXAccessToken(), token, 90, TimeUnit.MINUTES);
+        }
+        return token;
+
+    }
+
+    /**
+     * 调用微信接口，获得返回值,支持GET方法
+     */
+    private Map<String, Object> getWeChatReturn(Map<String, Object> params, String url) {
+        try {
+            String jsonStr = HttpUtils.httpGetRequest(url, params);
+            logger.info("-----------------------jsonStr is " + jsonStr + "---------------------");
+            if (!StringUtils.isEmpty(jsonStr)) {
+                return JsonUtils.json2object(jsonStr, Map.class, String.class, Object.class);
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        throw new ValidationException(MessageCodes.WECHAT_AUTHORIZE_FAILE);
     }
 }
 
