@@ -48,4 +48,5 @@ public class AddressWebAddParamVO {
     @NotBlank(message = "收货人姓名不能为空")
     @ApiModelProperty("收货人姓名")
     private String receiverName;
+
 }

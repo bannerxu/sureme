@@ -54,32 +54,8 @@ public class CouponCmsService {
      */
     public Page<CouponCmsResultVO> findPage(Pageable pageable) {
         Specification<Coupon> specification = commonSpecUtil.equal("deleted", false);
-        Page<Coupon> coupons = couponDao.findAll(specification, pageable);
-        if (ObjectUtils.isEmpty(coupons)) {
-            return null;
-        }
-        // 转换Coupon到VO并返回
-        return coupons.map(coupon -> {
-            Integer couponId = coupon.getCouponId();
-            CouponCmsResultVO couponCmsResultVO = new CouponCmsResultVO();
-            BeanUtils.copyNonNullProperties(coupon, couponCmsResultVO);
-
-            // 查找卡券关联的商品并设置到VO中
-            List<RelationCouponCommodity> relations = relationCouponCommodityDao.findByCouponIdIs(couponId);
-            List<Commodity> commodities = new ArrayList<>();
-            if (!ObjectUtils.isEmpty(relations)) {
-                relations.forEach(relationCouponCommodity -> {
-                    Integer commodityId = relationCouponCommodity.getCommodityId();
-                    Commodity commodity = commodityDao.findOne(commodityId);
-                    if (!(ObjectUtils.isEmpty(commodity) || commodity.getDeleted())) {
-                        commodities.add(commodity);
-                    }
-                });
-            }
-
-            couponCmsResultVO.setCommodities(commodities);
-            return couponCmsResultVO;
-        });
+        // 查询并转换Coupon到VO并返回
+        return couponDao.findAll(specification, pageable).map(this::convertCouponToVO);
     }
 
     /**
@@ -93,24 +69,35 @@ public class CouponCmsService {
         if (ObjectUtils.isEmpty(coupon) || coupon.isDeleted()) {
             logger.error("调用卡券单个查询业务：id（{}）对应的卡券不存在", couponId);
         }
+
+        return convertCouponToVO(coupon);
+    }
+
+    /**
+     * 卡券转VO
+     *
+     * @param coupon 卡券
+     * @return VO
+     */
+    private CouponCmsResultVO convertCouponToVO(Coupon coupon) {
+        Integer couponId = coupon.getCouponId();
+        CouponCmsResultVO couponCmsResultVO = new CouponCmsResultVO();
+        BeanUtils.copyNonNullProperties(coupon, couponCmsResultVO);
+
+        // 查找卡券关联的商品并设置到VO中
         List<RelationCouponCommodity> relations = relationCouponCommodityDao.findByCouponIdIs(couponId);
         List<Commodity> commodities = new ArrayList<>();
         if (!ObjectUtils.isEmpty(relations)) {
             relations.forEach(relationCouponCommodity -> {
                 Integer commodityId = relationCouponCommodity.getCommodityId();
                 Commodity commodity = commodityDao.findOne(commodityId);
-                if (ObjectUtils.isEmpty(commodity)) {
-                    logger.error("卡券没有对应的商品");
-                } else {
+                if (!(ObjectUtils.isEmpty(commodity) || commodity.getDeleted())) {
                     commodities.add(commodity);
                 }
             });
         }
-        // 设置返回对象
-        CouponCmsResultVO couponCmsResultVO = new CouponCmsResultVO();
-        BeanUtils.copyNonNullProperties(coupon, couponCmsResultVO);
-        couponCmsResultVO.setCommodities(commodities);
 
+        couponCmsResultVO.setCommodities(commodities);
         return couponCmsResultVO;
     }
 
@@ -153,7 +140,7 @@ public class CouponCmsService {
         });
 
         // 保存关联
-        List<RelationCouponCommodity> listSave = relationCouponCommodityDao.save(needSaveRelations);
+        relationCouponCommodityDao.save(needSaveRelations);
         // 设置返回VO
         CouponCmsResultVO couponCmsResultVO = new CouponCmsResultVO();
         BeanUtils.copyNonNullProperties(couponSave, couponCmsResultVO);
@@ -249,7 +236,7 @@ public class CouponCmsService {
         }
 
         // 设置卡券信息
-        BeanUtils.copyNonNullProperties(couponCmsUpdateVO ,coupon);
+        BeanUtils.copyNonNullProperties(couponCmsUpdateVO, coupon);
         coupon.setUpdateTime(date);
         // 统一保存
         relationCouponCommodityDao.save(needSaveRelation);

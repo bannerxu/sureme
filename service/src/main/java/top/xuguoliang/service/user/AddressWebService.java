@@ -18,6 +18,7 @@ import top.xuguoliang.service.user.web.AddressWebUpdateParamVO;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -82,6 +83,7 @@ public class AddressWebService {
 
     /**
      * 修改收货地址
+     *
      * @param vo 地址信息
      * @return 修改完成后的地址信息
      */
@@ -93,11 +95,13 @@ public class AddressWebService {
         }
 
         BeanUtils.copyNonNullProperties(vo, address);
+        address.setUpdateTime(new Date());
         return addressDao.saveAndFlush(address);
     }
 
     /**
      * 删除收货地址
+     *
      * @param addressId 地址id
      */
     public void deleteAddress(Integer addressId) {
@@ -107,4 +111,29 @@ public class AddressWebService {
             addressDao.saveAndFlush(address);
         }
     }
+
+    /**
+     * 设置默认地址
+     *
+     * @param userId 用户id
+     * @param addressId 地址id
+     */
+    public void setDefaultAddress(Integer userId, Integer addressId) {
+        Address address = addressDao.findOne(addressId);
+        if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
+            logger.error("设置默认地址失败：地址不存在");
+            throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
+        }
+        List<Address> addresses = addressDao.findByUserIdIsAndDeletedIsFalse(userId);
+        addresses.forEach(adr -> {
+            if (adr.getAddressId().equals(addressId)) {
+                adr.setIsDefault(true);
+            } else {
+                adr.setIsDefault(false);
+            }
+        });
+
+        addressDao.save(addresses);
+    }
+
 }
