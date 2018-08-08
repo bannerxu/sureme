@@ -1,6 +1,5 @@
 package top.xuguoliang.common.utils;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
