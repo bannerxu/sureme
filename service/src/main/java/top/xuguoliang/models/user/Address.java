@@ -57,5 +57,9 @@ public class Address {
     private Date updateTime;
 
     @ApiModelProperty("删除")
-    private Boolean deleted;
+    private Boolean deleted = false;
+
+    @ApiModelProperty("默认")
+    private Boolean isDefault = false;
+
 }
