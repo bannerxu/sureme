@@ -66,7 +66,7 @@ public class CouponCmsService {
      */
     public CouponCmsResultVO getCoupon(Integer couponId) {
         Coupon coupon = couponDao.findOne(couponId);
-        if (ObjectUtils.isEmpty(coupon) || coupon.isDeleted()) {
+        if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券单个查询业务：id（{}）对应的卡券不存在", couponId);
         }
 
@@ -156,7 +156,7 @@ public class CouponCmsService {
      */
     public void deleteCoupon(Integer couponId) {
         Coupon coupon = couponDao.findOne(couponId);
-        if (ObjectUtils.isEmpty(coupon) || coupon.isDeleted()) {
+        if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券删除业务，id（{}）对应的卡券不存在", couponId);
         }
         // 根据卡券id查询关联关系
@@ -185,7 +185,7 @@ public class CouponCmsService {
         Integer couponId = couponCmsUpdateVO.getCouponId();
         Coupon coupon = couponDao.findOne(couponId);
 
-        if (ObjectUtils.isEmpty(coupon) || coupon.isDeleted()) {
+        if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券修改业务：id（{}）对应的卡券不存在", couponId);
             throw new ValidationException(MessageCodes.CMS_COUPON_NOT_EXIST, "卡券不存在");
         }
