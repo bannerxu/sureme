@@ -16,7 +16,7 @@ public class TestUtils {
     private WeChatUtil weChatUtil;
 
     @Test
-    public void test1(){
-        weChatUtil.getAccessToken();
+    public void test1() {
+        System.out.println(weChatUtil.getQRCode(430,"index","1/2"));
     }
 }

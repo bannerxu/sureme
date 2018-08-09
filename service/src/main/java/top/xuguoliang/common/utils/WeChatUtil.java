@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.service.RedisKeyPrefix;
+import top.xuguoliang.service.qiniu.QiNiuService;
 import top.xuguoliang.service.user.web.AuthorizeVO;
 import top.xuguoliang.service.user.web.WeChatUser;
 
@@ -22,7 +23,10 @@ import javax.annotation.Resource;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.security.AlgorithmParameters;
@@ -30,6 +34,8 @@ import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.commons.io.FileUtils.writeByteArrayToFile;
 
 
 @Component
@@ -61,6 +67,8 @@ public class WeChatUtil {
     private SSL ssl;
     @Resource
     private XMLUtil xmlUtil;
+    @Resource
+    private QiNiuService qiNiuService;
 
     /**
      * wx.login授权获得用户信息
@@ -398,5 +406,94 @@ public class WeChatUtil {
         }
         throw new ValidationException(MessageCodes.WECHAT_AUTHORIZE_FAILE);
     }
+
+    /**
+     * 将二进制转换成文件保存
+     *
+     * @param inputStream 二进制流
+     * @param imgPath     图片的保存路径
+     * @param imgName     图片的名称
+     * @return 1：保存正常
+     * 0：保存失败
+     */
+    public static int saveToImgByInputStream(InputStream inputStream, String imgPath, String imgName) {
+        int stateInt = 1;
+        if (inputStream != null) {
+            try {
+                File file = new File(imgPath, imgName);//可以是任何图片格式.jpg,.png等
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] b = new byte[1024];
+                int nRead;
+                while ((nRead = inputStream.read(b)) != -1) {
+                    fos.write(b, 0, nRead);
+                }
+                fos.flush();
+                fos.close();
+            } catch (Exception e) {
+                stateInt = 0;
+                e.printStackTrace();
+            }
+        }
+        return stateInt;
+    }
+
+    /************************************/
+    public String getQRCode(Integer width, String path, String scene) {
+        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" + getAccessToken();
+
+        //设置媒体类型。application/json表示传递的是一个json格式的对象
+        MediaType mediaType = MediaType.parse("application/json");
+
+        String str = "{\n" +
+                "  \"width\":" + width + ",\n" +
+                "  \"path\":\"" + path + "\",\n" +
+                "  \"auto_color\":false,\n" +
+                "  \"scene\":\"" + scene + "\",\n" +
+                "  \"line_color\":{\n" +
+                "    \"r\":0,\n" +
+                "    \"b\":0,\n" +
+                "    \"g\":0\n" +
+                "  },\n" +
+                "  \"is_hyaline\":false\n" +
+                "}";
+        System.out.println(str);
+        //创建RequestBody对象，将参数按照指定的MediaType封装
+        RequestBody requestBody = RequestBody.create(mediaType, str);
+        Request request = new Request
+                .Builder()
+                .post(requestBody)//Post请求的参数传递
+                .url(url)
+                .build();
+        try {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Response response = okHttpClient.newCall(request).execute();
+            ResponseBody responseBody = response.body();
+            Assert.notNull(responseBody, "授权失败");
+
+            System.out.println(response.header("Content-Type"));
+            if ("image/jpeg".equals(response.header("Content-Type"))) {
+                byte[] bytes = response.body().bytes();
+
+                /*写到七牛云*/
+
+                String s;
+                s = qiNiuService.uploadByByte(bytes);
+
+                /*写到本地*/
+                /*writeByteArrayToFile(new File("C:\\Users\\19355\\Desktop\\img\\5.jpg"), bytes);
+                s = "localhost://*****";*/
+
+                response.body().close();
+                return s;
+            } else if ("application/json; charset=UTF-8".equals(response.header("Content-Type"))) {
+                logger.error("生成二维码错误:====={}=====", responseBody.string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }
 
