@@ -31,4 +31,11 @@ public interface RelationCouponCommodityDao extends JpaSpecificationExecutor<Rel
      * @return 卡券与商品的关系（单个）
      */
     RelationCouponCommodity findByCouponIdIsAndCommodityIdIs(Integer couponId, Integer commodityId);
+
+    /**
+     * 通过商品id查询所有未删除关系
+     * @param commodityId 商品id
+     * @return 未删除关系
+     */
+    List<RelationCouponCommodity> findByCommodityIdIsAndDeletedIsFalse(Integer commodityId);
 }

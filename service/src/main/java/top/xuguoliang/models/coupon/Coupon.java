@@ -27,8 +27,17 @@ public class Coupon {
     @ApiModelProperty("卡券名")
     private String couponName;
 
+    @ApiModelProperty("卡券类型")
+    private CouponTypeEnum couponType;
+
     @ApiModelProperty("对应折扣")
     private BigDecimal couponDiscount;
+
+    @ApiModelProperty("满额")
+    private BigDecimal minUseMoney;
+
+    @ApiModelProperty("减额")
+    private BigDecimal offsetMoney;
 
     @ApiModelProperty("领取开始时间")
     private Date pullBeginTime;
@@ -49,6 +58,6 @@ public class Coupon {
     private Date updateTime;
 
     @ApiModelProperty("删除")
-    private boolean deleted = false;
+    private Boolean deleted = false;
 
 }

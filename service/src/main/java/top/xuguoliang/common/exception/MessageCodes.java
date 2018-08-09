@@ -52,4 +52,7 @@ public class MessageCodes {
     public static final String WEB_SKU_NOT_EXIST = "web.sku.not.exist";
     public static final String WECHAT_AUTHORIZE_FAILE = "wechat.auth.fail";//微信授权失败
     public static final String WEB_CART_ITEM_NOT_EXIST = "web.cart.item.not.exist";
+    public static final String WEB_COUPON_NOT_EXIST = "web.coupon.not.exist";
+    public static final String WEB_COUPON_HAS_BEEN_PULLED = "web.coupon.has.been.pulled";
+    public static final String WEB_COUPON_NOT_PULL_TIME = "web.coupon.not.pull.time";
 }

@@ -27,7 +27,19 @@ public class PersonalCoupon {
     @ApiModelProperty("对应的卡券id")
     private Integer couponId;
 
-    @ApiModelProperty("卡券对应的商品id，为零全适用，非零针对单一商品")
+    @ApiModelProperty("满额")
+    private BigDecimal minUseMoney;
+
+    @ApiModelProperty("减额")
+    private BigDecimal offsetMoney;
+
+    @ApiModelProperty("使用开始时间")
+    private Date useBeginTime;
+
+    @ApiModelProperty("使用结束时间")
+    private Date useEndTime;
+
+    @ApiModelProperty("卡券对应的商品id")
     private Integer commodityId;
 
     @ApiModelProperty("用户id")
