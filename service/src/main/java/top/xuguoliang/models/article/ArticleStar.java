@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author jinguoguo
@@ -14,6 +17,8 @@ import javax.persistence.Entity;
 @ApiModel("文章收藏")
 public class ArticleStar {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("主键id")
     private Integer articleStarId;
 

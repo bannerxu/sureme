@@ -27,12 +27,6 @@ public class Coupon {
     @ApiModelProperty("卡券名")
     private String couponName;
 
-    @ApiModelProperty("卡券类型")
-    private CouponTypeEnum couponType;
-
-    @ApiModelProperty("对应折扣")
-    private BigDecimal couponDiscount;
-
     @ApiModelProperty("满额")
     private BigDecimal minUseMoney;
 

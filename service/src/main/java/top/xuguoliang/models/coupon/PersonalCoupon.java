@@ -51,6 +51,9 @@ public class PersonalCoupon {
     @ApiModelProperty("对应折扣")
     private BigDecimal couponDiscount;
 
+    @ApiModelProperty("是否有效")
+    private Boolean valid;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 
