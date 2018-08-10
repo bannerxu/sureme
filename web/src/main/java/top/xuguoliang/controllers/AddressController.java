@@ -58,7 +58,7 @@ public class AddressController {
 
     @PutMapping("default/{addressId}")
     @ApiOperation("设置默认地址")
-    public void setDefaultAddress(@PathVariable Integer addressId) {
+    public void setDefaultAddress(@PathVariable @NotNull(message = "id不能为空") Integer addressId) {
         Integer userId = UserHelper.getUserId();
         addressWebService.setDefaultAddress(userId, addressId);
     }
