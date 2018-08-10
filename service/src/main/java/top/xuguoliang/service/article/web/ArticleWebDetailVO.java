@@ -1,29 +1,28 @@
-package top.xuguoliang.models.article;
+package top.xuguoliang.service.article.web;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.article.ArticleBanner;
+import top.xuguoliang.models.article.ArticleTypeEnum;
+import top.xuguoliang.models.comment.ArticleComment;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Lob;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("文章")
-public class Article {
-
-    @Id
-    @ApiModelProperty("文章id")
+public class ArticleWebDetailVO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer articleId;
 
     @ApiModelProperty("文章标题")
     private String articleTitle;
 
-    @Lob
     @ApiModelProperty("文章内容")
     private String articleContent;
 
@@ -45,7 +44,15 @@ public class Article {
     @ApiModelProperty("更新时间")
     private Date updateTime;
 
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
+    @ApiModelProperty("关联商品")
+    private List<ArticleWebCommodityVO> commodities;
 
+    @ApiModelProperty("文章轮播")
+    private List<ArticleBanner> articleBanners;
+
+    @ApiModelProperty("喜欢")
+    private Boolean isLike = false;
+
+    @ApiModelProperty("收藏")
+    private Boolean isStar = false;
 }

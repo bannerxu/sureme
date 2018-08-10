@@ -16,4 +16,11 @@ public interface CommodityDao extends JpaSpecificationExecutor<Commodity>, JpaRe
      * @return 商品列表
      */
     List<Commodity> findByCategoryIdIs(Integer categoryId);
+
+    /**
+     * 通过主键id查询未删除的商品
+     * @param commodityId 商品id
+     * @return 未删除的商品
+     */
+    Commodity findByCommodityIdIsAndDeletedIsFalse(Integer commodityId);
 }

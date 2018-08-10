@@ -23,6 +23,9 @@ public class CartItemWebResultVO {
     @ApiModelProperty("商品标题")
     private String commodityTitle;
 
+    @ApiModelProperty("商品url")
+    private String commodityUrl;
+
     @ApiModelProperty("规格id")
     private Integer stockKeepingUnitId;
 
@@ -42,6 +45,6 @@ public class CartItemWebResultVO {
     private Boolean valid;
 
     @ApiModelProperty("是否选中")
-    private Boolean isSelected;
+    private Boolean isSelected = false;
 
 }

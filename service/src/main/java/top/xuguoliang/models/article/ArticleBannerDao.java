@@ -14,7 +14,7 @@ public interface ArticleBannerDao extends JpaSpecificationExecutor<ArticleBanner
      * @param articleId 文章id
      * @return 文章轮播list
      */
-    List<ArticleBanner> findByArticleIdIsAndDeletedIsFalse(Integer articleId);
+    List<ArticleBanner> findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(Integer articleId);
 
     /**
      * 通过文章id查询文章轮播，忽略deleted

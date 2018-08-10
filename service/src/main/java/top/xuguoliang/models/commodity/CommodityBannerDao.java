@@ -10,10 +10,17 @@ import java.util.List;
  */
 public interface CommodityBannerDao extends JpaSpecificationExecutor<CommodityBanner>, JpaRepository<CommodityBanner, Integer> {
     /**
-     * 根据商品id查找对应的商品轮播
+     * 根据商品id查找未删除的商品轮播
      * @param commodityId 商品id
      * @return 商品轮播List
      */
     List<CommodityBanner> findByCommodityIdIsAndDeletedIsFalse(Integer commodityId);
     List<CommodityBanner> findByCommodityIdIs(Integer commodityId);
+
+    /**
+     * 查询商品轮播，通过id排序
+     * @param commodityId 商品id
+     * @return 商品轮播列表
+     */
+    List<CommodityBanner> findByCommodityIdIsAndDeletedIsFalseOrderByCommodityIdAsc(Integer commodityId);
 }

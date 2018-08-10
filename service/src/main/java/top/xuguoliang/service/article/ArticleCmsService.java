@@ -93,7 +93,7 @@ public class ArticleCmsService {
         Integer articleId = article.getArticleId();
 
         // 通过文章id查找对应轮播图，并设置到VO
-        List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalse(articleId);
+        List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
         if (!ObjectUtils.isEmpty(articleBanners)) {
             articleCmsResultVO.setArticleBanners(articleBanners);
         }
@@ -133,7 +133,7 @@ public class ArticleCmsService {
 
         Article article = articleDao.findOne(articleId);
 
-        List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalse(articleId);
+        List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
 
         // 复制文章属性到VO
         BeanUtils.copyNonNullProperties(article, articleCmsResultVO);
