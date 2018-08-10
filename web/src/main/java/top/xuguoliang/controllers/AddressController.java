@@ -45,7 +45,7 @@ public class AddressController {
 
     @PutMapping("/{addressId}")
     @ApiOperation("修改")
-    public Address updateAddress(@PathVariable @NotNull Integer addressId,
+    public Address updateAddress(@PathVariable @NotNull(message = "id不能为空") Integer addressId,
                                  @RequestBody AddressWebUpdateParamVO addressWebUpdateParamVO) {
         return addressWebService.updateAddress(addressId, addressWebUpdateParamVO);
     }
