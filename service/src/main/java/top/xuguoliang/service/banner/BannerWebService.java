@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.models.banner.Banner;
 import top.xuguoliang.models.banner.BannerDao;
+import top.xuguoliang.models.banner.BannerTypeEnum;
 import top.xuguoliang.service.banner.web.BannerWebResultVO;
 
 import javax.annotation.Resource;
@@ -21,14 +22,19 @@ public class BannerWebService {
 
     /**
      * 查找所有首页轮播图
+     *
      * @return 轮播
      */
-    public List<BannerWebResultVO> findAll() {
-        return bannerDao.findAll().stream().map(this::mapBannerToVO).collect(Collectors.toList());
+    public List<BannerWebResultVO> findAll(BannerTypeEnum bannerType) {
+        return bannerDao.findByBannerTypeIs(bannerType)
+                .stream()
+                .map(this::mapBannerToVO)
+                .collect(Collectors.toList());
     }
 
     /**
      * 把轮播对象转成VO
+     *
      * @param banner 轮播
      * @return vo
      */
