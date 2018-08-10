@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
  * @author jinguoguo
  */
 @RestController
-@RequestMapping("api/user/address")
+@RequestMapping("api/address")
 @Api(tags = "用户地址模块")
 public class AddressController {
 
