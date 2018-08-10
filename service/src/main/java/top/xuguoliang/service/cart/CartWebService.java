@@ -14,10 +14,12 @@ import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnit;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.service.cart.web.CartItemWebResultVO;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author jinguoguo
@@ -51,7 +53,7 @@ public class CartWebService {
         // 根据用户id和规格id查询购物车条目
         List<CartItem> cartItems = cartItemDao.findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(userId, stockKeepingUnitId);
         if (ObjectUtils.isEmpty(cartItems)) {
-            // 如果为空则表示当前购物车没有该商品
+            // 如果为空则表示当前购物车没有该商品，直接添加
             StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
             if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
                 logger.error("添加商品到购物车失败：商品规格不存在");
@@ -70,14 +72,16 @@ public class CartWebService {
             cartItem.setUpdateTime(date);
             cartItem.setCount(1);
             cartItem.setValid(true);
+            cartItem.setUserId(userId);
             cartItemDao.saveAndFlush(cartItem);
             return true;
         } else {
-            // 如果不为空则说明已有，直接添加数量
+            // 如果不为空则说明已有，添加数量
             cartItems.forEach(cartItem -> {
                 if (cartItem.getStockKeepingUnitId().equals(stockKeepingUnitId)) {
                     cartItem.setCount(cartItem.getCount() + 1);
                     cartItem.setUpdateTime(date);
+                    cartItem.setUserId(userId);
                     cartItemDao.saveAndFlush(cartItem);
                 }
             });
@@ -110,8 +114,14 @@ public class CartWebService {
      * @param userId 用户id
      * @return 购物车条目列表
      */
-    public List<CartItem> findAllByUserId(Integer userId) {
-        return cartItemDao.findByUserIdIsAndDeletedIsFalseOrderByUpdateTimeDesc(userId);
+    public List<CartItemWebResultVO> findAllByUserId(Integer userId) {
+        return cartItemDao.findByUserIdIsAndDeletedIsFalseOrderByUpdateTimeDesc(userId)
+                .stream()
+                .map(cartItem -> {
+                    CartItemWebResultVO vo = new CartItemWebResultVO();
+                    BeanUtils.copyNonNullProperties(cartItem, vo);
+                    return vo;
+                }).collect(Collectors.toList());
     }
 
     /**

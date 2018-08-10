@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.cart.CartItem;
 import top.xuguoliang.service.cart.CartWebService;
+import top.xuguoliang.service.cart.web.CartItemWebResultVO;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Min;
@@ -38,12 +39,13 @@ public class CartController {
 
     @GetMapping
     @ApiOperation("查询所有")
-    public List<CartItem> findAllCartItems() {
+    public List<CartItemWebResultVO> findAllCartItems() {
         Integer userId = UserHelper.getUserId();
         return cartWebService.findAllByUserId(userId);
     }
 
     @PutMapping("/{cartItemId}/{count}")
+    @ApiOperation("计算总价")
     public Boolean updateCount(@PathVariable Integer cartItemId, @PathVariable @Min(1) Integer count) {
         Integer userId = UserHelper.getUserId();
         return cartWebService.updateCount(userId, cartItemId, count);
