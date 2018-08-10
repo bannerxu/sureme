@@ -68,7 +68,7 @@ public class AddressWebService {
      * @return 分页收货地址
      */
     public Page<Address> findPage(Pageable pageable) {
-        return addressDao.findAll(pageable);
+        return addressDao.findByDeletedIsFalse(pageable);
     }
 
     /**
@@ -78,7 +78,7 @@ public class AddressWebService {
      * @return 收货地址
      */
     public Address getAddress(Integer addressId) {
-        return addressDao.findOne(addressId);
+        return addressDao.findByAddressIdIsAndDeletedIsFalse(addressId);
     }
 
     /**
