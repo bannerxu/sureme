@@ -29,7 +29,7 @@ public class ShiroConfig {
         Map<String, String> filterChainDefinitionMapping = shiroFilter.getFilterChainDefinitionMap();
         swaggerFilterChain(filterChainDefinitionMapping);
         filterChainDefinitionMapping.put("/", "anon");
-        filterChainDefinitionMapping.put("/api/user/**", "anon");
+        filterChainDefinitionMapping.put("/api/user/authorize", "anon");
         filterChainDefinitionMapping.put("/api/test/login", "anon");
         filterChainDefinitionMapping.put("/api/**", "cors,stateless");
         shiroFilter.setSecurityManager(securityManager);

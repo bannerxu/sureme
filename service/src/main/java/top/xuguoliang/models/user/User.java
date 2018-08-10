@@ -60,4 +60,8 @@ public class User {
 
     @ApiModelProperty("积分")
     private String integral;
+
+    @ApiModelProperty("孕期")
+    private PregnancyTypeEnum pregnancyType;
+
 }

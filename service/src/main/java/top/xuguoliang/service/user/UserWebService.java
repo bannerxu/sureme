@@ -7,8 +7,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.xuguoliang.common.utils.WeChatUtil;
+import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.RedisKeyPrefix;
@@ -68,7 +70,6 @@ public class UserWebService {
     }
 
 
-    /*测试的方法 todo*/
     public User authorize() {
         User user = userDao.findOne(1);
 
@@ -86,5 +87,23 @@ public class UserWebService {
         redis.set(RedisKeyPrefix.webAuthTokenToId(newToken), userId + "", 7, TimeUnit.DAYS);
         user.setToken(newToken);
         return user;
+    }
+
+    /**
+     * 设置孕期
+     *
+     * @param userId        用户id
+     * @param pregnancyType 孕期类型
+     * @return 成功与否
+     */
+    public Boolean setPregnancyType(Integer userId, PregnancyTypeEnum pregnancyType) {
+        User user = userDao.findOne(userId);
+        if (ObjectUtils.isEmpty(user)) {
+            logger.error("设置孕期失败：用户不存在");
+            return false;
+        }
+        user.setPregnancyType(pregnancyType);
+        userDao.saveAndFlush(user);
+        return true;
     }
 }

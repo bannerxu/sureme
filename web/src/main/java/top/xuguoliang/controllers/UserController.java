@@ -7,12 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.utils.WeChatUtil;
+import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserWebService;
 import top.xuguoliang.service.user.web.AuthorizeVO;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -41,6 +43,13 @@ public class UserController {
     @GetMapping("getAccessToken")
     public String getAccessToken() {
         return weChatUtil.getAccessToken();
+    }
+
+    @PutMapping("setPregnancyType")
+    @ApiOperation("选择孕期")
+    public Boolean setPregnancyType(@RequestBody @NotNull PregnancyTypeEnum pregnancyType) {
+        Integer userId = UserHelper.getUserId();
+        return userWebService.setPregnancyType(userId, pregnancyType);
     }
 }
 
