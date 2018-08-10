@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.commodity.CommodityWebService;
+import top.xuguoliang.service.commodity.web.CommodityWebDetailVO;
 import top.xuguoliang.service.commodity.web.CommodityWebResultVO;
 
 import javax.annotation.Resource;
@@ -31,8 +32,9 @@ public class CommodityController {
 
     @GetMapping("/{commodityId}")
     @ApiOperation("商品详情")
-    public CommodityWebResultVO getCommodityDetail(@PathVariable Integer commodityId) {
-        return commodityWebService.getCommodityDetail(commodityId);
+    public CommodityWebDetailVO getCommodityDetail(@PathVariable Integer commodityId) {
+        Integer userId = UserHelper.getUserId();
+        return commodityWebService.getCommodityDetail(userId, commodityId);
     }
 
 }

@@ -13,5 +13,5 @@ public interface PersonalCouponDao extends JpaSpecificationExecutor<PersonalCoup
      * @param couponId 卡券id
      * @return 个人卡券
      */
-    PersonalCoupon findByUserIdIsAndCouponIdIs(Integer userId, Integer couponId);
+    PersonalCoupon findByUserIdIsAndCouponIdIsAndDeletedIsFalse(Integer userId, Integer couponId);
 }

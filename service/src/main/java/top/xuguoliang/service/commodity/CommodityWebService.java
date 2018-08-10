@@ -14,14 +14,19 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.comment.CommodityComment;
 import top.xuguoliang.models.comment.CommodityCommentDao;
-import top.xuguoliang.models.commodity.Commodity;
-import top.xuguoliang.models.commodity.CommodityBanner;
-import top.xuguoliang.models.commodity.CommodityBannerDao;
-import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.commodity.*;
+import top.xuguoliang.models.coupon.Coupon;
 import top.xuguoliang.models.coupon.CouponDao;
+import top.xuguoliang.models.coupon.PersonalCoupon;
+import top.xuguoliang.models.coupon.PersonalCouponDao;
+import top.xuguoliang.models.relation.RelationCouponCommodity;
+import top.xuguoliang.models.relation.RelationCouponCommodityDao;
+import top.xuguoliang.service.commodity.web.CommodityWebCouponVO;
+import top.xuguoliang.service.commodity.web.CommodityWebDetailVO;
 import top.xuguoliang.service.commodity.web.CommodityWebResultVO;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +51,15 @@ public class CommodityWebService {
 
     @Resource
     private CouponDao couponDao;
+
+    @Resource
+    private StockKeepingUnitDao stockKeepingUnitDao;
+
+    @Resource
+    private RelationCouponCommodityDao relationCouponCommodityDao;
+
+    @Resource
+    private PersonalCouponDao personalCouponDao;
 
     /**
      * 分页查询商品
@@ -85,7 +99,7 @@ public class CommodityWebService {
      * @param commodityId 商品id
      * @return 商品
      */
-    public CommodityWebResultVO getCommodityDetail(Integer commodityId) {
+    public CommodityWebDetailVO getCommodityDetail(Integer userId, Integer commodityId) {
         Commodity commodity = commodityDao.findOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("查询商品错误：商品不存在");
@@ -93,10 +107,28 @@ public class CommodityWebService {
         }
         List<CommodityComment> comments = commodityCommentDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
         List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
-        // todo 查询所有适用于当前商品的卡券，设置到VO中
-        CommodityWebResultVO vo = convertCommodityToVO(commodity);
+        List<StockKeepingUnit> skus = stockKeepingUnitDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+
+        List<RelationCouponCommodity> relations = relationCouponCommodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+        List<CommodityWebCouponVO> coupons = new ArrayList<>();
+        relations.forEach(relation -> {
+            CommodityWebCouponVO couponVO = new CommodityWebCouponVO();
+            Integer couponId = relation.getCouponId();
+            Coupon coupon = couponDao.findOne(couponId);
+            BeanUtils.copyNonNullProperties(coupon, couponVO);
+            PersonalCoupon pCoupon = personalCouponDao.findByUserIdIsAndCouponIdIsAndDeletedIsFalse(userId, couponId);
+            if (!ObjectUtils.isEmpty(pCoupon)) {
+                couponVO.setIsPulled(true);
+            }
+            coupons.add(couponVO);
+        });
+
+        CommodityWebDetailVO vo = new CommodityWebDetailVO();
+        BeanUtils.copyNonNullProperties(commodity, vo);
         vo.setComments(comments);
         vo.setCommodityBanners(banners);
+        vo.setStockKeepingUnits(skus);
+        vo.setCoupons(coupons);
 
         return vo;
     }

@@ -81,7 +81,7 @@ public class CouponWebService {
 
         Date date = new Date();
 
-        PersonalCoupon personalCoupon = personalCouponDao.findByUserIdIsAndCouponIdIs(userId, couponId);
+        PersonalCoupon personalCoupon = personalCouponDao.findByUserIdIsAndCouponIdIsAndDeletedIsFalse(userId, couponId);
         if (!ObjectUtils.isEmpty(personalCoupon) && !personalCoupon.getDeleted()) {
             logger.error("id为{}的用户已经领取过id为{}的优惠券了", userId, couponId);
             throw new ValidationException(MessageCodes.WEB_COUPON_HAS_BEEN_PULLED);
