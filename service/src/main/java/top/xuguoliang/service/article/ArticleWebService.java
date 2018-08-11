@@ -165,7 +165,7 @@ public class ArticleWebService {
             resultVO.setIsStar(true);
         }
 
-        BeanUtils.copyNonNullProperties(article, relations);
+        BeanUtils.copyNonNullProperties(article, resultVO);
         resultVO.setCommodities(vos);
         resultVO.setArticleBanners(articleBanners);
 
