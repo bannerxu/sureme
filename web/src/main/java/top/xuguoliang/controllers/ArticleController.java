@@ -39,10 +39,17 @@ public class ArticleController {
         return articleWebService.getDetail(userId, articleId);
     }
 
-    @GetMapping("comment/articleId")
+    @GetMapping("comment/{articleId}")
     @ApiOperation("分页文章评论")
     public Page<ArticleComment> findCommentPage(@PathVariable Integer articleId, @PageableDefault Pageable pageable) {
         return articleWebService.findCommentPage(articleId, pageable);
+    }
+
+    @PostMapping("comment/{articleId}")
+    @ApiOperation("评论")
+    public Boolean addArticleComment(@PathVariable Integer articleId) {
+        Integer userId = UserHelper.getUserId();
+        return articleWebService.addArticleComment(userId, articleId);
     }
 
     @PostMapping("star/{articleId}")

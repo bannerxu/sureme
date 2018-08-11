@@ -80,7 +80,7 @@ public class ArticleWebService {
         Page<Article> articles;
         Specification<Article> deleted = commonSpecUtil.equal("deleted", false);
         Specification<Article> type = commonSpecUtil.equal("articleType", articleType);
-        if (ObjectUtils.isEmpty(articleType)) {
+        if (ObjectUtils.isEmpty(articleType) || articleType.equals(ArticleTypeEnum.ALL)) {
             // 查询所有
             articles = articleDao.findAll(deleted, pageable);
         } else {
@@ -262,6 +262,16 @@ public class ArticleWebService {
             article.setLikeCount(article.getLikeCount() - 1);
             articleLikeDao.delete(articleLike);
         }
+        return true;
+    }
+
+    /**
+     * 添加文章评论
+     * @param userId 用户id
+     * @param articleId 文章id
+     * @return 成功与否
+     */
+    public Boolean addArticleComment(Integer userId, Integer articleId) {
         return true;
     }
 }

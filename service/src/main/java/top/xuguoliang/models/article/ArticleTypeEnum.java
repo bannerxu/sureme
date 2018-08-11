@@ -12,5 +12,7 @@ public enum ArticleTypeEnum {
     // 孕中
     PREGNANT,
     // 孕后
-    AFTER_PREGNANT
+    AFTER_PREGNANT,
+    // 全部
+    ALL
 }
