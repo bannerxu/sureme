@@ -116,7 +116,7 @@ public class ArticleWebService {
 
                 // Banner
                 List<ArticleBanner> banners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
-                if (ObjectUtils.isEmpty(banners)) {
+                if (!ObjectUtils.isEmpty(banners)) {
                     ArticleBanner articleBanner = banners.get(0);
                     vo.setArticleImage(articleBanner.getArticleBannerUrl());
                 }
