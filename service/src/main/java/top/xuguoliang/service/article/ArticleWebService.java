@@ -71,7 +71,7 @@ public class ArticleWebService {
      * @param pageable    分页信息
      * @return 分页文章
      */
-    public Page<ArticleWebResultVO> findPage(ArticleTypeEnum articleType, Pageable pageable) {
+    public Page<ArticleWebResultVO> findPage(Integer userId, ArticleTypeEnum articleType, Pageable pageable) {
         Page<Article> articles;
         Specification<Article> deleted = commonSpecUtil.equal("deleted", false);
         Specification<Article> type = commonSpecUtil.equal("articleType", articleType);
@@ -89,18 +89,33 @@ public class ArticleWebService {
         }
         return articles.map(article -> {
             ArticleWebResultVO vo = new ArticleWebResultVO();
-            BeanUtils.copyNonNullProperties(article, vo);
-            return vo;
+            if (!ObjectUtils.isEmpty(article)) {
+                Integer articleId = article.getArticleId();
+                BeanUtils.copyNonNullProperties(article, vo);
+                // 查询点赞和收藏
+                ArticleLike articleLike = articleLikeDao.findByArticleIdIsAndUserIdIs(articleId, userId);
+                if (!ObjectUtils.isEmpty(articleLike)) {
+                    vo.setIsLike(true);
+                }
+                ArticleStar articleStar = articleStarDao.findByArticleIdIsAndUserIdIs(articleId, userId);
+                if(!ObjectUtils.isEmpty(articleStar)) {
+                    vo.setIsStar(true);
+                }
+                return vo;
+            } else {
+                return null;
+            }
         });
     }
 
     /**
      * 文章详情
      *
+     * @param userId 用户id
      * @param articleId 文章id
      * @return 文章
      */
-    public ArticleWebDetailVO getDetail(Integer articleId) {
+    public ArticleWebDetailVO getDetail(Integer userId, Integer articleId) {
 
         Article article = articleDao.findByArticleIdIsAndDeletedIsFalse(articleId);
         // 判断文章非空
@@ -139,6 +154,17 @@ public class ArticleWebService {
         }
 
         ArticleWebDetailVO resultVO = new ArticleWebDetailVO();
+
+        // 查询点赞和收藏
+        ArticleLike articleLike = articleLikeDao.findByArticleIdIsAndUserIdIs(articleId, userId);
+        if (!ObjectUtils.isEmpty(articleLike)) {
+            resultVO.setIsLike(true);
+        }
+        ArticleStar articleStar = articleStarDao.findByArticleIdIsAndUserIdIs(articleId, userId);
+        if(!ObjectUtils.isEmpty(articleStar)) {
+            resultVO.setIsStar(true);
+        }
+
         BeanUtils.copyNonNullProperties(article, relations);
         resultVO.setCommodities(vos);
         resultVO.setArticleBanners(articleBanners);

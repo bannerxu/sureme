@@ -28,13 +28,15 @@ public class ArticleController {
     @GetMapping("type/{articleType}")
     @ApiOperation("分页，类型不传默认查询所有")
     public Page<ArticleWebResultVO> findPage(@PathVariable(required = false) ArticleTypeEnum articleType, @PageableDefault Pageable pageable) {
-        return articleWebService.findPage(articleType, pageable);
+        Integer userId = UserHelper.getUserId();
+        return articleWebService.findPage(userId, articleType, pageable);
     }
 
     @GetMapping("/{articleId}")
     @ApiOperation("文章详情")
     public ArticleWebDetailVO getDetail(@PathVariable Integer articleId) {
-        return articleWebService.getDetail(articleId);
+        Integer userId = UserHelper.getUserId();
+        return articleWebService.getDetail(userId, articleId);
     }
 
     @GetMapping("comment/articleId")
