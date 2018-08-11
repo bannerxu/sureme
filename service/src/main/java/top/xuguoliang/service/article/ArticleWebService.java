@@ -113,6 +113,13 @@ public class ArticleWebService {
                 if(!ObjectUtils.isEmpty(articleStar)) {
                     vo.setIsStar(true);
                 }
+
+                // Banner
+                List<ArticleBanner> banners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
+                if (ObjectUtils.isEmpty(banners)) {
+                    ArticleBanner articleBanner = banners.get(0);
+                    vo.setArticleImage(articleBanner.getArticleBannerUrl());
+                }
                 return vo;
             } else {
                 return null;

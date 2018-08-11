@@ -39,4 +39,7 @@ public class ArticleWebResultVO {
 
     @ApiModelProperty("收藏")
     private Boolean isStar = false;
+
+    @ApiModelProperty("文章图片")
+    private String articleImage;
 }
