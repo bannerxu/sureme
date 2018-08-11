@@ -202,6 +202,8 @@ public class ArticleWebService {
         ArticleLike articleLike = articleLikeDao.findByArticleIdIsAndUserIdIs(articleId, userId);
         if (ObjectUtils.isEmpty(articleLike)) {
             articleLike = new ArticleLike();
+            articleLike.setUserId(userId);
+            articleLike.setArticleId(articleId);
             article.setLikeCount(article.getStarCount() + 1);
             articleLikeDao.saveAndFlush(articleLike);
             articleDao.saveAndFlush(article);
