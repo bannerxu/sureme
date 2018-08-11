@@ -29,4 +29,10 @@ public class CommodityWebResultVO {
     @ApiModelProperty("商品简介")
     private String commodityIntroduction;
 
+    @ApiModelProperty("商品图片")
+    private String commodityImage;
+
+    @ApiModelProperty("商品价格")
+    private BigDecimal commodityPrice;
+
 }
