@@ -32,6 +32,9 @@ public class ArticleWebDetailVO {
     @ApiModelProperty("发表文章的管理员id")
     private Integer managerId;
 
+    @ApiModelProperty("发表文章的管理员名称")
+    private String managerName;
+
     @ApiModelProperty("喜欢数")
     private Integer likeCount = 0;
 

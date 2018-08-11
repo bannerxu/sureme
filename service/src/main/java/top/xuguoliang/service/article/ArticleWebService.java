@@ -19,6 +19,8 @@ import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityBanner;
 import top.xuguoliang.models.commodity.CommodityBannerDao;
 import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.manager.Manager;
+import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
 import top.xuguoliang.service.article.web.ArticleWebCommodityVO;
@@ -54,6 +56,9 @@ public class ArticleWebService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private ManagerDao managerDao;
 
     @Resource
     private CommodityBannerDao commodityBannerDao;
@@ -92,6 +97,13 @@ public class ArticleWebService {
             if (!ObjectUtils.isEmpty(article)) {
                 Integer articleId = article.getArticleId();
                 BeanUtils.copyNonNullProperties(article, vo);
+
+                // 发布者名称
+                Integer managerId = article.getManagerId();
+                Manager manager = managerDao.findOne(managerId);
+                String name = manager.getName();
+                vo.setManagerName(name);
+
                 // 查询点赞和收藏
                 ArticleLike articleLike = articleLikeDao.findByArticleIdIsAndUserIdIs(articleId, userId);
                 if (!ObjectUtils.isEmpty(articleLike)) {
@@ -153,6 +165,11 @@ public class ArticleWebService {
             });
         }
 
+        // 发布者名称
+        Integer managerId = article.getManagerId();
+        Manager manager = managerDao.findOne(managerId);
+        String name = manager.getName();
+
         ArticleWebDetailVO resultVO = new ArticleWebDetailVO();
 
         // 查询点赞和收藏
@@ -168,6 +185,7 @@ public class ArticleWebService {
         BeanUtils.copyNonNullProperties(article, resultVO);
         resultVO.setCommodities(vos);
         resultVO.setArticleBanners(articleBanners);
+        resultVO.setManagerName(name);
 
         return resultVO;
     }
