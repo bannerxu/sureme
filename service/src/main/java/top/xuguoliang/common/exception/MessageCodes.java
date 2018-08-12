@@ -56,4 +56,5 @@ public class MessageCodes {
     public static final String WEB_COUPON_HAS_BEEN_PULLED = "web.coupon.has.been.pulled";
     public static final String WEB_COUPON_NOT_PULL_TIME = "web.coupon.not.pull.time";
     public static final String WEB_ARTICLE_NOT_EXIST = "web.article.not.exist";
+    public static final String WEB_USER_COMMENT_EXIST = "web.user.comment.exist";
 }

@@ -47,9 +47,9 @@ public class ArticleController {
 
     @PostMapping("comment/{articleId}")
     @ApiOperation("评论")
-    public Boolean addArticleComment(@PathVariable Integer articleId) {
+    public Boolean addArticleComment(@PathVariable Integer articleId, @RequestParam String commentContent) {
         Integer userId = UserHelper.getUserId();
-        return articleWebService.addArticleComment(userId, articleId);
+        return articleWebService.addArticleComment(userId, articleId, commentContent);
     }
 
     @PostMapping("star/{articleId}")

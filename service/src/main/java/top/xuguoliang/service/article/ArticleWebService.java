@@ -29,6 +29,7 @@ import top.xuguoliang.service.article.web.ArticleWebResultVO;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -271,7 +272,16 @@ public class ArticleWebService {
      * @param articleId 文章id
      * @return 成功与否
      */
-    public Boolean addArticleComment(Integer userId, Integer articleId) {
+    public Boolean addArticleComment(Integer userId, Integer articleId, String commentContent) {
+        ArticleComment articleComment = articleCommentDao.findByUserIdIsAndArticleIdIsAndDeletedIsFalse(userId, articleId);
+        if (ObjectUtils.isEmpty(articleComment)) {
+            articleComment = new ArticleComment();
+            articleComment.setCommentContent(commentContent);
+            articleComment.setCreateTime(new Date());
+        } else {
+            throw new ValidationException(MessageCodes.WEB_USER_COMMENT_EXIST);
+        }
         return true;
     }
+
 }

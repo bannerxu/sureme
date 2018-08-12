@@ -15,4 +15,6 @@ public interface ArticleCommentDao extends JpaSpecificationExecutor<ArticleComme
     List<ArticleComment> findByArticleIdIsAndDeletedIsFalse(Integer articleId);
 
     Page<ArticleComment> findByArticleIdIsAndDeletedIsFalseOrderByCreateTimeDesc(Integer articleId, Pageable pageable);
+
+    ArticleComment findByUserIdIsAndArticleIdIsAndDeletedIsFalse(Integer userId, Integer articleId);
 }
