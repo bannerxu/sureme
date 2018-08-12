@@ -19,8 +19,6 @@ import top.xuguoliang.models.coupon.Coupon;
 import top.xuguoliang.models.coupon.CouponDao;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
-import top.xuguoliang.models.relation.RelationCouponCommodity;
-import top.xuguoliang.models.relation.RelationCouponCommodityDao;
 import top.xuguoliang.service.commodity.web.CommodityWebCouponVO;
 import top.xuguoliang.service.commodity.web.CommodityWebDetailVO;
 import top.xuguoliang.service.commodity.web.CommodityWebResultVO;
@@ -54,9 +52,6 @@ public class CommodityWebService {
 
     @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
-
-    @Resource
-    private RelationCouponCommodityDao relationCouponCommodityDao;
 
     @Resource
     private PersonalCouponDao personalCouponDao;
@@ -118,26 +113,26 @@ public class CommodityWebService {
         List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
         List<StockKeepingUnit> skus = stockKeepingUnitDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
 
-        List<RelationCouponCommodity> relations = relationCouponCommodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
-        List<CommodityWebCouponVO> coupons = new ArrayList<>();
-        relations.forEach(relation -> {
-            CommodityWebCouponVO couponVO = new CommodityWebCouponVO();
-            Integer couponId = relation.getCouponId();
-            Coupon coupon = couponDao.findOne(couponId);
-            BeanUtils.copyNonNullProperties(coupon, couponVO);
-            PersonalCoupon pCoupon = personalCouponDao.findByUserIdIsAndCouponIdIsAndDeletedIsFalse(userId, couponId);
-            if (!ObjectUtils.isEmpty(pCoupon)) {
-                couponVO.setIsPulled(true);
-            }
-            coupons.add(couponVO);
-        });
+        List<CommodityWebCouponVO> couponVOs = new ArrayList<>();
+        List<Coupon> coupons = couponDao.findByDeletedIsFalse();
+        if (!ObjectUtils.isEmpty(coupons)) {
+            coupons.forEach(coupon -> {
+                Integer couponId = coupon.getCouponId();
+                CommodityWebCouponVO couponVO = new CommodityWebCouponVO();
+                BeanUtils.copyNonNullProperties(coupon, couponVO);
+                PersonalCoupon personalcoupon = personalCouponDao.findByUserIdIsAndCouponIdIsAndDeletedIsFalse(userId, couponId);
+                if (!ObjectUtils.isEmpty(personalcoupon)) {
+                    couponVO.setIsPulled(true);
+                }
+            });
+        }
 
         CommodityWebDetailVO vo = new CommodityWebDetailVO();
         BeanUtils.copyNonNullProperties(commodity, vo);
         vo.setComments(comments);
         vo.setCommodityBanners(banners);
         vo.setStockKeepingUnits(skus);
-        vo.setCoupons(coupons);
+        vo.setCoupons(couponVOs);
 
         return vo;
     }

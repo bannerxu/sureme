@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 import top.xuguoliang.common.constants.RoleConstant;
 import top.xuguoliang.service.coupon.CouponCmsService;
 import top.xuguoliang.service.coupon.cms.CouponCmsAddVO;
@@ -57,6 +58,7 @@ public class CouponController {
 
     @PutMapping
     @ApiOperation("修改")
+    @ApiIgnore
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public CouponCmsResultVO updateCoupon(@RequestBody CouponCmsUpdateVO couponCmsUpdateVO) {
         return couponCmsService.updateCoupon(couponCmsUpdateVO);

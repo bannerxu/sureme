@@ -19,8 +19,11 @@ public class CouponCmsResultVO {
     @ApiModelProperty("卡券名")
     private String couponName;
 
-    @ApiModelProperty("关联的商品")
-    private List<Commodity> commodities;
+    @ApiModelProperty("满额")
+    private BigDecimal minUseMoney;
+
+    @ApiModelProperty("减额")
+    private BigDecimal offsetMoney;
 
     @ApiModelProperty("领取开始时间")
     private Date pullBeginTime;

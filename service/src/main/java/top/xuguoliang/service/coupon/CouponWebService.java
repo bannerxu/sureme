@@ -2,6 +2,9 @@ package top.xuguoliang.service.coupon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
@@ -12,8 +15,6 @@ import top.xuguoliang.models.coupon.Coupon;
 import top.xuguoliang.models.coupon.CouponDao;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
-import top.xuguoliang.models.relation.RelationCouponCommodity;
-import top.xuguoliang.models.relation.RelationCouponCommodityDao;
 import top.xuguoliang.service.coupon.web.CouponWebResultVO;
 
 import javax.annotation.Resource;
@@ -38,35 +39,25 @@ public class CouponWebService {
     @Resource
     private PersonalCouponDao personalCouponDao;
 
-    @Resource
-    private RelationCouponCommodityDao relationCouponCommodityDao;
-
     /**
-     * 查询指定商品id的所有卡券
+     * 查询所有卡券
      *
-     * @param commodityId 商品id
-     * @return 卡券列表
+     * @return 所有卡券
      */
-    public List<CouponWebResultVO> findAllByCommodityId(Integer commodityId) {
-        List<RelationCouponCommodity> relations = relationCouponCommodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
-        if (ObjectUtils.isEmpty(relations)) {
-            logger.error("没有该商品的优惠券");
-            throw new ValidationException(MessageCodes.WEB_COUPON_NOT_EXIST);
-        }
-        List<CouponWebResultVO> vos = new ArrayList<>();
-        relations.forEach(relationCouponCommodity -> {
-            Integer couponId = relationCouponCommodity.getCouponId();
-            Coupon coupon = couponDao.findOne(couponId);
-            if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
-                logger.warn("id为{}的卡券不存在", couponId);
-            } else {
-                CouponWebResultVO vo = new CouponWebResultVO();
-                BeanUtils.copyNonNullProperties(coupon, vo);
-                vos.add(vo);
+    public Page<CouponWebResultVO> findPage(Integer userId, Pageable pageable) {
+        Specification<Coupon> deleted = commonSpecUtil.equal("deleted", false);
+        Page<Coupon> couponPage = couponDao.findAll(deleted, pageable);
+        return couponPage.map(coupon -> {
+            CouponWebResultVO vo = new CouponWebResultVO();
+            BeanUtils.copyNonNullProperties(coupon, vo);
+            Integer couponId = coupon.getCouponId();
+            PersonalCoupon pc = personalCouponDao.findByUserIdIsAndCouponIdIsAndDeletedIsFalse(userId, couponId);
+            if (!ObjectUtils.isEmpty(pc)) {
+                vo.setIsPulled(true);
             }
-        });
 
-        return vos;
+            return vo;
+        });
     }
 
 
@@ -107,4 +98,5 @@ public class CouponWebService {
         personalCouponDao.saveAndFlush(personal);
         return true;
     }
+
 }

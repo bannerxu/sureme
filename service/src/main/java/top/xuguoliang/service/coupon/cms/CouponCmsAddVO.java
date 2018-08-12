@@ -19,13 +19,11 @@ public class CouponCmsAddVO {
     @ApiModelProperty("卡券名")
     private String couponName;
 
-    @NotNull(message = "商品不能为空")
-    @ApiModelProperty("商品id，为零全适用，非零针对单一商品")
-    private List<Integer> commodityIds;
+    @ApiModelProperty("满额")
+    private BigDecimal minUseMoney;
 
-//    @NotNull(message = "折扣不能为空")
-//    @ApiModelProperty("对应折扣")
-//    private BigDecimal couponDiscount;
+    @ApiModelProperty("减额")
+    private BigDecimal offsetMoney;
 
     @ApiModelProperty("领取开始时间")
     private Date pullBeginTime;

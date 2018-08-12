@@ -48,9 +48,6 @@ public class PersonalCoupon {
     @ApiModelProperty("对应的卡券名")
     private String couponName;
 
-    @ApiModelProperty("对应折扣")
-    private BigDecimal couponDiscount;
-
     @ApiModelProperty("是否有效")
     private Boolean valid;
 

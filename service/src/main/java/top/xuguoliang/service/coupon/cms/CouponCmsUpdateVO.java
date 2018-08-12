@@ -23,9 +23,6 @@ public class CouponCmsUpdateVO {
     @ApiModelProperty("卡券名")
     private String couponName;
 
-    @ApiModelProperty("数组：商品id")
-    private List<Integer> commodityIds;
-
     @ApiModelProperty("领取开始时间")
     private Date pullBeginTime;
 
