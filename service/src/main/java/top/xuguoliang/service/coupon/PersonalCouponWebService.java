@@ -18,6 +18,6 @@ public class PersonalCouponWebService {
 
     public PersonalCouponWebResultVO findAll(Integer userId) {
         PersonalCoupon personalCoupon = personalCouponDao.findByUserIdIsAndDeletedIsFalse(userId);
-
+        return null;
     }
 }
