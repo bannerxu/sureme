@@ -15,6 +15,7 @@ import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.user.web.AuthorizeVO;
+import top.xuguoliang.service.user.web.UserSetPregnancyVO;
 import top.xuguoliang.service.user.web.WeChatUser;
 
 import javax.annotation.Resource;
@@ -93,16 +94,22 @@ public class UserWebService {
      * 设置孕期
      *
      * @param userId        用户id
-     * @param pregnancyType 孕期类型
+     * @param userSetPregnancyVO 设置信息
      * @return 成功与否
      */
-    public Boolean setPregnancyType(Integer userId, PregnancyTypeEnum pregnancyType) {
+    public Boolean setPregnancyType(Integer userId, UserSetPregnancyVO userSetPregnancyVO) {
+        PregnancyTypeEnum pregnancyType = userSetPregnancyVO.getPregnancyType();
         User user = userDao.findOne(userId);
         if (ObjectUtils.isEmpty(user)) {
             logger.error("设置孕期失败：用户不存在");
             return false;
         }
         user.setPregnancyType(pregnancyType);
+        if (pregnancyType.equals(PregnancyTypeEnum.PREGNANT)) {
+            user.setPregnantDate(userSetPregnancyVO.getPregnantDate());
+        } else if (pregnancyType.equals(PregnancyTypeEnum.AFTER_PREGNANT)) {
+            user.setBabyBirthday(userSetPregnancyVO.getBabyBirthday());
+        }
         userDao.saveAndFlush(user);
         return true;
     }

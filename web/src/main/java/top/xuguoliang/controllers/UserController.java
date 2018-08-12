@@ -11,6 +11,7 @@ import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserWebService;
 import top.xuguoliang.service.user.web.AuthorizeVO;
+import top.xuguoliang.service.user.web.UserSetPregnancyVO;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -47,9 +48,9 @@ public class UserController {
 
     @PutMapping("setPregnancyType")
     @ApiOperation("选择孕期")
-    public Boolean setPregnancyType(@RequestBody @NotNull PregnancyTypeEnum pregnancyType) {
+    public Boolean setPregnancyType(@RequestBody UserSetPregnancyVO userSetPregnancyVO) {
         Integer userId = UserHelper.getUserId();
-        return userWebService.setPregnancyType(userId, pregnancyType);
+        return userWebService.setPregnancyType(userId, userSetPregnancyVO);
     }
 }
 

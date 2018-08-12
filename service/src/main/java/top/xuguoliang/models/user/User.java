@@ -64,4 +64,10 @@ public class User {
     @ApiModelProperty("孕期")
     private PregnancyTypeEnum pregnancyType;
 
+    @ApiModelProperty("怀孕日期")
+    private Date pregnantDate;
+
+    @ApiModelProperty("宝宝生日")
+    private Date babyBirthday;
+
 }
