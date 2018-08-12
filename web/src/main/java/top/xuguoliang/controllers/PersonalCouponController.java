@@ -1,6 +1,8 @@
 package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.xuguoliang.service.coupon.PersonalCouponWebService;
@@ -19,9 +21,11 @@ public class PersonalCouponController {
     @Resource
     private PersonalCouponWebService personalCouponWebService;
 
+    @GetMapping
+    @ApiOperation("个人卡券列表")
     public PersonalCouponWebResultVO findAll() {
-
-        return null;
+        Integer userId = UserHelper.getUserId();
+        return personalCouponWebService.findAll(userId);
     }
 
 }
