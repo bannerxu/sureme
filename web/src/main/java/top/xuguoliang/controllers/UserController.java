@@ -5,8 +5,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.utils.WeChatUtil;
+import top.xuguoliang.models.article.ArticleStar;
 import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserWebService;
@@ -52,6 +56,21 @@ public class UserController {
         Integer userId = UserHelper.getUserId();
         return userWebService.setPregnancyType(userId, userSetPregnancyVO);
     }
+
+    @GetMapping("star")
+    @ApiOperation("查看收藏")
+    public Page<ArticleStar> findStar(@PageableDefault Pageable pageable) {
+        Integer userId = UserHelper.getUserId();
+        return userWebService.findStar(userId, pageable);
+    }
+
+    @DeleteMapping("star/{articleStarId}")
+    @ApiOperation("删除收藏")
+    public void deleteStar(@PathVariable Integer articleStarId) {
+        Integer userId = UserHelper.getUserId();
+        userWebService.deleteStar(userId, articleStarId);
+    }
+
 }
 
 

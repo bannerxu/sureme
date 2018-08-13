@@ -3,6 +3,8 @@ package top.xuguoliang.service.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.xuguoliang.common.utils.WeChatUtil;
+import top.xuguoliang.models.article.ArticleStar;
+import top.xuguoliang.models.article.ArticleStarDao;
 import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
@@ -40,6 +44,9 @@ public class UserWebService {
 
     @Resource
     private WeChatUtil weChatUtil;
+
+    @Resource
+    private ArticleStarDao articleStarDao;
 
     public User authorize(AuthorizeVO authorizeVO) {
         logger.debug("用户认证，传入VO：{}", authorizeVO);
@@ -93,7 +100,7 @@ public class UserWebService {
     /**
      * 设置孕期
      *
-     * @param userId        用户id
+     * @param userId             用户id
      * @param userSetPregnancyVO 设置信息
      * @return 成功与否
      */
@@ -112,5 +119,27 @@ public class UserWebService {
         }
         userDao.saveAndFlush(user);
         return true;
+    }
+
+    /**
+     * 查询用户收藏
+     *
+     * @param userId 用户id
+     */
+    public Page<ArticleStar> findStar(Integer userId, Pageable pageable) {
+        return articleStarDao.findByUserIdIs(userId, pageable);
+    }
+
+    /**
+     * 删除用户收藏
+     *
+     * @param userId        用户id
+     * @param articleStarId 文章收藏id
+     */
+    public void deleteStar(Integer userId, Integer articleStarId) {
+        ArticleStar articleStar = articleStarDao.findByArticleStarIdIsAndUserIdIs(articleStarId, userId);
+        if (!ObjectUtils.isEmpty(articleStar)) {
+            articleStarDao.delete(articleStarId);
+        }
     }
 }
