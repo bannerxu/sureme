@@ -47,7 +47,6 @@ public class CartController {
 
     @PutMapping("cartItemId/{cartItemId}/count/{count}")
     @ApiOperation("设置数量")
-    @ApiIgnore
     public Boolean updateCount(@PathVariable Integer cartItemId, @PathVariable @Min(1) Integer count) {
         Integer userId = UserHelper.getUserId();
         return cartWebService.updateCount(userId, cartItemId, count);
