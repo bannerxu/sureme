@@ -2,7 +2,6 @@ package top.xuguoliang.service.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,19 +10,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.WeChatUtil;
-import top.xuguoliang.models.article.ArticleStar;
-import top.xuguoliang.models.article.ArticleStarDao;
+import top.xuguoliang.models.article.*;
 import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.RedisKeyPrefix;
+import top.xuguoliang.service.user.web.ArticleStarResultVO;
 import top.xuguoliang.service.user.web.AuthorizeVO;
 import top.xuguoliang.service.user.web.UserSetPregnancyVO;
 import top.xuguoliang.service.user.web.WeChatUser;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +45,12 @@ public class UserWebService {
 
     @Resource
     private WeChatUtil weChatUtil;
+
+    @Resource
+    private ArticleDao articleDao;
+
+    @Resource
+    private ArticleBannerDao articleBannerDao;
 
     @Resource
     private ArticleStarDao articleStarDao;
@@ -126,8 +133,31 @@ public class UserWebService {
      *
      * @param userId 用户id
      */
-    public Page<ArticleStar> findStar(Integer userId, Pageable pageable) {
-        return articleStarDao.findByUserIdIs(userId, pageable);
+    public Page<ArticleStarResultVO> findStar(Integer userId, Pageable pageable) {
+        return articleStarDao.findByUserIdIs(userId, pageable).map(articleStar -> {
+            if (ObjectUtils.isEmpty(articleStar)) {
+                logger.warn("查询文章收藏错误：文章收藏不存在");
+                return null;
+            }
+            ArticleStarResultVO vo = new ArticleStarResultVO();
+            BeanUtils.copyNonNullProperties(articleStar, vo);
+
+            Integer articleId = articleStar.getArticleId();
+            Article article = articleDao.findByArticleIdIsAndDeletedIsFalse(articleId);
+            if (ObjectUtils.isEmpty(article)) {
+                logger.warn("查询文章收藏错误：文章不存在");
+                return null;
+            }
+            BeanUtils.copyNonNullProperties(article, vo);
+
+            List<ArticleBanner> banners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
+            if (ObjectUtils.isEmpty(banners)) {
+                logger.warn("查询文章收藏错误，文章图片不存在");
+                return null;
+            }
+            vo.setArticleImage(banners.get(0).getArticleBannerUrl());
+            return vo;
+        });
     }
 
     /**

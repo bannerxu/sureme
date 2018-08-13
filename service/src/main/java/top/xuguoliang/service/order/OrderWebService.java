@@ -21,6 +21,8 @@ import top.xuguoliang.models.order.OrderTypeEnum;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
+import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 
@@ -138,5 +140,15 @@ public class OrderWebService {
             BeanUtils.copyNonNullProperties(order, vo);
             return vo;
         });
+    }
+
+    /**
+     * 购物车下单
+     * @param userId 用户id
+     * @param orderWebCartCreateParamVO 下单信息
+     * @return Order
+     */
+    public OrderWebCartCreateResultVO createCartOrder(Integer userId, OrderWebCartCreateParamVO orderWebCartCreateParamVO) {
+        return null;
     }
 }

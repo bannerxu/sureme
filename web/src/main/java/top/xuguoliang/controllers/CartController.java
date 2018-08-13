@@ -8,6 +8,9 @@ import springfox.documentation.annotations.ApiIgnore;
 import top.xuguoliang.models.cart.CartItem;
 import top.xuguoliang.service.cart.CartWebService;
 import top.xuguoliang.service.cart.web.CartItemWebResultVO;
+import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
+import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
+import top.xuguoliang.service.order.OrderWebService;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Min;
@@ -23,6 +26,9 @@ public class CartController {
 
     @Resource
     private CartWebService cartWebService;
+
+    @Resource
+    private OrderWebService orderWebService;
 
     @PostMapping("stockKeepingUnitId/{stockKeepingUnitId}/count/{count}")
     @ApiOperation("添加商品(通过规格)到购物车")
@@ -50,6 +56,13 @@ public class CartController {
     public Boolean updateCount(@PathVariable Integer cartItemId, @PathVariable @Min(1) Integer count) {
         Integer userId = UserHelper.getUserId();
         return cartWebService.updateCount(userId, cartItemId, count);
+    }
+
+    @PostMapping("order")
+    @ApiOperation("购物车下单")
+    public OrderWebCartCreateResultVO createCartOrder(@RequestBody OrderWebCartCreateParamVO orderWebCartCreateParamVO) {
+        Integer userId = UserHelper.getUserId();
+        return orderWebService.createCartOrder(userId, orderWebCartCreateParamVO);
     }
 
 }

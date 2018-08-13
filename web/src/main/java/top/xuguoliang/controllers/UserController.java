@@ -14,6 +14,7 @@ import top.xuguoliang.models.article.ArticleStar;
 import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.service.user.UserWebService;
+import top.xuguoliang.service.user.web.ArticleStarResultVO;
 import top.xuguoliang.service.user.web.AuthorizeVO;
 import top.xuguoliang.service.user.web.UserSetPregnancyVO;
 
@@ -59,7 +60,7 @@ public class UserController {
 
     @GetMapping("star")
     @ApiOperation("查看收藏")
-    public Page<ArticleStar> findStar(@PageableDefault Pageable pageable) {
+    public Page<ArticleStarResultVO> findStar(@PageableDefault Pageable pageable) {
         Integer userId = UserHelper.getUserId();
         return userWebService.findStar(userId, pageable);
     }
