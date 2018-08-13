@@ -2,9 +2,7 @@ package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.coupon.PersonalCouponWebService;
 import top.xuguoliang.service.coupon.web.PersonalCouponWebResultVO;
 
@@ -28,4 +26,9 @@ public class PersonalCouponController {
         return personalCouponWebService.findAll(userId);
     }
 
+    @DeleteMapping("/{personalCouponId}")
+    public void deletePersonalCoupon(@PathVariable Integer personalCouponId) {
+        Integer userId = UserHelper.getUserId();
+        personalCouponWebService.deletePersonalCoupon(userId, personalCouponId);
+    }
 }
