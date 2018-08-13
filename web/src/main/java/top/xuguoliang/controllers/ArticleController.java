@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.ArticleTypeEnum;
 import top.xuguoliang.models.comment.ArticleComment;
 import top.xuguoliang.service.article.ArticleWebService;
+import top.xuguoliang.service.article.web.ArticleCommentWebResultVO;
 import top.xuguoliang.service.article.web.ArticleWebDetailVO;
 import top.xuguoliang.service.article.web.ArticleWebResultVO;
+import top.xuguoliang.service.comment.cms.ArticleCommentCmsResultVO;
 
 import javax.annotation.Resource;
 
@@ -41,7 +43,7 @@ public class ArticleController {
 
     @GetMapping("comment/{articleId}")
     @ApiOperation("分页文章评论")
-    public Page<ArticleComment> findCommentPage(@PathVariable Integer articleId, @PageableDefault Pageable pageable) {
+    public Page<ArticleCommentWebResultVO> findCommentPage(@PathVariable Integer articleId, @PageableDefault Pageable pageable) {
         return articleWebService.findCommentPage(articleId, pageable);
     }
 

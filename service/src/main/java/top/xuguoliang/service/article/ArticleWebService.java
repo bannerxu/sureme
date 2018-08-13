@@ -23,6 +23,9 @@ import top.xuguoliang.models.manager.Manager;
 import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
+import top.xuguoliang.models.user.User;
+import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.article.web.ArticleCommentWebResultVO;
 import top.xuguoliang.service.article.web.ArticleWebCommodityVO;
 import top.xuguoliang.service.article.web.ArticleWebDetailVO;
 import top.xuguoliang.service.article.web.ArticleWebResultVO;
@@ -45,6 +48,9 @@ public class ArticleWebService {
 
     @Resource
     private ArticleDao articleDao;
+
+    @Resource
+    private UserDao userDao;
 
     @Resource
     private ArticleBannerDao articleBannerDao;
@@ -205,8 +211,18 @@ public class ArticleWebService {
      * @param pageable 分页信息
      * @return 文章评论
      */
-    public Page<ArticleComment> findCommentPage(Integer articleId, Pageable pageable) {
-        return articleCommentDao.findByArticleIdIsAndDeletedIsFalseOrderByCreateTimeDesc(articleId, pageable);
+    public Page<ArticleCommentWebResultVO> findCommentPage(Integer articleId, Pageable pageable) {
+        return articleCommentDao.findByArticleIdIsAndDeletedIsFalseOrderByCreateTimeDesc(articleId, pageable).map(articleComment -> {
+            ArticleCommentWebResultVO vo = new ArticleCommentWebResultVO();
+            BeanUtils.copyNonNullProperties(articleComment, vo);
+
+            Integer userId = articleComment.getUserId();
+            User user = userDao.findOne(userId);
+            vo.setNickname(user.getNickName());
+            vo.setAvatarUrl(user.getAvatarUrl());
+
+            return vo;
+        });
     }
 
     /**
@@ -279,6 +295,7 @@ public class ArticleWebService {
             articleComment.setCommentContent(commentContent);
             articleComment.setCreateTime(new Date());
             articleComment.setArticleId(articleId);
+            articleComment.setUserId(userId);
             articleCommentDao.saveAndFlush(articleComment);
         } else {
             throw new ValidationException(MessageCodes.WEB_USER_COMMENT_EXIST);
