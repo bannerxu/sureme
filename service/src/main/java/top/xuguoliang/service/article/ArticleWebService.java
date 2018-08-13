@@ -117,7 +117,7 @@ public class ArticleWebService {
                     vo.setIsLike(true);
                 }
                 ArticleStar articleStar = articleStarDao.findByArticleIdIsAndUserIdIs(articleId, userId);
-                if(!ObjectUtils.isEmpty(articleStar)) {
+                if (!ObjectUtils.isEmpty(articleStar)) {
                     vo.setIsStar(true);
                 }
 
@@ -137,7 +137,7 @@ public class ArticleWebService {
     /**
      * 文章详情
      *
-     * @param userId 用户id
+     * @param userId    用户id
      * @param articleId 文章id
      * @return 文章
      */
@@ -192,7 +192,7 @@ public class ArticleWebService {
             resultVO.setIsLike(true);
         }
         ArticleStar articleStar = articleStarDao.findByArticleIdIsAndUserIdIs(articleId, userId);
-        if(!ObjectUtils.isEmpty(articleStar)) {
+        if (!ObjectUtils.isEmpty(articleStar)) {
             resultVO.setIsStar(true);
         }
 
@@ -208,7 +208,7 @@ public class ArticleWebService {
      * 分页获取文章评论
      *
      * @param articleId 文章id
-     * @param pageable 分页信息
+     * @param pageable  分页信息
      * @return 文章评论
      */
     public Page<ArticleCommentWebResultVO> findCommentPage(Integer articleId, Pageable pageable) {
@@ -227,7 +227,8 @@ public class ArticleWebService {
 
     /**
      * 收藏或取消收藏
-     * @param userId 用户id
+     *
+     * @param userId    用户id
      * @param articleId 文章id
      * @return 成功与否
      */
@@ -256,7 +257,8 @@ public class ArticleWebService {
 
     /**
      * 点赞或取消点赞
-     * @param userId 用户id
+     *
+     * @param userId    用户id
      * @param articleId 文章id
      * @return 成功与否
      */
@@ -284,22 +286,19 @@ public class ArticleWebService {
 
     /**
      * 添加文章评论
-     * @param userId 用户id
+     *
+     * @param userId    用户id
      * @param articleId 文章id
      * @return 成功与否
      */
     public Boolean addArticleComment(Integer userId, Integer articleId, String commentContent) {
-        ArticleComment articleComment = articleCommentDao.findByUserIdIsAndArticleIdIsAndDeletedIsFalse(userId, articleId);
-        if (ObjectUtils.isEmpty(articleComment)) {
-            articleComment = new ArticleComment();
-            articleComment.setCommentContent(commentContent);
-            articleComment.setCreateTime(new Date());
-            articleComment.setArticleId(articleId);
-            articleComment.setUserId(userId);
-            articleCommentDao.saveAndFlush(articleComment);
-        } else {
-            throw new ValidationException(MessageCodes.WEB_USER_COMMENT_EXIST);
-        }
+        ArticleComment articleComment = new ArticleComment();
+        articleComment.setCommentContent(commentContent);
+        articleComment.setCreateTime(new Date());
+        articleComment.setArticleId(articleId);
+        articleComment.setUserId(userId);
+        articleCommentDao.saveAndFlush(articleComment);
+
         return true;
     }
 
