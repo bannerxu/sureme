@@ -278,6 +278,7 @@ public class ArticleWebService {
             articleComment = new ArticleComment();
             articleComment.setCommentContent(commentContent);
             articleComment.setCreateTime(new Date());
+            articleCommentDao.saveAndFlush(articleComment);
         } else {
             throw new ValidationException(MessageCodes.WEB_USER_COMMENT_EXIST);
         }
