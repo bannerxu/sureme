@@ -1,5 +1,7 @@
 package top.xuguoliang.service.coupon;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.utils.BeanUtils;
@@ -25,19 +27,22 @@ public class PersonalCouponWebService {
      * @param userId 用户id
      * @return 个人卡券
      */
-    public PersonalCouponWebResultVO findAll(Integer userId) {
-        PersonalCoupon personalCoupon = personalCouponDao.findByUserIdIsAndDeletedIsFalse(userId);
-        Date date = new Date();
-        if (!ObjectUtils.isEmpty(personalCoupon)) {
-            PersonalCouponWebResultVO vo = personalCouponToVO(personalCoupon);
-            if (vo.getUseBeginTime().before(date) && vo.getUseEndTime().after(date)) {
-                vo.setValid(true);
-            } else {
-                vo.setValid(false);
-            }
-            return vo;
-        }
-        return null;
+    public Page<PersonalCouponWebResultVO> findAll(Integer userId, Pageable pageable) {
+        return personalCouponDao.findByUserIdIsAndDeletedIsFalse(userId, pageable)
+                .map(personalCoupon -> {
+                    Date date = new Date();
+                    if (!ObjectUtils.isEmpty(personalCoupon)) {
+                        PersonalCouponWebResultVO vo = personalCouponToVO(personalCoupon);
+                        if (vo.getUseBeginTime().before(date) && vo.getUseEndTime().after(date)) {
+                            vo.setValid(true);
+                        } else {
+                            vo.setValid(false);
+                        }
+                        return vo;
+                    } else {
+                        return null;
+                    }
+                });
     }
 
     private PersonalCouponWebResultVO personalCouponToVO(PersonalCoupon personalCoupon) {

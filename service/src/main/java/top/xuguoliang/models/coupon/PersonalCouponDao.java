@@ -1,5 +1,7 @@
 package top.xuguoliang.models.coupon;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -17,12 +19,13 @@ public interface PersonalCouponDao extends JpaSpecificationExecutor<PersonalCoup
     PersonalCoupon findByUserIdIsAndCouponIdIsAndDeletedIsFalse(Integer userId, Integer couponId);
 
     /**
-     * 查找指定用户的未删除的个人卡券
+     * 分页查找指定用户的未删除的个人卡券
      *
+     * @param pageable 分页信息
      * @param userId 用户id
      * @return 个人卡券
      */
-    PersonalCoupon findByUserIdIsAndDeletedIsFalse(Integer userId);
+    Page<PersonalCoupon> findByUserIdIsAndDeletedIsFalse(Integer userId, Pageable pageable);
 
     /**
      * 查找指定用户的
