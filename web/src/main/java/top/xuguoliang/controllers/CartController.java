@@ -2,14 +2,15 @@ package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 import top.xuguoliang.models.cart.CartItem;
 import top.xuguoliang.service.cart.CartWebService;
 import top.xuguoliang.service.cart.web.CartItemWebResultVO;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.Min;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -23,11 +24,11 @@ public class CartController {
     @Resource
     private CartWebService cartWebService;
 
-    @PostMapping("/{stockKeepingUnitId}")
+    @PostMapping("stockKeepingUnitId/{stockKeepingUnitId}/count/{count}")
     @ApiOperation("添加商品(通过规格)到购物车")
-    public Boolean addCommodityToCart(@PathVariable Integer stockKeepingUnitId) {
+    public CartItem addCommodityToCart(@PathVariable Integer stockKeepingUnitId, @PathVariable @Min(1) Integer count) {
         Integer userId = UserHelper.getUserId();
-        return cartWebService.addCommodityToCart(userId, stockKeepingUnitId);
+        return cartWebService.addCommodityToCart(userId, stockKeepingUnitId, count);
     }
 
     @DeleteMapping("/{cartItemId}")
@@ -44,8 +45,9 @@ public class CartController {
         return cartWebService.findAllByUserId(userId);
     }
 
-    @PutMapping("/{cartItemId}/{count}")
-    @ApiOperation("计算总价")
+    @PutMapping("cartItemId/{cartItemId}/count/{count}")
+    @ApiOperation("设置数量")
+    @ApiIgnore
     public Boolean updateCount(@PathVariable Integer cartItemId, @PathVariable @Min(1) Integer count) {
         Integer userId = UserHelper.getUserId();
         return cartWebService.updateCount(userId, cartItemId, count);

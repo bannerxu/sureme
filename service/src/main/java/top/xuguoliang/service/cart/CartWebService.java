@@ -48,11 +48,11 @@ public class CartWebService {
      * @param userId             用户id
      * @param stockKeepingUnitId 规格Id
      */
-    public Boolean addCommodityToCart(Integer userId, Integer stockKeepingUnitId) {
+    public CartItem addCommodityToCart(Integer userId, Integer stockKeepingUnitId, Integer count) {
         Date date = new Date();
         // 根据用户id和规格id查询购物车条目
-        List<CartItem> cartItems = cartItemDao.findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(userId, stockKeepingUnitId);
-        if (ObjectUtils.isEmpty(cartItems)) {
+        CartItem cartItem = cartItemDao.findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(userId, stockKeepingUnitId);
+        if (ObjectUtils.isEmpty(cartItem)) {
             // 如果为空则表示当前购物车没有该商品，直接添加
             StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
             if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
@@ -65,30 +65,38 @@ public class CartWebService {
                 logger.error("添加商品到购物车失败：商品不存在");
                 throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
             }
-            CartItem cartItem = new CartItem();
+            cartItem = new CartItem();
             BeanUtils.copyNonNullProperties(stockKeepingUnit, cartItem);
             BeanUtils.copyNonNullProperties(commodity, cartItem);
             cartItem.setCreateTime(date);
             cartItem.setUpdateTime(date);
-            cartItem.setCount(1);
+            cartItem.setCount(count);
             cartItem.setValid(true);
             cartItem.setUserId(userId);
-            cartItemDao.saveAndFlush(cartItem);
-            return true;
         } else {
             // 如果不为空则说明已有，添加数量
-            cartItems.forEach(cartItem -> {
-                if (cartItem.getStockKeepingUnitId().equals(stockKeepingUnitId)) {
-                    cartItem.setCount(cartItem.getCount() + 1);
-                    cartItem.setUpdateTime(date);
-                    cartItem.setUserId(userId);
-                    cartItemDao.saveAndFlush(cartItem);
-                }
-            });
-            return true;
+            cartItem.setCount(cartItem.getCount() + count);
+            cartItem.setUpdateTime(date);
+            cartItem.setUserId(userId);
         }
+        return cartItemDao.saveAndFlush(cartItem);
     }
 
+    /**
+     * 判断数量是否小于或等于指定规格的库存
+     *
+     * @param count              数量
+     * @param stockKeepingUnitId 规格id
+     * @return 是否小于
+     */
+    private Boolean isCountLessThanStock(Integer count, Integer stockKeepingUnitId) {
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+        if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
+            logger.error("判断数量是否小于规格库存失败：规格不存在");
+            return false;
+        }
+        return count <= stockKeepingUnit.getStock();
+    }
 
     /**
      * 从购物车中删除指定的条目
@@ -134,7 +142,7 @@ public class CartWebService {
      */
     public Boolean updateCount(Integer userId, Integer cartItemId, Integer count) {
         CartItem cartItem = cartItemDao.findByUserIdIsAndCartItemIdIsAndDeletedIsFalse(userId, cartItemId);
-        if(ObjectUtils.isEmpty(cartItem)) {
+        if (ObjectUtils.isEmpty(cartItem)) {
             logger.error("修改购物车条目数量失败：条目不存在");
             throw new ValidationException(MessageCodes.WEB_CART_ITEM_NOT_EXIST);
         }

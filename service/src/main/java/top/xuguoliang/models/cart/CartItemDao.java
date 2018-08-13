@@ -10,7 +10,8 @@ import java.util.List;
  */
 public interface CartItemDao extends JpaSpecificationExecutor<CartItem>, JpaRepository<CartItem, Integer> {
     List<CartItem> findByUserIdIsAndDeletedIsFalse(Integer userId);
-    List<CartItem> findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(Integer userId, Integer stockKeppingUnitId);
+
+    CartItem findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(Integer userId, Integer stockKeepingUnitId);
 
     CartItem findByUserIdIsAndCartItemIdIsAndDeletedIsFalse(Integer userId, Integer cartItemId);
 
