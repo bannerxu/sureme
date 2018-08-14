@@ -15,19 +15,24 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.commodity.StockKeepingUnit;
+import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
 import top.xuguoliang.models.order.OrderTypeEnum;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -48,6 +53,9 @@ public class OrderWebService {
 
     @Resource
     private UserDao userDao;
+
+    @Resource
+    private StockKeepingUnitDao stockKeepingUnitDao;
 
     @Resource
     private AddressDao addressDao;
@@ -145,10 +153,24 @@ public class OrderWebService {
     /**
      * 购物车下单
      * @param userId 用户id
-     * @param orderWebCartCreateParamVO 下单信息
+     * @param vo 下单信息
      * @return Order
      */
-    public OrderWebCartCreateResultVO createCartOrder(Integer userId, OrderWebCartCreateParamVO orderWebCartCreateParamVO) {
+    public OrderWebCartCreateResultVO createCartOrder(Integer userId, OrderWebCartCreateParamVO vo) {
+        // 计算所有商品总价
+        BigDecimal sum = BigDecimal.ZERO;
+
+        List<ItemParamVO> items = vo.getItems();
+        items.forEach(itemParamVO -> {
+            Integer stockKeepingUnitId = itemParamVO.getStockKeepingUnitId();
+            BigDecimal skuCount = BigDecimal.valueOf(itemParamVO.getSkuCount());
+            StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+            if (!ObjectUtils.isEmpty(stockKeepingUnit)) {
+                BigDecimal unitPrice = stockKeepingUnit.getUnitPrice();
+                BigDecimal itemPrice = unitPrice.multiply(skuCount);
+            }
+        });
+        // 判断优惠券是否属于优惠范围
         return null;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.ArticleTypeEnum;
 import top.xuguoliang.models.comment.ArticleComment;
 import top.xuguoliang.service.article.ArticleWebService;
+import top.xuguoliang.service.article.web.ArticleCommentWebAddVO;
 import top.xuguoliang.service.article.web.ArticleCommentWebResultVO;
 import top.xuguoliang.service.article.web.ArticleWebDetailVO;
 import top.xuguoliang.service.article.web.ArticleWebResultVO;
@@ -49,9 +50,9 @@ public class ArticleController {
 
     @PostMapping("comment/{articleId}")
     @ApiOperation("评论")
-    public Boolean addArticleComment(@PathVariable Integer articleId, @RequestParam String commentContent) {
+    public Boolean addArticleComment(@PathVariable Integer articleId, @RequestBody ArticleCommentWebAddVO articleCommentWebAddVO) {
         Integer userId = UserHelper.getUserId();
-        return articleWebService.addArticleComment(userId, articleId, commentContent);
+        return articleWebService.addArticleComment(userId, articleId, articleCommentWebAddVO.getCommentContent());
     }
 
     @PostMapping("star/{articleId}")
