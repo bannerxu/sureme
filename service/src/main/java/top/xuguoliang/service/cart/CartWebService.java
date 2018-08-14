@@ -10,10 +10,7 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.cart.CartItem;
 import top.xuguoliang.models.cart.CartItemDao;
-import top.xuguoliang.models.commodity.Commodity;
-import top.xuguoliang.models.commodity.CommodityDao;
-import top.xuguoliang.models.commodity.StockKeepingUnit;
-import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.service.cart.web.CartItemWebResultVO;
 
 import javax.annotation.Resource;
@@ -37,6 +34,9 @@ public class CartWebService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CommodityBannerDao commodityBannerDao;
 
     @Resource
     private CommonSpecUtil<CartItem> commonSpecUtil;
@@ -128,6 +128,13 @@ public class CartWebService {
                 .map(cartItem -> {
                     CartItemWebResultVO vo = new CartItemWebResultVO();
                     BeanUtils.copyNonNullProperties(cartItem, vo);
+                    Integer commodityId = cartItem.getCommodityId();
+                    List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(commodityId);
+                    if (ObjectUtils.isEmpty(banners)) {
+                        logger.warn("查询购物车条目商品图片失败：商品图片不存在");
+                        return vo;
+                    }
+                    vo.setCommodityUrl(banners.get(0).getCommodityBannerUrl());
                     return vo;
                 }).collect(Collectors.toList());
     }

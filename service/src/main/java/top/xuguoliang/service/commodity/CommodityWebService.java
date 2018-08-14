@@ -88,7 +88,7 @@ public class CommodityWebService {
 
         // 商品图片
         Integer commodityId = commodity.getCommodityId();
-        List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityIdAsc(commodityId);
+        List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(commodityId);
         if (!ObjectUtils.isEmpty(banners)) {
             CommodityBanner commodityBanner = banners.get(0);
             vo.setCommodityImage(commodityBanner.getCommodityBannerUrl());

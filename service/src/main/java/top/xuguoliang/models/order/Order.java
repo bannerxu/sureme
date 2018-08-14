@@ -33,39 +33,10 @@ public class Order {
     @ApiModelProperty("订单类型")
     private OrderTypeEnum orderType;
 
-
-    @ApiModelProperty("商品id")
-    private Integer commodityId;
-
-    @ApiModelProperty("商品标题")
-    private String commodityTitle;
-
-    @ApiModelProperty("商品简介")
-    private String commodityIntroduction;
-
-    @Lob
-    @ApiModelProperty("商品详情")
-    private String commodityDetail;
-
-    @ApiModelProperty("商品价格")
-    private BigDecimal commodityPrice;
-
-
-    @ApiModelProperty("规格id")
-    private Integer stockKeepingUnitId;
-
-    @ApiModelProperty("规格名称")
-    private String skuName;
-
-    @ApiModelProperty("单价")
-    private BigDecimal unitPrice;
-
-    @ApiModelProperty("折扣价")
-    private BigDecimal discountPrice;
-
-
     @ApiModelProperty("用户id")
     private Integer userId;
+
+    // ----------------地址信息----------------
 
     @ApiModelProperty("地址")
     private String address;
@@ -91,6 +62,7 @@ public class Order {
     @ApiModelProperty("收货人姓名")
     private String receiverName;
 
+    // ----------------额外信息----------------
 
     @ApiModelProperty("邮费")
     private BigDecimal postage;
@@ -109,6 +81,29 @@ public class Order {
 
     @ApiModelProperty("实际支付金额")
     private BigDecimal realPayMoney;
+
+    // --------------------卡券相关--------------------
+
+    @ApiModelProperty("个人卡券id")
+    private Integer personalCouponId;
+
+    @ApiModelProperty("对应的卡券id")
+    private Integer couponId;
+
+    @ApiModelProperty("满额")
+    private BigDecimal minUseMoney;
+
+    @ApiModelProperty("减额")
+    private BigDecimal offsetMoney;
+
+    @ApiModelProperty("使用开始时间")
+    private Date useBeginTime;
+
+    @ApiModelProperty("使用结束时间")
+    private Date useEndTime;
+
+    @ApiModelProperty("对应的卡券名")
+    private String couponName;
 
 
     @ApiModelProperty("创建时间")

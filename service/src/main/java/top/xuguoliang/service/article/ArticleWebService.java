@@ -173,7 +173,7 @@ public class ArticleWebService {
                 ArticleWebCommodityVO vo = new ArticleWebCommodityVO();
                 Integer commodityId = commodity.getCommodityId();
                 List<CommodityBanner> commodityBanners = commodityBannerDao
-                        .findByCommodityIdIsAndDeletedIsFalseOrderByCommodityIdAsc(commodityId);
+                        .findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(commodityId);
                 vo.setCommodityBanner(commodityBanners.get(0));
                 vos.add(vo);
             });

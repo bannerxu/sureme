@@ -13,12 +13,17 @@ import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
+import top.xuguoliang.common.utils.NumberUtil;
+import top.xuguoliang.common.utils.PaymentUtil;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnit;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.models.coupon.PersonalCoupon;
+import top.xuguoliang.models.coupon.PersonalCouponDao;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
+import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.models.order.OrderTypeEnum;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
@@ -28,8 +33,10 @@ import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
+import top.xuguoliang.service.payment.web.UnifiedOrderParam;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +56,9 @@ public class OrderWebService {
     private OrderDao orderDao;
 
     @Resource
+    private PersonalCouponDao personalCouponDao;
+
+    @Resource
     private CommodityDao commodityDao;
 
     @Resource
@@ -60,6 +70,8 @@ public class OrderWebService {
     @Resource
     private AddressDao addressDao;
 
+    @Resource
+    private PaymentUtil paymentUtil;
 
     /**
      * 创建订单
@@ -152,25 +164,98 @@ public class OrderWebService {
 
     /**
      * 购物车下单
+     *
      * @param userId 用户id
-     * @param vo 下单信息
+     * @param vo     下单信息
      * @return Order
      */
+    @Transactional(rollbackOn = {Exception.class})
     public OrderWebCartCreateResultVO createCartOrder(Integer userId, OrderWebCartCreateParamVO vo) {
-        // 计算所有商品总价
-        BigDecimal sum = BigDecimal.ZERO;
+        Date date = new Date();
+        // 商品总价
+        BigDecimal total = BigDecimal.valueOf(0.0);
 
         List<ItemParamVO> items = vo.getItems();
-        items.forEach(itemParamVO -> {
-            Integer stockKeepingUnitId = itemParamVO.getStockKeepingUnitId();
-            BigDecimal skuCount = BigDecimal.valueOf(itemParamVO.getSkuCount());
+        for (ItemParamVO item : items) {
+            Integer stockKeepingUnitId = item.getStockKeepingUnitId();
+            Integer voCount = item.getSkuCount();
+            BigDecimal skuCount = BigDecimal.valueOf(voCount);
             StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+            // 非空判断
             if (!ObjectUtils.isEmpty(stockKeepingUnit)) {
-                BigDecimal unitPrice = stockKeepingUnit.getUnitPrice();
-                BigDecimal itemPrice = unitPrice.multiply(skuCount);
+                // 判断库存是否足够
+                Integer stock = stockKeepingUnit.getStock();
+                if (voCount > stock) {
+                    logger.error("购物车下单失败：规格库存不足");
+                    throw new ValidationException(MessageCodes.WEB_SKU_STOCK_NOT_ENOUGH);
+                }
+                // 减少库存，保存
+                stockKeepingUnit.setStock(stock - voCount);
+                stockKeepingUnitDao.save(stockKeepingUnit);
+
+                // 计算总价
+                BigDecimal discountPrice = stockKeepingUnit.getDiscountPrice();
+                BigDecimal itemPrice = discountPrice.multiply(skuCount);
+                total = total.add(itemPrice);
+            } else {
+                logger.error("购物车下单失败：商品规格不存在（用户id：{}）", userId);
+                throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
             }
-        });
+        }
         // 判断优惠券是否属于优惠范围
+        Integer personalCouponId = vo.getPersonalCouponId();
+        PersonalCoupon personalCoupon = personalCouponDao.findByPersonalCouponIdIsAndUserIdIsAndDeletedIsFalse(personalCouponId, userId);
+        if (ObjectUtils.isEmpty(personalCoupon)) {
+            logger.error("购物车下单失败：优惠券不存在（用户id:{}）", userId);
+            throw new ValidationException(MessageCodes.WEB_COUPON_NOT_EXIST);
+        }
+        // 是否在优惠券使用时间内
+        Date useBeginTime = personalCoupon.getUseBeginTime();
+        Date useEndTime = personalCoupon.getUseEndTime();
+        if (useBeginTime.after(date) || useEndTime.before(date)) {
+            logger.error("购物车下单失败：优惠券不在使用时间内（用户id:{}）", userId);
+            throw new ValidationException(MessageCodes.WEB_COUPON_CAN_NOT_USE);
+        }
+        // 商品总价是否达到优惠券满减价格
+        BigDecimal minUseMoney = personalCoupon.getMinUseMoney();
+        if (minUseMoney.doubleValue() > total.doubleValue()) {
+            logger.error("购物车下单失败：商品总价未达到优惠券满减金额（用户id:{}）", userId);
+            throw new ValidationException(MessageCodes.WEB_COUPON_NOT_ENOUGH);
+        }
+        // 计算需要支付的价格 TODO 运费待议
+        BigDecimal needPayMoney = total.subtract(personalCoupon.getOffsetMoney());
+
+        // 判断地址是否为空
+        Integer addressId = vo.getAddressId();
+        Address address = addressDao.findOne(addressId);
+        if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
+            logger.error("购物车下单失败：地址不存在");
+            throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
+        }
+
+        // 新建订单，减少库存，如果取消订单再行恢复
+        Order order = new Order();
+        BeanUtils.copyNonNullProperties(address, order);
+        BeanUtils.copyNonNullProperties(personalCoupon, order);
+        order.setUserId(userId);
+        order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
+        order.setOrderNumber(NumberUtil.generateOrderNumber("co"));
+        order.setOrderType(OrderTypeEnum.ORDER_TYPE_NORMAL);
+        order.setCreateTime(date);
+        order.setUpdateTime(date);
+        order.setDeleted(false);
+        order.setTotalMoney(total);
+
+        // 调用微信统一下单接口，返回预支付对象
+        UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
+//        unifiedOrderParam.setAppid();
+//        unifiedOrderParam.setMch_id();
+//        unifiedOrderParam.setNotify_url();
+//        unifiedOrderParam.setOpenid();
+//        paymentUtil.unifiedOrder();
+
+
+
         return null;
     }
 }

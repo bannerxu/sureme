@@ -4,10 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -26,6 +23,19 @@ public class OrderItem {
 
     // ------------------------商品相关------------------------
 
+    @ApiModelProperty("商品id")
+    private Integer commodityId;
+
+    @ApiModelProperty("商品标题")
+    private String commodityTitle;
+
+    @ApiModelProperty("商品简介")
+    private String commodityIntroduction;
+
+    @Lob
+    @ApiModelProperty("商品详情")
+    private String commodityDetail;
+
     @ApiModelProperty("规格id")
     private Integer stockKeepingUnitId;
 
@@ -41,36 +51,8 @@ public class OrderItem {
     @ApiModelProperty("库存")
     private Integer stock;
 
-    @ApiModelProperty("商品id")
-    private Integer commodityId;
-
     @ApiModelProperty("订单id")
     private Integer orderId;
 
-    @ApiModelProperty("用户id")
-    private Integer userId;
-
-    // --------------------卡券--------------------
-
-    @ApiModelProperty("个人卡券id")
-    private Integer personalCouponId;
-
-    @ApiModelProperty("对应的卡券id")
-    private Integer couponId;
-
-    @ApiModelProperty("满额")
-    private BigDecimal minUseMoney;
-
-    @ApiModelProperty("减额")
-    private BigDecimal offsetMoney;
-
-    @ApiModelProperty("使用开始时间")
-    private Date useBeginTime;
-
-    @ApiModelProperty("使用结束时间")
-    private Date useEndTime;
-
-    @ApiModelProperty("对应的卡券名")
-    private String couponName;
 
 }

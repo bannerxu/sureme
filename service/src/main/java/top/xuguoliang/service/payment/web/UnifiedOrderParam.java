@@ -3,8 +3,12 @@ package top.xuguoliang.service.payment.web;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author jinguoguo
+ */
 @Data
 public class UnifiedOrderParam {
+
     @ApiModelProperty("小程序id")
     private String appid;
 

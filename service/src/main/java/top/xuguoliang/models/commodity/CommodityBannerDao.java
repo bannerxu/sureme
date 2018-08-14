@@ -22,5 +22,5 @@ public interface CommodityBannerDao extends JpaSpecificationExecutor<CommodityBa
      * @param commodityId 商品id
      * @return 商品轮播列表
      */
-    List<CommodityBanner> findByCommodityIdIsAndDeletedIsFalseOrderByCommodityIdAsc(Integer commodityId);
+    List<CommodityBanner> findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(Integer commodityId);
 }

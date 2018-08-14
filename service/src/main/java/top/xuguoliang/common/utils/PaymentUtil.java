@@ -5,6 +5,7 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import top.xuguoliang.service.payment.web.UnifiedOrderParam;
 import top.xuguoliang.service.payment.web.UnifiedOrderResult;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * @author jinguoguo
  */
+@Component
 public class PaymentUtil {
 
     private final Logger logger = LoggerFactory.getLogger(WeChatUtil.class);
