@@ -34,6 +34,7 @@ import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 import top.xuguoliang.service.payment.web.UnifiedOrderParam;
+import top.xuguoliang.service.payment.web.UnifiedOrderResult;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -246,15 +247,22 @@ public class OrderWebService {
         order.setDeleted(false);
         order.setTotalMoney(total);
 
+        return null;
+    }
+
+    /**
+     * 统一下单
+     *
+     * @return 下单返回对象
+     */
+    private UnifiedOrderResult unifiedOrder() {
         // 调用微信统一下单接口，返回预支付对象
-        UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
+//        UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
 //        unifiedOrderParam.setAppid();
 //        unifiedOrderParam.setMch_id();
 //        unifiedOrderParam.setNotify_url();
 //        unifiedOrderParam.setOpenid();
-//        paymentUtil.unifiedOrder();
-
-
+//        UnifiedOrderResult unifiedOrderResult = paymentUtil.unifiedOrder();
 
         return null;
     }
