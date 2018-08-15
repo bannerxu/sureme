@@ -16,6 +16,7 @@ import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -64,9 +65,13 @@ public class GroupBuyingCmsService {
      * @return 添加成功后的实体信息
      */
     public GroupBuyingCmsResultVO addGroupBuying(GroupBuyingCmsAddParamVO addVO) {
+        Date date = new Date();
         // 保存
         GroupBuying groupBuying = new GroupBuying();
         BeanUtils.copyNonNullProperties(addVO, groupBuying);
+        groupBuying.setCreateTime(date);
+        groupBuying.setUpdateTime(date);
+        groupBuying.setDeleted(false);
         GroupBuying groupBuyingSave = groupBuyingDao.saveAndFlush(groupBuying);
         // 返回值
         GroupBuyingCmsResultVO resultVO = new GroupBuyingCmsResultVO();
