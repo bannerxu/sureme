@@ -17,6 +17,9 @@ public class ArticleCommentCmsResultVO {
     @ApiModelProperty("发表评论的用户id")
     private Integer userId;
 
+    @ApiModelProperty("用户昵称")
+    private String nickname;
+
     @ApiModelProperty("文章id")
     private Integer articleId;
 
