@@ -1,5 +1,6 @@
 package top.xuguoliang.service.groupbuying.cms;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,6 +12,7 @@ import java.util.Date;
  * @author jinguoguo
  */
 @Data
+@ApiModel("添加拼团参数")
 public class GroupBuyingCmsAddParamVO {
 
     @NotNull(message = "商品不能为空")
