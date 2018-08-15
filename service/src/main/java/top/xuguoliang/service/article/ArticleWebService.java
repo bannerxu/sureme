@@ -296,7 +296,11 @@ public class ArticleWebService {
         articleComment.setCommentContent(commentContent);
         articleComment.setCreateTime(new Date());
         articleComment.setArticleId(articleId);
-        articleComment.setUserId(userId);
+        User user = userDao.findOne(userId);
+        if (!ObjectUtils.isEmpty(user)) {
+            articleComment.setUserId(userId);
+            articleComment.setNickname(user.getNickName());
+        }
         articleCommentDao.saveAndFlush(articleComment);
 
         return true;

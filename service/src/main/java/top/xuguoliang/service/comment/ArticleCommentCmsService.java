@@ -3,6 +3,7 @@ package top.xuguoliang.service.comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.utils.BeanUtils;
@@ -34,11 +35,13 @@ public class ArticleCommentCmsService {
      */
     public Page<ArticleCommentCmsResultVO> findPage(Integer articleId, Pageable pageable) {
         Page<ArticleCommentCmsResultVO> resultVOS;
+        Specification<ArticleComment> deleted = commonSpecUtil.equal("deleted", false);
         if (ObjectUtils.isEmpty(articleId)) {
-            resultVOS = articleCommentDao.findAll(pageable).map(this::convertArticleCommentToVO);
+            resultVOS = articleCommentDao.findAll(deleted, pageable).map(this::convertArticleCommentToVO);
         } else {
             Specification<ArticleComment> specification = commonSpecUtil.equal("articleId", articleId);
-            resultVOS = articleCommentDao.findAll(specification, pageable).map(this::convertArticleCommentToVO);
+            Specifications<ArticleComment> specifications = Specifications.where(deleted).and(specification);
+            resultVOS = articleCommentDao.findAll(specifications, pageable).map(this::convertArticleCommentToVO);
         }
         return resultVOS;
     }
