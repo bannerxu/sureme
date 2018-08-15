@@ -90,7 +90,7 @@ public class GroupBuyingCmsService {
         // 修改
         GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying) || groupBuying.getDeleted()) {
-            // 实体已被删除
+            logger.error("修改拼团失败：拼团不存在");
             throw new ValidationException(MessageCodes.CMS_GROUP_BUYING_NOT_EXIST);
         }
         BeanUtils.copyNonNullProperties(updateVO, groupBuying);

@@ -33,6 +33,9 @@ public class GroupBuying {
     @ApiModelProperty("拼团价格")
     private BigDecimal groupPrice;
 
+    @ApiModelProperty("拼团人数")
+    private Integer peopleNumber;
+
     @ApiModelProperty("开始时间")
     private Date beginTime;
 
