@@ -38,8 +38,8 @@ public class GroupBuyingController {
 
     @PostMapping
     @ApiOperation("添加")
-    public GroupBuyingCmsResultVO addGroupBuying(@RequestBody GroupBuyingCmsAddParamVO groupBuyingCmsAddParamVO) {
-        return groupBuyingCmsService.addGroupBuying(groupBuyingCmsAddParamVO);
+    public void addGroupBuying(@RequestBody GroupBuyingCmsAddParamVO groupBuyingCmsAddParamVO) {
+        groupBuyingCmsService.addGroupBuying(groupBuyingCmsAddParamVO);
     }
 
     @PutMapping("/{groupBuyingId}")

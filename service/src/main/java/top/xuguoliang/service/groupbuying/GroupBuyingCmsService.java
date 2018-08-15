@@ -62,9 +62,8 @@ public class GroupBuyingCmsService {
      * 添加
      *
      * @param addVO 添加的信息
-     * @return 添加成功后的实体信息
      */
-    public GroupBuyingCmsResultVO addGroupBuying(GroupBuyingCmsAddParamVO addVO) {
+    public void addGroupBuying(GroupBuyingCmsAddParamVO addVO) {
         Date date = new Date();
         // 保存
         GroupBuying groupBuying = new GroupBuying();
@@ -72,12 +71,8 @@ public class GroupBuyingCmsService {
         groupBuying.setCreateTime(date);
         groupBuying.setUpdateTime(date);
         groupBuying.setDeleted(false);
-        GroupBuying groupBuyingSave = groupBuyingDao.saveAndFlush(groupBuying);
-        // 返回值
-        GroupBuyingCmsResultVO resultVO = new GroupBuyingCmsResultVO();
-        BeanUtils.copyNonNullProperties(groupBuyingSave, resultVO);
+        groupBuyingDao.saveAndFlush(groupBuying);
 
-        return resultVO;
     }
 
     /**
