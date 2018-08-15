@@ -9,9 +9,14 @@ import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
+import top.xuguoliang.models.commodity.Commodity;
+import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.commodity.StockKeepingUnit;
+import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.groupbuying.GroupBuying;
 import top.xuguoliang.models.groupbuying.GroupBuyingDao;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsAddParamVO;
+import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsDetailVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
 
@@ -28,6 +33,13 @@ public class GroupBuyingCmsService {
 
     @Resource
     private GroupBuyingDao groupBuyingDao;
+
+    @Resource
+    private CommodityDao commodityDao;
+
+    @Resource
+    private StockKeepingUnitDao stockKeepingUnitDao;
+
 
     /**
      * 分页查询
@@ -49,13 +61,12 @@ public class GroupBuyingCmsService {
      * @param groupBuyingId id
      * @return 单个结果
      */
-    public GroupBuyingCmsResultVO getGroupBuying(Integer groupBuyingId) {
-        GroupBuyingCmsResultVO resultVO = new GroupBuyingCmsResultVO();
+    public GroupBuyingCmsDetailVO getGroupBuying(Integer groupBuyingId) {
+        GroupBuyingCmsDetailVO detailVO = new GroupBuyingCmsDetailVO();
         GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
-        BeanUtils.copyNonNullProperties(groupBuying, resultVO);
-        // todo 执行业务
+        BeanUtils.copyNonNullProperties(groupBuying, detailVO);
 
-        return resultVO;
+        return detailVO;
     }
 
     /**
@@ -71,6 +82,22 @@ public class GroupBuyingCmsService {
         groupBuying.setCreateTime(date);
         groupBuying.setUpdateTime(date);
         groupBuying.setDeleted(false);
+
+        // 冗余商品和规格信息到实体中
+        Integer commodityId = addVO.getCommodityId();
+        Commodity commodity = commodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+        if (ObjectUtils.isEmpty(commodity)) {
+            logger.error("添加拼团失败：商品不存在");
+            throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST);
+        }
+        StockKeepingUnit sku = stockKeepingUnitDao.findOne(addVO.getStockKeepingUnitId());
+        if (ObjectUtils.isEmpty(sku) || sku.getDeleted()) {
+            logger.error("添加拼团失败：商品规格不存在");
+            throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
+        }
+        BeanUtils.copyNonNullProperties(commodity, groupBuying);
+        BeanUtils.copyNonNullProperties(sku, groupBuying);
+
         groupBuyingDao.saveAndFlush(groupBuying);
 
     }

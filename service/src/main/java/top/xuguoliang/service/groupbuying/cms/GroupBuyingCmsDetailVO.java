@@ -10,7 +10,7 @@ import java.util.Date;
  * @author jinguoguo
  */
 @Data
-public class GroupBuyingCmsResultVO {
+public class GroupBuyingCmsDetailVO {
 
     @ApiModelProperty("主键id")
     private Integer groupBuyingId;
@@ -28,15 +28,6 @@ public class GroupBuyingCmsResultVO {
 
     @ApiModelProperty("结束时间")
     private Date endTime;
-
-    @ApiModelProperty("创建时间")
-    private Date createTime;
-
-    @ApiModelProperty("更新时间")
-    private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted;
 
     // ---------------------商品信息---------------------
 
@@ -80,7 +71,6 @@ public class GroupBuyingCmsResultVO {
 
     @ApiModelProperty("库存")
     private Integer stock;
-
 
 
 }

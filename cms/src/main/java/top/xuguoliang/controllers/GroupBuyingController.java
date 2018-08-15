@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingCmsService;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsAddParamVO;
+import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsDetailVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
 import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
 
@@ -32,7 +33,7 @@ public class GroupBuyingController {
 
     @GetMapping("/{groupBuyingId}")
     @ApiOperation("查询单个")
-    public GroupBuyingCmsResultVO getGroupBuying(@PathVariable Integer groupBuyingId) {
+    public GroupBuyingCmsDetailVO getGroupBuying(@PathVariable Integer groupBuyingId) {
         return groupBuyingCmsService.getGroupBuying(groupBuyingId);
     }
 
