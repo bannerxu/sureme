@@ -45,8 +45,10 @@ public class CouponWebService {
      * @return 所有卡券
      */
     public Page<CouponWebResultVO> findPage(Integer userId, Pageable pageable) {
+        Date date = new Date();
         Specification<Coupon> deleted = commonSpecUtil.equal("deleted", false);
-        Page<Coupon> couponPage = couponDao.findAll(deleted, pageable);
+
+        Page<Coupon> couponPage = couponDao.findByPullBeginTimeBeforeAndPullEndTimeAfterAndDeletedIsFalse(date, date, pageable);
         return couponPage.map(coupon -> {
             CouponWebResultVO vo = new CouponWebResultVO();
             BeanUtils.copyNonNullProperties(coupon, vo);
