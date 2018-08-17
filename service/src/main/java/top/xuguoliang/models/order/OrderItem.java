@@ -48,9 +48,6 @@ public class OrderItem {
     @ApiModelProperty("折扣价")
     private BigDecimal discountPrice;
 
-    @ApiModelProperty("库存")
-    private Integer stock;
-
     @ApiModelProperty("订单id")
     private Integer orderId;
 

@@ -4,21 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
+import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnit;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.groupbuying.GroupBuying;
 import top.xuguoliang.models.groupbuying.GroupBuyingDao;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsAddParamVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsDetailVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
+import top.xuguoliang.models.groupbuying.UserGroupBuying;
+import top.xuguoliang.models.groupbuying.UserGroupBuyingDao;
+import top.xuguoliang.service.groupbuying.cms.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -35,10 +36,16 @@ public class GroupBuyingCmsService {
     private GroupBuyingDao groupBuyingDao;
 
     @Resource
+    private CommonSpecUtil<GroupBuying> commonSpecUtil;
+
+    @Resource
     private CommodityDao commodityDao;
 
     @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
+
+    @Resource
+    private UserGroupBuyingDao userGroupBuyingDao;
 
 
     /**
@@ -48,7 +55,8 @@ public class GroupBuyingCmsService {
      * @return 分页的结果
      */
     public Page<GroupBuyingCmsResultVO> findPage(Pageable pageable) {
-        return groupBuyingDao.findAll(pageable).map(groupBuying -> {
+        Specification<GroupBuying> deleted = commonSpecUtil.equal("deleted", false);
+        return groupBuyingDao.findAll(deleted, pageable).map(groupBuying -> {
             GroupBuyingCmsResultVO vo = new GroupBuyingCmsResultVO();
             BeanUtils.copyNonNullProperties(groupBuying, vo);
             return vo;
@@ -133,10 +141,26 @@ public class GroupBuyingCmsService {
     public void deleteGroupBuying(Integer groupBuyingId) {
         GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying)) {
-            logger.warn("实体不存在");
-            return ;
+            logger.warn("删除拼团失败：拼团不存在");
+            return;
         }
         groupBuying.setDeleted(true);
         groupBuyingDao.saveAndFlush(groupBuying);
     }
+
+    /**
+     * 分页查询用户拼团
+     *
+     * @param pageable 分页信息
+     * @return 用户拼团分页
+     */
+    public Page<UserGroupBuyingCmsResultVO> findPageUserGroupBuying(Pageable pageable) {
+        return userGroupBuyingDao.findByIsFullIsTrue(pageable).map(userGroupBuying -> {
+            UserGroupBuyingCmsResultVO resultVO = new UserGroupBuyingCmsResultVO();
+            BeanUtils.copyNonNullProperties(userGroupBuying, resultVO);
+            return resultVO;
+        });
+
+    }
+
 }

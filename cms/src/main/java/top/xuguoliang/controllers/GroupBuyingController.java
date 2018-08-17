@@ -7,10 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingCmsService;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsAddParamVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsDetailVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsResultVO;
-import top.xuguoliang.service.groupbuying.cms.GroupBuyingCmsUpdateParamVO;
+import top.xuguoliang.service.groupbuying.cms.*;
 
 import javax.annotation.Resource;
 
@@ -55,5 +52,9 @@ public class GroupBuyingController {
         groupBuyingCmsService.deleteGroupBuying(groupBuyingId);
     }
 
+    @GetMapping("userGroupBuying}")
+    public Page<UserGroupBuyingCmsResultVO> findPageUserGroupBuying(@PageableDefault Pageable pageable) {
+        return groupBuyingCmsService.findPageUserGroupBuying(pageable);
+    }
 
 }

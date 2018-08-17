@@ -33,6 +33,9 @@ public class Order {
     @ApiModelProperty("订单类型")
     private OrderTypeEnum orderType;
 
+    @ApiModelProperty("拼团id，只在订单类型是拼团时有用")
+    private Integer userGroupBuyingId;
+
     @ApiModelProperty("用户id")
     private Integer userId;
 

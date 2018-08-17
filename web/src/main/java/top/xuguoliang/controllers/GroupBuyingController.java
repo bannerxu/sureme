@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingWebService;
 import top.xuguoliang.service.groupbuying.web.GroupBuyingWebJoinParamVO;
 import top.xuguoliang.service.groupbuying.web.GroupBuyingWebResultVO;
+import top.xuguoliang.service.groupbuying.web.UserGroupBuyingWebJoinParamVO;
+import top.xuguoliang.service.groupbuying.web.UserGroupBuyingWebResultVO;
 
 import javax.annotation.Resource;
 
@@ -37,8 +39,8 @@ public class GroupBuyingController {
 
     @PostMapping("join")
     @ApiOperation("加入拼团")
-    public GroupBuyingWebResultVO joinGroupBuying(@RequestBody GroupBuyingWebJoinParamVO groupBuyingWebJoinParamVO) {
+    public UserGroupBuyingWebResultVO joinGroupBuying(@RequestBody UserGroupBuyingWebJoinParamVO vo) {
         Integer userId = UserHelper.getUserId();
-        return groupBuyingWebService.joinGroupBuying(userId, groupBuyingWebJoinParamVO);
+        return groupBuyingWebService.joinUserGroupBuying(userId, vo);
     }
 }

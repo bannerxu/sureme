@@ -1,5 +1,12 @@
 package top.xuguoliang.common.utils;
 
+import com.github.binarywang.wxpay.bean.request.BaseWxPayRequest;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thoughtworks.xstream.XStream;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -32,6 +39,26 @@ public class PaymentUtil {
 
     @Value("${wx.pay.mch_id}")
     private String mchId;
+
+
+    public WxPayUnifiedOrderResult unified(WxPayUnifiedOrderRequest orderRequest) throws WxPayException {
+        WxPayConfig payConfig = new WxPayConfig();
+        payConfig.setAppId(appId);
+        payConfig.setMchId(mchId);
+        payConfig.setNotifyUrl("");
+        orderRequest.setBody("主题");
+        orderRequest.setOutTradeNo("订单号");
+//        //元转成分
+//        orderRequest.setTotalFee(BaseWxPayRequest.yuanToFen("1"));
+        // 这个最好换成本机的真实ip
+//        orderRequest.setSpbillCreateIp("127.0.0.1");
+//        orderRequest.setTimeStart("yyyyMMddHHmmss");
+//        orderRequest.setTimeExpire("yyyyMMddHHmmss");
+        orderRequest.setTradeType("JSAPI");
+
+        WxPayService wxPayService = new WxPayServiceImpl();
+        return wxPayService.unifiedOrder(orderRequest);
+    }
 
     public UnifiedOrderResult unifiedOrder(UnifiedOrderParam unifiedOrderParam) {
         Map<String, String> resultMap = new HashMap<>();

@@ -48,3 +48,20 @@ wx:
   app-secret: 4fd55998fd0f3d4cbeca5c4fe0cc4b8a
   mchId:
   mchKey:
+
+# 日志
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.github.binarywang.demo.wx.pay: DEBUG
+    com.github.binarywang.wxpay: DEBUG
+
+# 微信支付
+wechat:
+  pay:
+    appId: wxc8e6381c38f0ea0f
+    mchId: # 商户号id
+    mchKey: # 商户号秘钥
+    keyPath: # 证书地址，项目中用 "classpath:"
+    # subAppId: # 服务商模式才开启
+    # subMchId: # 服务商模式才开启

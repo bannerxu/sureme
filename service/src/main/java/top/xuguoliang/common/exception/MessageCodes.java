@@ -60,4 +60,7 @@ public class MessageCodes {
     public static final String WEB_COUPON_CAN_NOT_USE = "web.coupon.can.not.use";
     public static final String WEB_COUPON_NOT_ENOUGH = "web.coupon.not.enough";
     public static final String WEB_SKU_STOCK_NOT_ENOUGH = "web.sku.stock.not.enough";
+    public static final String WEB_GROUP_BUYING_NOT_IN_TIME = "web.group.buying.not.in.time";
+    public static final String WEB_ORDER_USER_NO_MATCH = "web.order.user.no.match";
+    public static final String WEB_USER_GROUP_BUYING_PEOPLE_FULL = "web.user.group.buying.people.full";
 }
