@@ -64,4 +64,5 @@ public class MessageCodes {
     public static final String WEB_ORDER_USER_NO_MATCH = "web.order.user.no.match";
     public static final String WEB_USER_GROUP_BUYING_PEOPLE_FULL = "web.user.group.buying.people.full";
     public static final String WEB_USER_GROUP_BUYING_NOT_EXIST = "web.user.group.buying.not.exist";
+    public static final String CMS_SECOND_NOT_EXIST = "cms.second.not.exist";
 }

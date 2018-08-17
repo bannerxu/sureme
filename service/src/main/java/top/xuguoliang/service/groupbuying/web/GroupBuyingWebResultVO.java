@@ -14,9 +14,6 @@ public class GroupBuyingWebResultVO {
     @ApiModelProperty("主键id")
     private Integer groupBuyingId;
 
-    @ApiModelProperty("订单id")
-    private Integer orderId;
-
     @ApiModelProperty("商品图片")
     private String commodityImage;
 

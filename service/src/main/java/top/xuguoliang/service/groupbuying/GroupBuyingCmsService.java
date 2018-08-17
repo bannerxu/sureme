@@ -84,12 +84,6 @@ public class GroupBuyingCmsService {
      */
     public void addGroupBuying(GroupBuyingCmsAddParamVO addVO) {
         Date date = new Date();
-        // 保存
-        GroupBuying groupBuying = new GroupBuying();
-        BeanUtils.copyNonNullProperties(addVO, groupBuying);
-        groupBuying.setCreateTime(date);
-        groupBuying.setUpdateTime(date);
-        groupBuying.setDeleted(false);
 
         // 冗余商品和规格信息到实体中
         Integer commodityId = addVO.getCommodityId();
@@ -103,9 +97,17 @@ public class GroupBuyingCmsService {
             logger.error("添加拼团失败：商品规格不存在");
             throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
         }
+
+        // 保存
+        GroupBuying groupBuying = new GroupBuying();
+
+        BeanUtils.copyNonNullProperties(addVO, groupBuying);
         BeanUtils.copyNonNullProperties(commodity, groupBuying);
         BeanUtils.copyNonNullProperties(sku, groupBuying);
 
+        groupBuying.setCreateTime(date);
+        groupBuying.setUpdateTime(date);
+        groupBuying.setDeleted(false);
         groupBuying.setOriginalPrice(sku.getDiscountPrice());
 
         groupBuyingDao.saveAndFlush(groupBuying);
