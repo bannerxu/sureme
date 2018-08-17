@@ -1,10 +1,8 @@
-package top.xuguoliang.models.groupbuying;
+package top.xuguoliang.service.groupbuying.web;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -12,19 +10,11 @@ import java.util.Date;
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("拼团，团购")
-public class GroupBuying {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class GroupBuyingWebDetailVO {
     @ApiModelProperty("主键id")
     private Integer groupBuyingId;
 
     // ---------------------拼团信息---------------------
-
-    @ApiModelProperty("原价")
-    private BigDecimal originalPrice;
 
     @ApiModelProperty("拼团价格")
     private BigDecimal groupPrice;
@@ -61,7 +51,6 @@ public class GroupBuying {
     @ApiModelProperty("商品简介")
     private String commodityIntroduction;
 
-    @Lob
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
@@ -90,5 +79,4 @@ public class GroupBuying {
 
     @ApiModelProperty("库存")
     private Integer stock;
-
 }

@@ -106,6 +106,8 @@ public class GroupBuyingCmsService {
         BeanUtils.copyNonNullProperties(commodity, groupBuying);
         BeanUtils.copyNonNullProperties(sku, groupBuying);
 
+        groupBuying.setOriginalPrice(sku.getDiscountPrice());
+
         groupBuyingDao.saveAndFlush(groupBuying);
 
     }

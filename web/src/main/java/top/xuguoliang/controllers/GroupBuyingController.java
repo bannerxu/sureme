@@ -22,16 +22,28 @@ public class GroupBuyingController {
     @Resource
     private GroupBuyingWebService groupBuyingWebService;
 
-    @GetMapping
+    @GetMapping("findPageGroupBuying")
     @ApiOperation("拼团列表")
-    public Page<GroupBuyingWebResultVO> findPage(@PageableDefault Pageable pageable) {
-        return groupBuyingWebService.findPage(pageable);
+    public Page<GroupBuyingWebResultVO> findPageGroupBuying(@PageableDefault Pageable pageable) {
+        return groupBuyingWebService.findPageGroupBuying(pageable);
+    }
+
+    @GetMapping("findPageUserGroupBuying")
+    @ApiOperation("用户拼团列表")
+    public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(@PageableDefault Pageable pageable) {
+        return groupBuyingWebService.findPageUserGroupBuying(pageable);
     }
 
     @GetMapping("/{groupBuyingId}")
     @ApiOperation("拼团详情")
-    public GroupBuyingWebResultVO getGroupBuying(@PathVariable Integer groupBuyingId){
+    public GroupBuyingWebDetailVO getGroupBuying(@PathVariable Integer groupBuyingId){
         return groupBuyingWebService.getGroupBuying(groupBuyingId);
+    }
+
+    @GetMapping("userGroupBuying/{userGroupBuyingId}")
+    @ApiOperation("用户拼团详情")
+    public UserGroupBuyingWebDetailVO getUserGroupBuying(@PathVariable Integer userGroupBuyingId) {
+        return groupBuyingWebService.getUserGroupBuying(userGroupBuyingId);
     }
 
     @PostMapping("open")

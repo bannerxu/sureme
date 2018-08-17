@@ -1,9 +1,5 @@
 package top.xuguoliang.service.groupbuying;
 
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
-import com.github.binarywang.wxpay.config.WxPayConfig;
-import com.github.binarywang.wxpay.exception.WxPayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -15,18 +11,12 @@ import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
-import top.xuguoliang.common.utils.PaymentUtil;
-import top.xuguoliang.models.commodity.Commodity;
-import top.xuguoliang.models.commodity.CommodityDao;
-import top.xuguoliang.models.commodity.StockKeepingUnit;
-import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.groupbuying.GroupBuying;
 import top.xuguoliang.models.groupbuying.GroupBuyingDao;
 import top.xuguoliang.models.groupbuying.UserGroupBuying;
 import top.xuguoliang.models.groupbuying.UserGroupBuyingDao;
 import top.xuguoliang.models.order.*;
-import top.xuguoliang.models.relation.RelationUserGroupBuying;
-import top.xuguoliang.models.relation.RelationUserGroupBuyingDao;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.User;
@@ -36,6 +26,7 @@ import top.xuguoliang.service.groupbuying.web.*;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -46,13 +37,13 @@ public class GroupBuyingWebService {
     private static final Logger logger = LoggerFactory.getLogger(GroupBuyingWebService.class);
 
     @Resource
-    private CommonSpecUtil<GroupBuying> commonSpecUtil;
-
-    @Resource
     private GroupBuyingDao groupBuyingDao;
 
     @Resource
     private UserGroupBuyingDao userGroupBuyingDao;
+
+    @Resource
+    private CommodityBannerDao commodityBannerDao;
 
     @Resource
     private UserDao userDao;
@@ -74,13 +65,37 @@ public class GroupBuyingWebService {
 
 
     /**
-     * 拼团列表
+     * 分页查询拼团列表
      *
      * @param pageable 分页信息
      * @return 分页拼团列表
      */
-    public Page<GroupBuyingWebResultVO> findPage(Pageable pageable) {
-        return groupBuyingDao.findAll(pageable).map(this::convertGroupBuyingToVO);
+    public Page<GroupBuyingWebResultVO> findPageGroupBuying(Pageable pageable) {
+        return groupBuyingDao.findAllByDeletedIsFalseOrderByCreateTimeDesc(pageable).map(groupBuying -> {
+            GroupBuyingWebResultVO resultVO = new GroupBuyingWebResultVO();
+            if (ObjectUtils.isEmpty(groupBuying)) {
+                logger.error("拼团不存在");
+                return null;
+            }
+            BeanUtils.copyNonNullProperties(groupBuying, resultVO);
+
+            // 商品标题名称
+            Integer commodityId = groupBuying.getCommodityId();
+            Commodity commodity = commodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+            if (!ObjectUtils.isEmpty(commodity)) {
+                resultVO.setCommodityName(commodity.getCommodityTitle());
+            }
+
+            // 商品图片
+            List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(commodityId);
+            if (!ObjectUtils.isEmpty(banners)) {
+                resultVO.setCommodityImage(banners.get(0).getCommodityBannerUrl());
+            }
+
+            resultVO.setMaxPeopleNumber(groupBuying.getPeopleNumber());
+
+            return resultVO;
+        });
     }
 
     /**
@@ -89,7 +104,7 @@ public class GroupBuyingWebService {
      * @param groupBuyingId 拼团id
      * @return 拼团信息
      */
-    public GroupBuyingWebResultVO getGroupBuying(Integer groupBuyingId) {
+    public GroupBuyingWebDetailVO getGroupBuying(Integer groupBuyingId) {
         GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying) || groupBuying.getDeleted()) {
             logger.error("查询拼团失败：该拼团不存在");
@@ -98,12 +113,18 @@ public class GroupBuyingWebService {
         return convertGroupBuyingToVO(groupBuying);
     }
 
-    private GroupBuyingWebResultVO convertGroupBuyingToVO(GroupBuying groupBuying) {
+    /**
+     * 拼团转VO
+     *
+     * @param groupBuying 拼团
+     * @return VO
+     */
+    private GroupBuyingWebDetailVO convertGroupBuyingToVO(GroupBuying groupBuying) {
         Date date = new Date();
         if (!(date.before(groupBuying.getEndTime()) && date.after(groupBuying.getBeginTime()))) {
             return null;
         }
-        GroupBuyingWebResultVO resultVO = new GroupBuyingWebResultVO();
+        GroupBuyingWebDetailVO resultVO = new GroupBuyingWebDetailVO();
         // 商品信息
         Integer commodityId = groupBuying.getCommodityId();
         Commodity commodity = commodityDao.findOne(commodityId);
@@ -118,7 +139,6 @@ public class GroupBuyingWebService {
             logger.error("商品规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
         }
-        // todo 查询评论
 
         // 设置返回值
         BeanUtils.copyNonNullProperties(commodity, resultVO);
@@ -128,6 +148,49 @@ public class GroupBuyingWebService {
         return resultVO;
     }
 
+    /**
+     * 分页查询用户拼团
+     *
+     * @param pageable 分页信息
+     * @return 用户拼团
+     */
+    public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(Pageable pageable) {
+        return userGroupBuyingDao.findByIsFullIsFalseOrderByCreateTimeDesc(pageable).map(userGroupBuying -> {
+            UserGroupBuyingWebResultVO resultVO = new UserGroupBuyingWebResultVO();
+            if (ObjectUtils.isEmpty(userGroupBuying)) {
+                logger.error("用户拼团不存在");
+                return null;
+            }
+            BeanUtils.copyNonNullProperties(userGroupBuying, resultVO);
+
+            // 商品标题名称
+            Integer commodityId = userGroupBuying.getCommodityId();
+            Commodity commodity = commodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+            if (!ObjectUtils.isEmpty(commodity)) {
+                resultVO.setCommodityName(commodity.getCommodityTitle());
+            }
+
+            // 差人数
+            resultVO.setNeedPeopleNumber(userGroupBuying.getMaxPeopleNumber() - userGroupBuying.getCurrentPeopleNumber());
+
+            // 商品图片
+            List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(commodityId);
+            if (!ObjectUtils.isEmpty(banners)) {
+                resultVO.setCommodityImage(banners.get(0).getCommodityBannerUrl());
+            }
+
+            // 用户
+            Integer userId = userGroupBuying.getSponsorUserId();
+            User user = userDao.findOne(userId);
+            if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
+                logger.error("用户不存在");
+            } else {
+                resultVO.setAvatarUrl(user.getAvatarUrl());
+            }
+
+            return resultVO;
+        });
+    }
 
     /**
      * 开团
@@ -323,5 +386,55 @@ public class GroupBuyingWebService {
         resultVO.setOrderId(orderSave.getOrderId());
 
         return resultVO;
+    }
+
+    /**
+     * 获取用户拼团详情
+     *
+     * @param userGroupBuyingId 用户拼团id
+     * @return 用户拼团详情
+     */
+    public UserGroupBuyingWebDetailVO getUserGroupBuying(Integer userGroupBuyingId) {
+        UserGroupBuying userGroupBuying = userGroupBuyingDao.findOne(userGroupBuyingId);
+        if (ObjectUtils.isEmpty(userGroupBuying)) {
+            logger.error("用户拼团不存在");
+            throw new ValidationException(MessageCodes.WEB_USER_GROUP_BUYING_NOT_EXIST);
+        }
+
+        return convertUserGroupBuyingToVO(userGroupBuying);
+    }
+
+    /**
+     * 用户拼团转VO
+     *
+     * @param userGroupBuying 用户拼团
+     * @return VO
+     */
+    private UserGroupBuyingWebDetailVO convertUserGroupBuyingToVO(UserGroupBuying userGroupBuying) {
+        Date date = new Date();
+        if (!(date.before(userGroupBuying.getEndTime()) && date.after(userGroupBuying.getBeginTime()))) {
+            return null;
+        }
+        UserGroupBuyingWebDetailVO detailVO = new UserGroupBuyingWebDetailVO();
+        // 商品信息
+        Integer commodityId = userGroupBuying.getCommodityId();
+        Commodity commodity = commodityDao.findOne(commodityId);
+        if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
+            logger.error("商品不存在");
+            throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
+        }
+        // 规格信息
+        Integer stockKeepingUnitId = userGroupBuying.getStockKeepingUnitId();
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+        if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
+            logger.error("商品规格不存在");
+            throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
+        }
+
+        // 设置返回值
+        BeanUtils.copyNonNullProperties(commodity, detailVO);
+        BeanUtils.copyNonNullProperties(stockKeepingUnit, detailVO);
+
+        return detailVO;
     }
 }
