@@ -7,10 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingWebService;
-import top.xuguoliang.service.groupbuying.web.GroupBuyingWebJoinParamVO;
-import top.xuguoliang.service.groupbuying.web.GroupBuyingWebResultVO;
-import top.xuguoliang.service.groupbuying.web.UserGroupBuyingWebJoinParamVO;
-import top.xuguoliang.service.groupbuying.web.UserGroupBuyingWebResultVO;
+import top.xuguoliang.service.groupbuying.web.*;
 
 import javax.annotation.Resource;
 
@@ -37,9 +34,16 @@ public class GroupBuyingController {
         return groupBuyingWebService.getGroupBuying(groupBuyingId);
     }
 
+    @PostMapping("open")
+    @ApiOperation("开团")
+    public UserGroupBuyingWebOpenResultVO openUserGroupBuying(@RequestBody UserGroupBuyingWebOpenParamVO vo) {
+        Integer userId = UserHelper.getUserId();
+        return groupBuyingWebService.openUserGroupBuying(userId, vo);
+    }
+
     @PostMapping("join")
     @ApiOperation("加入拼团")
-    public UserGroupBuyingWebResultVO joinGroupBuying(@RequestBody UserGroupBuyingWebJoinParamVO vo) {
+    public UserGroupBuyingWebResultVO joinUserGroupBuying(@RequestBody UserGroupBuyingWebJoinParamVO vo) {
         Integer userId = UserHelper.getUserId();
         return groupBuyingWebService.joinUserGroupBuying(userId, vo);
     }

@@ -72,11 +72,6 @@ public class GroupBuyingWebService {
     @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
 
-    @Resource
-    private PaymentUtil paymentUtil;
-
-    @Resource
-    private RelationUserGroupBuyingDao relationUserGroupBuyingDao;
 
     /**
      * 拼团列表
@@ -142,7 +137,7 @@ public class GroupBuyingWebService {
      * @return 预支付
      */
     @Transactional(rollbackOn = Exception.class)
-    public UserGroupBuyingWebOpenResultVO openGroupBuying(Integer userId, UserGroupBuyingWebOpenParamVO paramVO) {
+    public UserGroupBuyingWebOpenResultVO openUserGroupBuying(Integer userId, UserGroupBuyingWebOpenParamVO paramVO) {
         Date now = new Date();
 
         Integer addressId = paramVO.getAddressId();
