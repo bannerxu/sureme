@@ -4,8 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Lob;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -17,6 +16,8 @@ import java.util.Date;
 @ApiModel("秒杀")
 public class Second {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("秒杀id")
     private Integer secondId;
 
