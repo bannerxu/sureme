@@ -250,7 +250,9 @@ public class GroupBuyingWebService {
         }
 
         // 判断拼团人数是否已满
-        if (userGroupBuying.getCurrentPeopleNumber() >= userGroupBuying.getMaxPeopleNumber()) {
+        Integer currentPeopleNumber = userGroupBuying.getCurrentPeopleNumber();
+        Integer maxPeopleNumber = userGroupBuying.getMaxPeopleNumber();
+        if (currentPeopleNumber >= maxPeopleNumber) {
             logger.error("加入拼团失败：拼团人数已满");
             throw new ValidationException(MessageCodes.WEB_USER_GROUP_BUYING_PEOPLE_FULL);
         }
@@ -290,18 +292,12 @@ public class GroupBuyingWebService {
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
         }
 
-        // 创建用户拼团
-        UserGroupBuying userGroupBuyingNew = new UserGroupBuying();
-        BeanUtils.copyNonNullProperties(commodity, userGroupBuyingNew);
-        BeanUtils.copyNonNullProperties(userGroupBuying, userGroupBuyingNew);
-        userGroupBuyingNew.setMaxPeopleNumber(userGroupBuying.getMaxPeopleNumber());
-        userGroupBuyingNew.setCurrentPeopleNumber(1);
-        userGroupBuyingNew.setSponsorUserId(userId);
-        userGroupBuyingNew.setIsFull(false);
-        userGroupBuyingNew.setGroupBuyingId(userGroupBuying.getGroupBuyingId());
-        userGroupBuyingNew.setCreateTime(now);
-        userGroupBuyingNew.setUpdateTime(now);
-        UserGroupBuying userGroupBuyingSave = userGroupBuyingDao.save(userGroupBuyingNew);
+        // 修改用户拼团
+        int nowPeopleNumber = currentPeopleNumber + 1;
+        userGroupBuying.setCurrentPeopleNumber(nowPeopleNumber);
+        userGroupBuying.setUpdateTime(now);
+        userGroupBuying.setIsFull(nowPeopleNumber >= maxPeopleNumber);
+        UserGroupBuying userGroupBuyingSave = userGroupBuyingDao.save(userGroupBuying);
 
         // 创建拼团订单，保存拼团信息，地址信息
         Order order = new Order();
