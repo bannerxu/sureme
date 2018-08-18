@@ -65,6 +65,7 @@ public class GroupBuyingWebDetailVO {
     @ApiModelProperty("分类名")
     private String categoryName;
 
+    @ApiModelProperty("商品轮播")
     private List<CommodityBanner> commodityBanners;
 
     // ---------------------规格信息---------------------
