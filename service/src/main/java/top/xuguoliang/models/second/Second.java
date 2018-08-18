@@ -21,6 +21,12 @@ public class Second {
     @ApiModelProperty("秒杀id")
     private Integer secondId;
 
+    @ApiModelProperty("秒杀数量，库存")
+    private Integer secondCount;
+
+    @ApiModelProperty("秒杀价格")
+    private BigDecimal secondPrice;
+
     @ApiModelProperty("原价")
     private BigDecimal originalPrice;
 

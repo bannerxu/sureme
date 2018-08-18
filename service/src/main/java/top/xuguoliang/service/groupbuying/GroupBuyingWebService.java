@@ -254,6 +254,7 @@ public class GroupBuyingWebService {
 
         // 创建用户拼团
         UserGroupBuying userGroupBuyingNew = new UserGroupBuying();
+        BeanUtils.copyNonNullProperties(user, userGroupBuyingNew);
         BeanUtils.copyNonNullProperties(commodity, userGroupBuyingNew);
         BeanUtils.copyNonNullProperties(groupBuying, userGroupBuyingNew);
         userGroupBuyingNew.setMaxPeopleNumber(groupBuying.getPeopleNumber());
@@ -313,6 +314,12 @@ public class GroupBuyingWebService {
         if (ObjectUtils.isEmpty(userGroupBuying)) {
             logger.error("加入拼团失败：拼团不存在");
             throw new ValidationException(MessageCodes.WEB_GROUP_BUYING_NOT_EXIST);
+        }
+
+        // 判断是否是自己的团
+        if (userGroupBuying.getSponsorUserId().equals(userId)) {
+            logger.error("加入拼团失败：用户不能加入自己发起的团");
+            throw new ValidationException(MessageCodes.WEB_USER_GROUP_BUYING_OWN);
         }
 
         // 判断拼团人数是否已满

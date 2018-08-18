@@ -58,5 +58,9 @@ public class RedisKeyPrefix {
     public static String WebWXAccessToken() {
         return "web.wx.accessToken";
     }
+
+    public static String secondFindPage() {
+        return "secondFindPage";
+    }
 }
 

@@ -1,4 +1,4 @@
-package top.xuguoliang.service.second.cms;
+package top.xuguoliang.service.second.web;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * @author jinguoguo
  */
 @Data
-public class SecondCmsPageResultVO {
+public class SecondWebPageResultVO {
 
     @ApiModelProperty("秒杀id")
     private Integer secondId;
@@ -32,5 +32,7 @@ public class SecondCmsPageResultVO {
     @ApiModelProperty("总库存")
     private Integer secondCount;
 
+    @ApiModelProperty("目前已买")
+    private Integer currentPaidCount;
 
 }

@@ -4,10 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -27,6 +24,9 @@ public class UserGroupBuying {
     @ApiModelProperty("发起者的用户id")
     private Integer sponsorUserId;
 
+    @ApiModelProperty("用户昵称")
+    private String nickname;
+
     @ApiModelProperty("对应拼团id")
     private Integer groupBuyingId;
 
@@ -34,7 +34,11 @@ public class UserGroupBuying {
     private Integer commodityId;
 
     @ApiModelProperty("商品名称")
-    private String commodityName;
+    private String commodityTitle;
+
+    @Lob
+    @ApiModelProperty("商品详情")
+    private String commodityDetail;
 
     @ApiModelProperty("规格id")
     private Integer stockKeepingUnitId;
@@ -43,7 +47,7 @@ public class UserGroupBuying {
     private String skuName;
 
     @ApiModelProperty("原价")
-    private String originalPrice;
+    private BigDecimal originalPrice;
 
     @ApiModelProperty("团购价")
     private BigDecimal groupPrice;
