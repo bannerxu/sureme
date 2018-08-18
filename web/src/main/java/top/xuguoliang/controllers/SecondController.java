@@ -39,6 +39,6 @@ public class SecondController {
     @PostMapping
     @ApiOperation("秒杀")
     public SecondKillResultVO secondKill(@PathVariable Integer secondId) {
-
+        return null;
     }
 }
