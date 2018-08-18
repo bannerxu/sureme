@@ -32,6 +32,9 @@ public class UserGroupBuyingWebDetailVO {
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
+    @ApiModelProperty("销量")
+    private Integer salesVolume;
+
     @ApiModelProperty("商品轮播")
     private List<CommodityBanner> commodityBanners;
 
