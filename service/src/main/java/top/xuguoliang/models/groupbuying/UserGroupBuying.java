@@ -40,6 +40,9 @@ public class UserGroupBuying {
     @ApiModelProperty("商品详情")
     private String commodityDetail;
 
+    @ApiModelProperty("销量")
+    private Integer salesVolume;
+
     @ApiModelProperty("规格id")
     private Integer stockKeepingUnitId;
 

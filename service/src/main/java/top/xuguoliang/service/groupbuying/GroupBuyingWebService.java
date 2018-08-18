@@ -9,7 +9,6 @@ import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
-import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.groupbuying.GroupBuying;
