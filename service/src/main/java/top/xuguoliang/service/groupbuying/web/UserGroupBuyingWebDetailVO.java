@@ -44,6 +44,9 @@ public class UserGroupBuyingWebDetailVO {
     @ApiModelProperty("规格名称")
     private String skuName;
 
+    @ApiModelProperty("库存")
+    private Integer stock;
+
     @ApiModelProperty("原价")
     private String originalPrice;
 
