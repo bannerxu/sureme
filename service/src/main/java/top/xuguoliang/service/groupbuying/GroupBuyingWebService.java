@@ -189,6 +189,7 @@ public class GroupBuyingWebService {
                 logger.error("用户不存在");
             } else {
                 resultVO.setAvatarUrl(user.getAvatarUrl());
+                resultVO.setNickname(user.getNickName());
             }
 
             return resultVO;
@@ -264,6 +265,7 @@ public class GroupBuyingWebService {
         userGroupBuyingNew.setGroupBuyingId(groupBuyingId);
         userGroupBuyingNew.setCreateTime(now);
         userGroupBuyingNew.setUpdateTime(now);
+        userGroupBuyingNew.setNickname(user.getNickName());
         UserGroupBuying userGroupBuyingSave = userGroupBuyingDao.save(userGroupBuyingNew);
 
         // 创建拼团订单，保存拼团信息，地址信息
