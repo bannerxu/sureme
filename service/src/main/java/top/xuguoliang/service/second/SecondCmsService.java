@@ -104,8 +104,8 @@ public class SecondCmsService {
             logger.error("添加秒杀失败：规格{} 不存在");
             throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
         }
+        BeanUtils.copyNonNullProperties(commodity, second);
         BeanUtils.copyNonNullProperties(stockKeepingUnit, second);
-
         BeanUtils.copyNonNullProperties(paramVO, second);
         Second secondSave = secondDao.saveAndFlush(second);
 
