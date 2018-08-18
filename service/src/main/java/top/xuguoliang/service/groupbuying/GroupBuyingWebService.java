@@ -139,11 +139,14 @@ public class GroupBuyingWebService {
             logger.error("商品规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
         }
+        // 商品轮播
+        List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
 
         // 设置返回值
         BeanUtils.copyNonNullProperties(commodity, resultVO);
         BeanUtils.copyNonNullProperties(stockKeepingUnit, resultVO);
-        // BeanUtils.copyNonNullProperties(); todo 设置评论
+        BeanUtils.copyNonNullProperties(groupBuying, resultVO);
+        resultVO.setCommodityBanners(commodityBanners);
 
         return resultVO;
     }

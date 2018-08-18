@@ -2,9 +2,11 @@ package top.xuguoliang.service.groupbuying.web;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.commodity.CommodityBanner;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -62,6 +64,8 @@ public class GroupBuyingWebDetailVO {
 
     @ApiModelProperty("分类名")
     private String categoryName;
+
+    private List<CommodityBanner> commodityBanners;
 
     // ---------------------规格信息---------------------
 
