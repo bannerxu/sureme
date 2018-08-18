@@ -2,6 +2,7 @@ package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,7 @@ public class SecondController {
 
     @GetMapping
     @ApiOperation("分页")
-    @RequiresRoles({RoleConstant.ADMIN, RoleConstant.ROOT})
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public Page<SecondCmsPageResultVO> findPage(@PageableDefault Pageable pageable) {
         return secondCmsService.findPage(pageable);
     }
@@ -38,7 +39,7 @@ public class SecondController {
 
     @GetMapping("/{secondId}")
     @ApiOperation("详情")
-    @RequiresRoles({RoleConstant.ADMIN, RoleConstant.ROOT})
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public SecondCmsDetailVO getSecondDetail(@PathVariable Integer secondId) {
         return secondCmsService.getSecondDetail(secondId);
     }
@@ -46,7 +47,7 @@ public class SecondController {
 
     @PostMapping
     @ApiOperation("添加")
-    @RequiresRoles({RoleConstant.ADMIN, RoleConstant.ROOT})
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public SecondCmsAddResultVO addSecond(@RequestBody SecondCmsAddParamVO paramVO) {
         return secondCmsService.addSecond(paramVO);
     }
@@ -54,7 +55,7 @@ public class SecondController {
 
     @DeleteMapping("/{secondId}")
     @ApiOperation("删除")
-    @RequiresRoles({RoleConstant.ADMIN, RoleConstant.ROOT})
+    @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public void deleted(@PathVariable Integer secondId) {
         secondCmsService.deleteSecond(secondId);
     }
