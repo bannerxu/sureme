@@ -20,6 +20,7 @@ import top.xuguoliang.service.second.cms.SecondCmsDetailVO;
 import top.xuguoliang.service.second.cms.SecondCmsPageResultVO;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -95,6 +96,7 @@ public class SecondCmsService {
      * @return 添加完成
      */
     public SecondCmsAddResultVO addSecond(SecondCmsAddParamVO paramVO) {
+        Date now = new Date();
         Second second = new Second();
 
         // 商品信息
@@ -117,6 +119,7 @@ public class SecondCmsService {
         BeanUtils.copyNonNullProperties(commodity, second);
         BeanUtils.copyNonNullProperties(stockKeepingUnit, second);
         BeanUtils.copyNonNullProperties(paramVO, second);
+        second.setOriginalPrice(stockKeepingUnit.getDiscountPrice());
         Second secondSave = secondDao.saveAndFlush(second);
 
         SecondCmsAddResultVO resultVO = new SecondCmsAddResultVO();
