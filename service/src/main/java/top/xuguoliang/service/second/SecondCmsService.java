@@ -20,6 +20,7 @@ import top.xuguoliang.service.second.cms.SecondCmsDetailVO;
 import top.xuguoliang.service.second.cms.SecondCmsPageResultVO;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -55,6 +56,14 @@ public class SecondCmsService {
         return secondDao.findAll(deleted, pageable).map(second -> {
             SecondCmsPageResultVO vo = new SecondCmsPageResultVO();
             BeanUtils.copyNonNullProperties(second, vo);
+
+            // 商品轮播
+            List<CommodityBanner> banners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalseOrderByCommodityBannerIdAsc(second.getCommodityId());
+            if (ObjectUtils.isEmpty(banners)) {
+                logger.error("分页查询商品错误：商品轮播{} 不存在");
+            } else {
+                vo.setCommodityImage(banners.get(0).getCommodityBannerUrl());
+            }
             return vo;
         });
     }
@@ -104,6 +113,7 @@ public class SecondCmsService {
             logger.error("添加秒杀失败：规格{} 不存在");
             throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
         }
+
         BeanUtils.copyNonNullProperties(commodity, second);
         BeanUtils.copyNonNullProperties(stockKeepingUnit, second);
         BeanUtils.copyNonNullProperties(paramVO, second);

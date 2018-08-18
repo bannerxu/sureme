@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -18,7 +19,7 @@ public class SecondCmsPageResultVO {
     private String commodityImage;
 
     @ApiModelProperty("商品名称")
-    private String commodityName;
+    private String commodityTitle;
 
     @ApiModelProperty("规格名称")
     private String skuName;
@@ -31,6 +32,12 @@ public class SecondCmsPageResultVO {
 
     @ApiModelProperty("总库存")
     private Integer secondCount;
+
+    @ApiModelProperty("开始时间")
+    private Date beginTime;
+
+    @ApiModelProperty("结束时间")
+    private Date endTime;
 
 
 }
