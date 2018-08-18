@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
@@ -14,6 +16,7 @@ import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.second.Second;
 import top.xuguoliang.models.second.SecondDao;
+import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.second.cms.SecondCmsAddParamVO;
 import top.xuguoliang.service.second.cms.SecondCmsAddResultVO;
 import top.xuguoliang.service.second.cms.SecondCmsDetailVO;
@@ -45,6 +48,9 @@ public class SecondCmsService {
 
     @Resource
     private CommonSpecUtil<Second> commonSpecUtil;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 分页查询秒杀
@@ -122,6 +128,13 @@ public class SecondCmsService {
         second.setOriginalPrice(stockKeepingUnit.getDiscountPrice());
         Second secondSave = secondDao.saveAndFlush(second);
 
+        // 初始化redis中对应秒杀的属性：已售数量和总数量
+        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+        String secondPaid = RedisKeyPrefix.secondPaid(secondSave.getSecondId());
+        String secondCount = RedisKeyPrefix.secondCount(secondSave.getSecondId());
+        valueOperations.set(secondPaid, "0");
+        valueOperations.set(secondCount, String.valueOf(secondSave.getSecondCount()));
+
         SecondCmsAddResultVO resultVO = new SecondCmsAddResultVO();
         BeanUtils.copyNonNullProperties(secondSave, resultVO);
         return resultVO;
@@ -141,6 +154,13 @@ public class SecondCmsService {
         }
         second.setDeleted(true);
         secondDao.saveAndFlush(second);
+
+        // 删除redis中对应的秒杀属性
+        String secondPaid = RedisKeyPrefix.secondPaid(secondId);
+        String secondCount = RedisKeyPrefix.secondCount(secondId);
+        stringRedisTemplate.delete(secondPaid);
+        stringRedisTemplate.delete(secondCount);
+
     }
 
 }

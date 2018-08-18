@@ -62,5 +62,13 @@ public class RedisKeyPrefix {
     public static String secondFindPage() {
         return "secondFindPage";
     }
+
+    public static String secondPaid(Integer secondId) {
+        return "second.paid:" + secondId;
+    }
+
+    public static String secondCount(Integer secondId) {
+        return "second.count:" + secondId;
+    }
 }
 

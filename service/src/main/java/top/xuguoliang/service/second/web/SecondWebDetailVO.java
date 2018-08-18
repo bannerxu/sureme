@@ -2,9 +2,11 @@ package top.xuguoliang.service.second.web;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.commodity.CommodityBanner;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -35,6 +37,8 @@ public class SecondWebDetailVO {
 
     @ApiModelProperty("更新时间")
     private Date updateTime;
+
+    private List<CommodityBanner> commodityBanners;
 
     @ApiModelProperty("删除")
     private Boolean deleted = false;

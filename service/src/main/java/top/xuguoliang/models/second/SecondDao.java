@@ -14,6 +14,7 @@ public interface SecondDao extends JpaSpecificationExecutor<Second>, JpaReposito
     /**
      * 分页查询没到结束时间的未删除的秒杀
      * @param endTime 结束时间
+     * @param pageable 分页信息
      * @return 秒杀
      */
     Page<Second> findAllByEndTimeAfterAndDeletedIsFalse(Date endTime, Pageable pageable);
