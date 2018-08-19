@@ -31,5 +31,7 @@ public class PaymentController {
 
     public void payOrderNotify(WxPayOrderNotifyResult wxPayOrderNotifyResult) {
 
+        // TODO: 2018-08-19 支付回调，如果成功要创建佣金记录
+        paymentWebService.payOrderNotify(wxPayOrderNotifyResult);
     }
 }
