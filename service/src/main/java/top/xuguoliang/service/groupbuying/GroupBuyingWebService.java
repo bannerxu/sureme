@@ -70,8 +70,8 @@ public class GroupBuyingWebService {
      * @return 分页拼团列表
      */
     public Page<GroupBuyingWebResultVO> findPageGroupBuying(Pageable pageable) {
-        return groupBuyingDao.findAllByBeginTimeBeforeAndEndTimeAfterAndDeletedIsFalseOrderByCreateTimeDesc(pageable).map(groupBuying -> {
-            Date date = new Date();
+        Date date = new Date();
+        return groupBuyingDao.findAllByBeginTimeBeforeAndEndTimeAfterAndDeletedIsFalseOrderByCreateTimeDesc(date, date, pageable).map(groupBuying -> {
             if (ObjectUtils.isEmpty(groupBuying)) {
                 logger.error("拼团不存在");
                 return null;
@@ -159,16 +159,11 @@ public class GroupBuyingWebService {
      * @return 用户拼团
      */
     public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(Pageable pageable) {
-        return userGroupBuyingDao.findByIsFullIsFalseOrderByCreateTimeDesc(pageable).map(userGroupBuying -> {
-            Date date = new Date();
+        Date date = new Date();
+        return userGroupBuyingDao.findByBeginTimeBeforeAndEndTimeAfterAndIsFullIsFalseOrderByCreateTimeDesc(date, date, pageable).map(userGroupBuying -> {
             UserGroupBuyingWebResultVO resultVO = new UserGroupBuyingWebResultVO();
             if (ObjectUtils.isEmpty(userGroupBuying)) {
                 logger.error("用户拼团不存在");
-                return null;
-            }
-
-            // 不在拼团时间内
-            if (!(date.before(userGroupBuying.getEndTime()) && date.after(userGroupBuying.getBeginTime()))) {
                 return null;
             }
             BeanUtils.copyNonNullProperties(userGroupBuying, resultVO);
