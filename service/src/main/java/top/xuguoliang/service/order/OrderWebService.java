@@ -154,10 +154,12 @@ public class OrderWebService {
      * @param pageable 分页信息
      * @return 订单信息
      */
-    public Page<OrderWebResultVO> findPage(Integer userId, Pageable pageable) {
+    public Page<OrderWebResultVO> findPage(Integer userId, OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("userId", userId);
+        Specification<Order> status = commonSpecUtil.equal("orderStatus", orderStatus);
+        Specifications<Order> where = Specifications.where(specification).and(status);
 
-        return orderDao.findAll(specification, pageable).map(order -> {
+        return orderDao.findAll(where, pageable).map(order -> {
             OrderWebResultVO vo = new OrderWebResultVO();
             BeanUtils.copyNonNullProperties(order, vo);
 

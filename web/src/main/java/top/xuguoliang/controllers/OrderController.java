@@ -29,7 +29,7 @@ public class OrderController {
     @ApiOperation("分页查询")
     public Page<OrderWebResultVO> findPage(@PathVariable OrderStatusEnum orderStatus, @PageableDefault Pageable pageable) {
         Integer userId = UserHelper.getUserId();
-        return orderWebService.findPage(userId, pageable);
+        return orderWebService.findPage(userId, orderStatus, pageable);
     }
 
     @GetMapping("/{orderId}")
