@@ -1,7 +1,6 @@
 package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +56,7 @@ public class OrderController {
 
 
     @ApiOperation("订单评价")
-    @ApiModelProperty("comment")
+    @PostMapping("comment")
     public void commentOrder(@RequestBody CommentOrderParamVO vo) {
         Integer userId = UserHelper.getUserId();
         orderWebService.commentOrder(userId, vo);
