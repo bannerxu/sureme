@@ -4,6 +4,7 @@ package top.xuguoliang.models.brokerage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ import java.util.Date;
  */
 @Data
 @Entity
+@NoArgsConstructor
 @ApiModel("佣金记录")
 public class Brokerage {
 
@@ -42,4 +44,13 @@ public class Brokerage {
 
     @ApiModelProperty("创建时间")
     private Date createTime = new Date();
+
+    public Brokerage(Integer orderId, String orderNumber, BigDecimal money, Double scale, Date createTime,Integer userId) {
+        this.orderId = orderId;
+        this.orderNumber = orderNumber;
+        this.money = money;
+        this.scale = scale;
+        this.createTime = createTime;
+        this.userId = userId;
+    }
 }

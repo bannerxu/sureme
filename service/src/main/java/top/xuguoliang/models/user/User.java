@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -67,5 +68,11 @@ public class User {
 
     @ApiModelProperty("宝宝生日")
     private Date babyBirthday;
+
+    @ApiModelProperty("佣金余额")
+    private BigDecimal balance;
+
+    @ApiModelProperty("冻结余额")
+    private BigDecimal freezeBalance;
 
 }

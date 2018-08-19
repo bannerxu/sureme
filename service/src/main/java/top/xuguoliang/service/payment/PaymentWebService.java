@@ -1,5 +1,6 @@
 package top.xuguoliang.service.payment;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -16,6 +17,7 @@ import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.brokerage.BrokerageWebService;
 
 import javax.annotation.Resource;
 
@@ -24,6 +26,8 @@ import javax.annotation.Resource;
  */
 @Service
 public class PaymentWebService {
+    @Resource
+    private BrokerageWebService brokerageWebService;
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentWebService.class);
 
@@ -73,5 +77,17 @@ public class PaymentWebService {
         }
 
         return null;
+    }
+
+    /**
+     * 校验回调
+     *
+     * @param wxPayOrderNotifyResult
+     */
+    public void payOrderNotify(WxPayOrderNotifyResult wxPayOrderNotifyResult) {
+
+        //如果成功，就创建佣金记录
+
+        brokerageWebService.insert(wxPayOrderNotifyResult.getOutTradeNo());
     }
 }
