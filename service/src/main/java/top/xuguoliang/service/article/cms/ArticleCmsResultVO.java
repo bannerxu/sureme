@@ -40,4 +40,7 @@ public class ArticleCmsResultVO {
 
     @ApiModelProperty("数组：商品")
     private List<Commodity> commodities;
+
+    @ApiModelProperty("对应怀孕周数 0通用")
+    private Integer pregnancyWeek;
 }

@@ -31,6 +31,7 @@ import top.xuguoliang.service.article.web.ArticleWebDetailVO;
 import top.xuguoliang.service.article.web.ArticleWebResultVO;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -306,4 +307,26 @@ public class ArticleWebService {
         return true;
     }
 
+    /**
+     * 根据用户的怀孕日期获取对应周数的推荐文章
+     * @param userId 用户id
+     * @return 文章
+     */
+    public Article getWeekly(Integer userId) {
+        User user = userDao.findOne(userId);
+        // 计算用户当前是怀孕第几周
+        Date pregnantDate = user.getPregnantDate();
+        long time = pregnantDate.getTime();
+        long now = System.currentTimeMillis();
+        int weeks = (int) (Math.abs(now - time)/(1000 * 60 * 60 * 24 * 7));
+
+        // 查找对应的文章
+        Article article = articleDao.findByPregnancyWeekIsAndDeletedIsFalse(weeks);
+        if (ObjectUtils.isEmpty(article)) {
+            logger.error("获取周推文章失败：文章为空");
+            throw new ValidationException(MessageCodes.WEB_ARTICLE_NOT_EXIST);
+        }
+
+        return article;
+    }
 }

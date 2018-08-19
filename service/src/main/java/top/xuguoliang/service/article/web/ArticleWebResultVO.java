@@ -42,4 +42,7 @@ public class ArticleWebResultVO {
 
     @ApiModelProperty("文章图片")
     private String articleImage;
+
+    @ApiModelProperty("对应怀孕周数 0通用")
+    private Integer pregnancyWeek;
 }

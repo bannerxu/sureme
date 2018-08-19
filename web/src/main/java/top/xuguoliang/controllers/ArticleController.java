@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import top.xuguoliang.models.article.Article;
 import top.xuguoliang.models.article.ArticleTypeEnum;
 import top.xuguoliang.models.comment.ArticleComment;
 import top.xuguoliang.service.article.ArticleWebService;
@@ -67,6 +68,13 @@ public class ArticleController {
     public Boolean like(@PathVariable Integer articleId) {
         Integer userId = UserHelper.getUserId();
         return articleWebService.like(userId, articleId);
+    }
+
+    @GetMapping("weekly")
+    @ApiOperation("获取每周推荐文章")
+    public Article getWeekly() {
+        Integer userId = UserHelper.getUserId();
+        return articleWebService.getWeekly(userId);
     }
 
 }

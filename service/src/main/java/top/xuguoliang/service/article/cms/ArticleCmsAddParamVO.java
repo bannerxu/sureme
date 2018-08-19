@@ -32,4 +32,8 @@ public class ArticleCmsAddParamVO {
     @NotNull(message = "文章商品不能为空")
     @ApiModelProperty("数组：商品id")
     private List<Integer> commodityIds;
+
+    @NotNull(message = "怀孕周数")
+    @ApiModelProperty("对应怀孕周数 0通用")
+    private Integer pregnancyWeek;
 }

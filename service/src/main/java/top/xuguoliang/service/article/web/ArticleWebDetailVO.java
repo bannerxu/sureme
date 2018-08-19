@@ -58,4 +58,7 @@ public class ArticleWebDetailVO {
 
     @ApiModelProperty("收藏")
     private Boolean isStar = false;
+
+    @ApiModelProperty("对应怀孕周数 0通用")
+    private Integer pregnancyWeek;
 }

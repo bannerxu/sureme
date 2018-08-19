@@ -39,6 +39,10 @@ public class Article {
     @ApiModelProperty("收藏数")
     private Integer starCount = 0;
 
+    @Column(unique = true)
+    @ApiModelProperty("对应怀孕周数 0通用")
+    private Integer pregnancyWeek;
+
     @ApiModelProperty("创建时间")
     private Date createTime;
 

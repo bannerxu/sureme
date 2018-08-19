@@ -9,4 +9,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface ArticleDao extends JpaSpecificationExecutor<Article>, JpaRepository<Article, Integer> {
 
     Article findByArticleIdIsAndDeletedIsFalse(Integer articleId);
+
+    /**
+     * 根据怀孕周数查询文章
+     * @param pregnancyWeek 怀孕周数，唯一
+     * @return 文章
+     */
+    Article findByPregnancyWeekIsAndDeletedIsFalse(Integer pregnancyWeek);
 }
