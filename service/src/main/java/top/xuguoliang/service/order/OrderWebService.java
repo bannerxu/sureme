@@ -157,7 +157,13 @@ public class OrderWebService {
     public Page<OrderWebResultVO> findPage(Integer userId, OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("userId", userId);
         Specification<Order> status = commonSpecUtil.equal("orderStatus", orderStatus);
-        Specifications<Order> where = Specifications.where(specification).and(status);
+        Specifications<Order> where;
+
+        if (orderStatus.equals(OrderStatusEnum.QUERY_ALL)) {
+            where = Specifications.where(specification);
+        } else {
+            where = Specifications.where(specification).and(status);
+        }
 
         return orderDao.findAll(where, pageable).map(order -> {
             OrderWebResultVO vo = new OrderWebResultVO();
