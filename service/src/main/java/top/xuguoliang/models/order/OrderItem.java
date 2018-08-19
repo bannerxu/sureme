@@ -6,7 +6,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -20,6 +19,9 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("订单条目id")
     private Integer orderItemId;
+
+    @ApiModelProperty("数量")
+    private Integer count;
 
     // ------------------------商品相关------------------------
 

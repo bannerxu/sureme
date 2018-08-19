@@ -47,7 +47,6 @@ public class OrderController {
     }
 
     @ApiOperation("通过订单号查询订单")
-    @GetMapping("/{orderNumber}")
     public OrderWebResultVO findByOrderNumber(@PathVariable String orderNumber) {
         return orderWebService.findByOrderNumber(orderNumber);
     }

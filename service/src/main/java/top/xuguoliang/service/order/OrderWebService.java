@@ -15,10 +15,7 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.common.utils.PaymentUtil;
-import top.xuguoliang.models.commodity.Commodity;
-import top.xuguoliang.models.commodity.CommodityDao;
-import top.xuguoliang.models.commodity.StockKeepingUnit;
-import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
 import top.xuguoliang.models.order.*;
@@ -62,6 +59,9 @@ public class OrderWebService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CommodityBannerDao commodityBannerDao;
 
     @Resource
     private UserDao userDao;
