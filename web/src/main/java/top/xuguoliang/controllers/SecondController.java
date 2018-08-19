@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.second.SecondWebService;
+import top.xuguoliang.service.second.web.SecondKillParamVO;
 import top.xuguoliang.service.second.web.SecondKillResultVO;
 import top.xuguoliang.service.second.web.SecondWebDetailVO;
 import top.xuguoliang.service.second.web.SecondWebPageResultVO;
@@ -38,7 +39,8 @@ public class SecondController {
 
     @PostMapping
     @ApiOperation("秒杀")
-    public SecondKillResultVO secondKill(@PathVariable Integer secondId) {
-        return null;
+    public SecondKillResultVO secondKill(SecondKillParamVO vo) {
+        Integer userId = UserHelper.getUserId();
+        return secondWebService.secondKill(userId, vo);
     }
 }

@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class SecondKillResultVO {
 
-    @ApiModelProperty("订单id")
-    private Integer orderId;
+    @ApiModelProperty("订单编号")
+    private String orderNumber;
 }

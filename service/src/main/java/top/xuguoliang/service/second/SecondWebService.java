@@ -14,10 +14,21 @@ import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
+import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.models.commodity.*;
+import top.xuguoliang.models.order.Order;
+import top.xuguoliang.models.order.OrderDao;
+import top.xuguoliang.models.order.OrderStatusEnum;
+import top.xuguoliang.models.order.OrderTypeEnum;
 import top.xuguoliang.models.second.Second;
 import top.xuguoliang.models.second.SecondDao;
+import top.xuguoliang.models.user.Address;
+import top.xuguoliang.models.user.AddressDao;
+import top.xuguoliang.models.user.User;
+import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.RedisKeyPrefix;
+import top.xuguoliang.service.second.web.SecondKillParamVO;
+import top.xuguoliang.service.second.web.SecondKillResultVO;
 import top.xuguoliang.service.second.web.SecondWebDetailVO;
 import top.xuguoliang.service.second.web.SecondWebPageResultVO;
 
@@ -35,6 +46,15 @@ public class SecondWebService {
 
     @Resource
     private SecondDao secondDao;
+
+    @Resource
+    private UserDao userDao;
+
+    @Resource
+    private AddressDao addressDao;
+
+    @Resource
+    private OrderDao orderDao;
 
     @Resource
     private CommodityDao commodityDao;
@@ -136,5 +156,70 @@ public class SecondWebService {
         }
 
         return detailVO;
+    }
+
+    /**
+     * 秒杀商品
+     *
+     * @param userId 用户id
+     * @param vo     秒杀id和收货地址id
+     * @return 秒杀结果
+     */
+    public SecondKillResultVO secondKill(Integer userId, SecondKillParamVO vo) {
+
+        // TODO 缓存优化先不做，后面再优化
+
+        Date now = new Date();
+        Integer secondId = vo.getSecondId();
+        Integer addressId = vo.getAddressId();
+
+        User user = userDao.findOne(userId);
+        if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
+            logger.error("秒杀失败：用户{} 不存在", userId);
+            throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
+        }
+
+        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+        Integer secondPaid = Integer.valueOf(valueOperations.get(RedisKeyPrefix.secondPaid(secondId)));
+        Integer secondCount = Integer.valueOf(valueOperations.get(RedisKeyPrefix.secondCount(secondId)));
+
+        // 已售完
+        if (secondPaid >= secondCount) {
+            logger.info("秒杀{} 已经抢完", secondId);
+            throw new ValidationException(MessageCodes.WEB_SECOND_SOLD_OUT);
+        }
+
+        // 秒杀信息
+        Second second = secondDao.findOne(secondId);
+        if (ObjectUtils.isEmpty(second) || second.getDeleted()) {
+            logger.error("秒杀失败：秒杀{} 不存在", second);
+        }
+
+        // 地址信息
+        Address address = addressDao.findByAddressIdIsAndDeletedIsFalse(addressId);
+        if (ObjectUtils.isEmpty(address)) {
+            logger.error("秒杀失败：收货地址{} 不存在");
+            throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
+        }
+
+        // TODO 从缓存中取出秒杀信息
+        // 创建秒杀订单
+        Order order = new Order();
+        BeanUtils.copyNonNullProperties(second, order);
+        BeanUtils.copyNonNullProperties(address, order);
+        order.setCreateTime(now);
+        order.setUpdateTime(now);
+        order.setOrderType(OrderTypeEnum.ORDER_TYPE_SECOND);
+        order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
+        order.setSecondId(secondId);
+        String orderNumber = NumberUtil.generateOrderNumber("sk");
+        order.setOrderNumber(orderNumber);
+        orderDao.saveAndFlush(order);
+
+        // 构建返回值
+        SecondKillResultVO resultVO = new SecondKillResultVO();
+        resultVO.setOrderNumber(orderNumber);
+
+        return resultVO;
     }
 }

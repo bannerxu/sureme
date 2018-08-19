@@ -71,11 +71,17 @@ public class GroupBuyingWebService {
      */
     public Page<GroupBuyingWebResultVO> findPageGroupBuying(Pageable pageable) {
         return groupBuyingDao.findAllByDeletedIsFalseOrderByCreateTimeDesc(pageable).map(groupBuying -> {
-            GroupBuyingWebResultVO resultVO = new GroupBuyingWebResultVO();
+            Date date = new Date();
             if (ObjectUtils.isEmpty(groupBuying)) {
                 logger.error("拼团不存在");
                 return null;
             }
+
+            // 拼团时间判断
+            if (!(date.before(groupBuying.getEndTime()) && date.after(groupBuying.getBeginTime()))) {
+                return null;
+            }
+            GroupBuyingWebResultVO resultVO = new GroupBuyingWebResultVO();
             BeanUtils.copyNonNullProperties(groupBuying, resultVO);
 
             // 商品标题名称
@@ -158,9 +164,15 @@ public class GroupBuyingWebService {
      */
     public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(Pageable pageable) {
         return userGroupBuyingDao.findByIsFullIsFalseOrderByCreateTimeDesc(pageable).map(userGroupBuying -> {
+            Date date = new Date();
             UserGroupBuyingWebResultVO resultVO = new UserGroupBuyingWebResultVO();
             if (ObjectUtils.isEmpty(userGroupBuying)) {
                 logger.error("用户拼团不存在");
+                return null;
+            }
+
+            // 不在拼团时间内
+            if (!(date.before(userGroupBuying.getEndTime()) && date.after(userGroupBuying.getBeginTime()))) {
                 return null;
             }
             BeanUtils.copyNonNullProperties(userGroupBuying, resultVO);
