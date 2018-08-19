@@ -70,17 +70,13 @@ public class GroupBuyingWebService {
      * @return 分页拼团列表
      */
     public Page<GroupBuyingWebResultVO> findPageGroupBuying(Pageable pageable) {
-        return groupBuyingDao.findAllByDeletedIsFalseOrderByCreateTimeDesc(pageable).map(groupBuying -> {
+        return groupBuyingDao.findAllByBeginTimeBeforeAndEndTimeAfterAndDeletedIsFalseOrderByCreateTimeDesc(pageable).map(groupBuying -> {
             Date date = new Date();
             if (ObjectUtils.isEmpty(groupBuying)) {
                 logger.error("拼团不存在");
                 return null;
             }
 
-            // 拼团时间判断
-            if (!(date.before(groupBuying.getEndTime()) && date.after(groupBuying.getBeginTime()))) {
-                return null;
-            }
             GroupBuyingWebResultVO resultVO = new GroupBuyingWebResultVO();
             BeanUtils.copyNonNullProperties(groupBuying, resultVO);
 

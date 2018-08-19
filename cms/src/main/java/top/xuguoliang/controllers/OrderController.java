@@ -10,6 +10,7 @@ import top.xuguoliang.common.constants.RoleConstant;
 import top.xuguoliang.service.order.OrderCmsService;
 import top.xuguoliang.service.order.cms.OrderCmsPageParamVO;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
+import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
 import javax.annotation.Resource;
 
@@ -43,5 +44,11 @@ public class OrderController {
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public void deleteOrder(@PathVariable Integer orderId) {
         orderCmsService.deleteOrder(orderId);
+    }
+
+    @PutMapping("/{orderId}")
+    @ApiOperation("发货")
+    public void send(@PathVariable Integer orderId, @RequestBody OrderSendParamVO vo) {
+        orderCmsService.send(orderId, vo);
     }
 }

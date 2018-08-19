@@ -19,6 +19,7 @@ import top.xuguoliang.models.order.OrderDao;
 import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.service.order.cms.OrderCmsPageParamVO;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
+import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
 import javax.annotation.Resource;
 
@@ -102,5 +103,23 @@ public class OrderCmsService {
         } else {
             logger.warn("订单目前状态非可删除，导致删除订单失败");
         }
+    }
+
+    /**
+     * 发货
+     *
+     * @param orderId 订单id
+     * @param vo      物流信息
+     */
+    public void send(Integer orderId, OrderSendParamVO vo) {
+        // 发货时，修改发货时间，订单状态
+        Order order = orderDao.findOne(orderId);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.error("订单发货失败：订单{} 不存在", orderId);
+            throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST);
+        }
+
+        String logisticsNumber = vo.getLogisticsNumber();
+        order.setLogisticsNumber(logisticsNumber);
     }
 }

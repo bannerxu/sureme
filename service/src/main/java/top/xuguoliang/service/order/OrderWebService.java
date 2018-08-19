@@ -21,10 +21,7 @@ import top.xuguoliang.models.commodity.StockKeepingUnit;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
-import top.xuguoliang.models.order.Order;
-import top.xuguoliang.models.order.OrderDao;
-import top.xuguoliang.models.order.OrderStatusEnum;
-import top.xuguoliang.models.order.OrderTypeEnum;
+import top.xuguoliang.models.order.*;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.UserDao;
@@ -32,6 +29,7 @@ import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
+import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 import top.xuguoliang.service.payment.web.UnifiedOrderParam;
 import top.xuguoliang.service.payment.web.UnifiedOrderResult;
@@ -55,6 +53,9 @@ public class OrderWebService {
 
     @Resource
     private OrderDao orderDao;
+
+    @Resource
+    private OrderItemDao orderItemDao;
 
     @Resource
     private PersonalCouponDao personalCouponDao;
@@ -159,6 +160,9 @@ public class OrderWebService {
         return orderDao.findAll(specification, pageable).map(order -> {
             OrderWebResultVO vo = new OrderWebResultVO();
             BeanUtils.copyNonNullProperties(order, vo);
+
+            List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(order.getOrderId());
+            vo.setOrderItems(orderItems);
             return vo;
         });
     }
@@ -265,5 +269,29 @@ public class OrderWebService {
 //        UnifiedOrderResult unifiedOrderResult = paymentUtil.unifiedOrder();
 
         return null;
+    }
+
+    /**
+     * 查询订单详情
+     *
+     * @param orderId 订单id
+     * @return 订单详情
+     */
+    public OrderWebDetailVO getDetail(Integer userId, Integer orderId) {
+        Order order = orderDao.findOne(orderId);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.error("查询订单详情失败：订单{} 不存在");
+            throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
+        }
+        if (order.getUserId().equals(userId)) {
+            logger.error("查询订单详情失败：当前用户{} 不是订单{} 的所有者");
+        }
+
+        OrderWebDetailVO detailVO = new OrderWebDetailVO();
+        BeanUtils.copyNonNullProperties(order, detailVO);
+        List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(orderId);
+        detailVO.setOrderItems(orderItems);
+
+        return detailVO;
     }
 }

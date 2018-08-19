@@ -10,5 +10,5 @@ import top.xuguoliang.models.groupbuying.GroupBuying;
  * @author jinguoguo
  */
 public interface GroupBuyingDao extends JpaSpecificationExecutor<GroupBuying>, JpaRepository<GroupBuying, Integer> {
-    Page<GroupBuying> findAllByDeletedIsFalseOrderByCreateTimeDesc(Pageable pageable);
+    Page<GroupBuying> findAllByBeginTimeBeforeAndEndTimeAfterAndDeletedIsFalseOrderByCreateTimeDesc(Pageable pageable);
 }

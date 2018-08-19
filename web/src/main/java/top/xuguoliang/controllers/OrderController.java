@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.order.OrderWebService;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
+import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 
 import javax.annotation.Resource;
@@ -28,6 +29,13 @@ public class OrderController {
     public Page<OrderWebResultVO> findPage(@PageableDefault Pageable pageable) {
         Integer userId = UserHelper.getUserId();
         return orderWebService.findPage(userId, pageable);
+    }
+
+    @GetMapping("/{orderId}")
+    @ApiOperation("订单详情")
+    public OrderWebDetailVO getDetail(@PathVariable Integer orderId) {
+        Integer userId = UserHelper.getUserId();
+        return orderWebService.getDetail(userId, orderId);
     }
 
     @ApiOperation("下单")
