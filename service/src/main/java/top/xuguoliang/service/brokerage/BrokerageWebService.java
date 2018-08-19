@@ -5,11 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.models.brokerage.Brokerage;
 import top.xuguoliang.models.brokerage.BrokerageDao;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
+import top.xuguoliang.models.shareitem.ShareItem;
+import top.xuguoliang.models.shareitem.ShareItemDao;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.brokerage.web.BrokerageVO;
@@ -27,13 +30,15 @@ public class BrokerageWebService {
     private OrderDao orderDao;
     @Resource
     private UserDao userDao;
+    @Resource
+    private ShareItemDao shareItemDao;
 
     /**
      * 佣金明细
      *
-     * @param userId
-     * @param pageable
-     * @return
+     * @param userId   用户id
+     * @param pageable 分页信息
+     * @return 分页佣金记录
      */
     public Page<BrokerageVO> findPage(Integer userId, Pageable pageable) {
         return brokerageDao.findAllByUserId(userId, pageable)
@@ -57,4 +62,6 @@ public class BrokerageWebService {
     }
 
     // TODO: 2018-08-05  订单支付后要记录佣金
+
+
 }

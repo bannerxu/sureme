@@ -14,6 +14,7 @@ import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author jinguoguo
@@ -60,5 +61,11 @@ public class OrderController {
     public void commentOrder(@RequestBody CommentOrderParamVO vo) {
         Integer userId = UserHelper.getUserId();
         orderWebService.commentOrder(userId, vo);
+    }
+
+    @PutMapping("receive/{orderId}")
+    @ApiOperation("确认收货")
+    public void received(@PathVariable @NotNull(message = "必须指定订单") Integer orderId) {
+        orderWebService.received(UserHelper.getUserId(), orderId);
     }
 }

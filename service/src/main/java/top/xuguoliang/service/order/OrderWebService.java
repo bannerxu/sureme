@@ -15,12 +15,18 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.common.utils.PaymentUtil;
+import top.xuguoliang.models.brokerage.Brokerage;
+import top.xuguoliang.models.brokerage.BrokerageDao;
 import top.xuguoliang.models.comment.CommodityComment;
 import top.xuguoliang.models.comment.CommodityCommentDao;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
 import top.xuguoliang.models.order.*;
+import top.xuguoliang.models.shareitem.ShareItem;
+import top.xuguoliang.models.shareitem.ShareItemDao;
+import top.xuguoliang.models.systemsetting.SystemSetting;
+import top.xuguoliang.models.systemsetting.SystemSettingDao;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.UserDao;
@@ -51,34 +57,30 @@ public class OrderWebService {
 
     @Resource
     private CommonSpecUtil<Order> commonSpecUtil;
-
     @Resource
     private OrderDao orderDao;
-
     @Resource
     private OrderItemDao orderItemDao;
-
     @Resource
     private PersonalCouponDao personalCouponDao;
-
     @Resource
     private CommodityDao commodityDao;
-
     @Resource
     private CommodityCommentDao commodityCommentDao;
-
     @Resource
     private CommodityBannerDao commodityBannerDao;
-
     @Resource
     private UserDao userDao;
-
     @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
-
     @Resource
     private AddressDao addressDao;
-
+    @Resource
+    private ShareItemDao shareItemDao;
+    @Resource
+    private BrokerageDao brokerageDao;
+    @Resource
+    private SystemSettingDao systemSettingDao;
     @Resource
     private PaymentUtil paymentUtil;
 
@@ -374,4 +376,51 @@ public class OrderWebService {
         order.setIsCommented(true);
         orderDao.saveAndFlush(order);
     }
+
+    /**
+     * 确认收货
+     *
+     * @param userId  用户id
+     * @param orderId 订单id
+     */
+    public void received(Integer userId, Integer orderId) {
+        Order order = orderDao.findOne(orderId);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.error("确认收货失败：订单{} 不存在", orderId);
+            throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
+        }
+        if (!order.getUserId().equals(userId)) {
+            logger.error("确认收货失败：不是对应用户操作");
+            throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
+        }
+        Date now = new Date();
+        order.setOrderStatus(OrderStatusEnum.ORDER_RECEIVED);
+        order.setReceiveTime(now);
+        orderDao.saveAndFlush(order);
+
+        SystemSetting systemSetting = systemSettingDao.findOne(1);
+        addBrokerage(now, order, userId, systemSetting.getFirstScale(), systemSetting.getSecondScale(), systemSetting.getThirdScale());
+
+    }
+
+    private void addBrokerage(Date now, Order order, Integer userId, Double firstScale, Double secondScale, Double thirdScale) {
+        if (null == firstScale) {
+            return;
+        }
+        Integer orderId = order.getOrderId();
+        ShareItem firstShareItem = shareItemDao.findByBeShareUserId(userId);
+        if (!ObjectUtils.isEmpty(firstShareItem)) {
+            Integer firstShareUserId = firstShareItem.getShareUserId();
+            Brokerage brokerage = new Brokerage();
+            brokerage.setMoney(order.getRealPayMoney());
+            brokerage.setCreateTime(now);
+            brokerage.setOrderNumber(order.getOrderNumber());
+            brokerage.setOrderId(orderId);
+            brokerage.setScale(firstScale);
+            brokerage.setUserId(firstShareUserId);
+            brokerageDao.save(brokerage);
+            addBrokerage(now, order, firstShareUserId, secondScale, thirdScale, null);
+        }
+    }
+
 }
