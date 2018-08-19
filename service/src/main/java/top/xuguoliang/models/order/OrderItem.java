@@ -23,6 +23,9 @@ public class OrderItem {
     @ApiModelProperty("数量")
     private Integer count;
 
+    @ApiModelProperty("价格")
+    private BigDecimal price;
+
     // ------------------------商品相关------------------------
 
     @ApiModelProperty("商品id")

@@ -1,12 +1,14 @@
 package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.order.OrderStatusEnum;
+import top.xuguoliang.service.comment.web.CommentOrderParamVO;
 import top.xuguoliang.service.order.OrderWebService;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebDetailVO;
@@ -39,15 +41,25 @@ public class OrderController {
         return orderWebService.getDetail(userId, orderId);
     }
 
-    @ApiOperation("下单")
     @PostMapping
+    @ApiOperation("下单")
     public OrderWebResultVO createOrder(@RequestBody OrderWebCreateParamVO orderWebCreateParamVO) {
         Integer userId = UserHelper.getUserId();
         return orderWebService.createOrder(userId, orderWebCreateParamVO);
     }
 
-    @ApiOperation("通过订单号查询订单")
-    public OrderWebResultVO findByOrderNumber(@PathVariable String orderNumber) {
-        return orderWebService.findByOrderNumber(orderNumber);
+    @DeleteMapping("/{orderId}")
+    @ApiOperation("取消|删除 订单")
+    public void cancelOrder(@PathVariable Integer orderId) {
+        Integer userId = UserHelper.getUserId();
+        orderWebService.deleteOrder(userId, orderId);
+    }
+
+
+    @ApiOperation("订单评价")
+    @ApiModelProperty("comment")
+    public void commentOrder(@RequestBody CommentOrderParamVO vo) {
+        Integer userId = UserHelper.getUserId();
+        orderWebService.commentOrder(userId, vo);
     }
 }

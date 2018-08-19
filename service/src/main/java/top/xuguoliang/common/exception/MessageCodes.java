@@ -68,4 +68,5 @@ public class MessageCodes {
     public static final String WEB_USER_GROUP_BUYING_OWN = "web.user.group.buying.own";
     public static final String WEB_SECOND_NOT_EXIST = "web.second.not.exist";
     public static final String WEB_SECOND_SOLD_OUT = "web.second.sold.out";
+    public static final String WEB_ORDER_ITEMS_IS_NULL = "web.order.items.is.null";
 }

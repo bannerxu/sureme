@@ -15,6 +15,8 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.common.utils.PaymentUtil;
+import top.xuguoliang.models.comment.CommodityComment;
+import top.xuguoliang.models.comment.CommodityCommentDao;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
@@ -25,6 +27,7 @@ import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
+import top.xuguoliang.service.comment.web.CommentOrderParamVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
@@ -34,6 +37,7 @@ import top.xuguoliang.service.payment.web.UnifiedOrderResult;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +63,9 @@ public class OrderWebService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CommodityCommentDao commodityCommentDao;
 
     @Resource
     private CommodityBannerDao commodityBannerDao;
@@ -182,7 +189,7 @@ public class OrderWebService {
      * @param vo     下单信息
      * @return Order
      */
-    @Transactional(rollbackOn = {Exception.class})
+    @Transactional(rollbackOn = Exception.class)
     public OrderWebCartCreateResultVO createCartOrder(Integer userId, OrderWebCartCreateParamVO vo) {
         Date date = new Date();
         // 商品总价
@@ -301,5 +308,70 @@ public class OrderWebService {
         detailVO.setOrderItems(orderItems);
 
         return detailVO;
+    }
+
+    /**
+     * 取消订单，删除订单
+     *
+     * @param userId  用户id
+     * @param orderId 订单id
+     */
+    public void deleteOrder(Integer userId, Integer orderId) {
+        Order order = orderDao.findOne(orderId);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.warn("删除订单失败：订单不存在或已经被删除");
+            return;
+        }
+        Integer orderUserId = order.getUserId();
+        if (!orderUserId.equals(userId)) {
+            logger.error("用户{} 想删除 用户{} 的订单{}", userId, orderUserId, orderId);
+            return;
+        }
+
+        order.setDeleted(true);
+        orderDao.saveAndFlush(order);
+    }
+
+    /**
+     * 评价订单，把所有关联的商品都评价上
+     *
+     * @param userId 用户id
+     * @param vo     vo
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public void commentOrder(Integer userId, CommentOrderParamVO vo) {
+
+        Integer orderId = vo.getOrderId();
+        String commentContent = vo.getCommentContent();
+        Order order = orderDao.findOne(orderId);
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.error("评价订单失败：订单{}不存在", orderId);
+            throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
+        }
+        List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(orderId);
+        if (ObjectUtils.isEmpty(orderItems)) {
+            logger.error("订单条目为空");
+            throw new ValidationException(MessageCodes.WEB_ORDER_ITEMS_IS_NULL);
+        }
+        Date now = new Date();
+        List<CommodityComment> needSave = new ArrayList<>();
+        orderItems.forEach(orderItem -> {
+            Integer commodityId = orderItem.getCommodityId();
+            CommodityComment commodityComment = new CommodityComment();
+            commodityComment.setUserId(userId);
+            commodityComment.setCommodityId(commodityId);
+            commodityComment.setCommentContent(commentContent);
+            commodityComment.setCreateTime(now);
+            commodityComment.setUpdateTime(now);
+            commodityComment.setDeleted(false);
+            needSave.add(commodityComment);
+        });
+        if (needSave.size() > 0) {
+            commodityCommentDao.save(needSave);
+        }
+
+        // 设置订单已评价
+        order.setIsCommented(true);
+        orderDao.saveAndFlush(order);
     }
 }
