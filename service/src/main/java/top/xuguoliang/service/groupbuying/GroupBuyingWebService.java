@@ -277,6 +277,9 @@ public class GroupBuyingWebService {
 
         // 创建拼团订单，保存拼团信息，地址信息
         Order order = new Order();
+        BeanUtils.copyNonNullProperties(userGroupBuyingSave, order);
+        BeanUtils.copyNonNullProperties(stockKeepingUnit, order);
+        BeanUtils.copyNonNullProperties(commodity, order);
         BeanUtils.copyNonNullProperties(address, order);
         order.setUserGroupBuyingId(userGroupBuyingSave.getUserGroupBuyingId());
         order.setOrderNumber(NumberUtil.generateOrderNumber("gb"));
@@ -383,6 +386,9 @@ public class GroupBuyingWebService {
 
         // 创建拼团订单，保存拼团信息，地址信息
         Order order = new Order();
+        BeanUtils.copyNonNullProperties(userGroupBuyingSave, order);
+        BeanUtils.copyNonNullProperties(stockKeepingUnit, order);
+        BeanUtils.copyNonNullProperties(commodity, order);
         BeanUtils.copyNonNullProperties(address, order);
         order.setUserGroupBuyingId(userGroupBuyingSave.getUserGroupBuyingId());
         order.setOrderNumber(NumberUtil.generateOrderNumber("gb"));
