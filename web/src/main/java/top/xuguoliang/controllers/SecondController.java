@@ -39,7 +39,7 @@ public class SecondController {
 
     @PostMapping
     @ApiOperation("秒杀")
-    public SecondKillResultVO secondKill(SecondKillParamVO vo) {
+    public SecondKillResultVO secondKill(@RequestBody SecondKillParamVO vo) {
         Integer userId = UserHelper.getUserId();
         return secondWebService.secondKill(userId, vo);
     }
