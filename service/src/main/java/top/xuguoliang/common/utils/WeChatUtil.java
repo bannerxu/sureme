@@ -207,7 +207,8 @@ public class WeChatUtil {
         packageParams.put("openid", openId);
         packageParams.put("check_name", "NO_CHECK");
         packageParams.put("re_user_name", "");
-        packageParams.put("amount", money.toString());// TODO: 2018-08-07 参数
+        // TODO: 2018-08-07 参数
+        packageParams.put("amount", money.toString());
         packageParams.put("desc", desc);
         packageParams.put("spbill_create_ip", "127.0.0.1");
 

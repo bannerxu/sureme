@@ -4,14 +4,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestBody;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
+import top.xuguoliang.common.utils.WeChatUtil;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.models.withdraw.Withdraw;
 import top.xuguoliang.models.withdraw.WithdrawDao;
 import top.xuguoliang.models.withdraw.WithdrawStatus;
 import top.xuguoliang.service.withdraw.cms.WithdrawPageVO;
+import top.xuguoliang.service.withdraw.cms.WithdrawUpdateVO;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -26,6 +30,9 @@ public class WithdrawCmsService {
     private UserDao userDao;
     @Resource
     private WithdrawDao withdrawDao;
+    @Resource
+    private WeChatUtil weChatUtil;
+
 
     public Page<WithdrawPageVO> findPage(String nickName, WithdrawStatus status, Date startTime, Date endTime, String code, Pageable pageable) {
         List<Integer> idList = userDao.findByNickNameLike(nickName == null ? "%%" : "%" + nickName + "%").stream()
@@ -45,5 +52,59 @@ public class WithdrawCmsService {
         User one = userDao.findOne(withdraw.getUserId());
         withdrawPageVO.setNickName(one.getNickName());
         return withdrawPageVO;
+    }
+
+    /**
+     * 处理提现
+     *
+     * @param updateVO
+     * @return
+     */
+    public WithdrawPageVO update(WithdrawUpdateVO updateVO) {
+        Withdraw withdraw = withdrawDao.findOne(updateVO.getWithdrawId());
+        Assert.notNull(withdraw, "提现记录不存在");
+
+        if (withdraw.getWithdrawStatus().equals(WithdrawStatus.WAIT)) {
+            if (updateVO.getWithdrawStatus().equals(WithdrawStatus.WAIT)) {
+                return toWithdrawPageVO(withdraw);
+            } else if (updateVO.getWithdrawStatus().equals(WithdrawStatus.SUCCESS)) {
+                //提现成功
+                User user = userDao.findOne(withdraw.getUserId());
+                try {
+                    if (weChatUtil.businessPayment(user.getOpenId(), withdraw.getMoney(), "佣金提现")) {
+                        User one = userDao.findOne(withdraw.getUserId());
+                        one.setFreezeBalance(one.getFreezeBalance().subtract(withdraw.getMoney()));
+                        userDao.save(one);
+
+                        BeanUtils.copyNonNullProperties(updateVO, withdraw);
+                        withdrawDao.save(withdraw);
+                    } else {
+                        withdrawFailure(new WithdrawUpdateVO(updateVO.getWithdrawId(), WithdrawStatus.FAILURE, "提现失败"), withdraw);
+                    }
+
+
+                } catch (Exception e) {
+                    withdrawFailure(new WithdrawUpdateVO(updateVO.getWithdrawId(), WithdrawStatus.FAILURE, e.getMessage()), withdraw);
+                }
+
+
+            } else if (updateVO.getWithdrawStatus().equals(WithdrawStatus.FAILURE)) {
+
+                withdrawFailure(updateVO, withdraw);
+            }
+        }
+        return toWithdrawPageVO(withdraw);
+    }
+
+    private void withdrawFailure(WithdrawUpdateVO updateVO, Withdraw withdraw) {
+        //提现失败
+        User one = userDao.findOne(withdraw.getUserId());
+        one.setBalance(one.getBalance().add(withdraw.getMoney()));
+        one.setFreezeBalance(one.getFreezeBalance().subtract(withdraw.getMoney()));
+        userDao.save(one);
+
+        BeanUtils.copyNonNullProperties(updateVO, withdraw);
+        withdrawDao.save(withdraw);
+
     }
 }
