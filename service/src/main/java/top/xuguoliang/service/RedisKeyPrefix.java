@@ -70,5 +70,9 @@ public class RedisKeyPrefix {
     public static String secondCount(Integer secondId) {
         return "second.count:" + secondId;
     }
+
+    public static String logisticsInfo(Integer orderId) {
+        return "logisticsInfo:" + orderId;
+    }
 }
 

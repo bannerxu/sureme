@@ -5,23 +5,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
+import top.xuguoliang.common.utils.LogisticsUtil;
 import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
+import top.xuguoliang.models.logistics.LogisticsRecord;
+import top.xuguoliang.models.logistics.LogisticsRecordDao;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
 import top.xuguoliang.models.order.OrderStatusEnum;
+import top.xuguoliang.service.RedisKeyPrefix;
+import top.xuguoliang.service.logistics.LogisticsResultVO;
 import top.xuguoliang.service.order.cms.OrderCmsPageParamVO;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
 import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jinguoguo
@@ -38,10 +47,19 @@ public class OrderCmsService {
     private CommodityDao commodityDao;
 
     @Resource
+    private LogisticsRecordDao logisticsRecordDao;
+
+    @Resource
     private StockKeepingUnitDao stockKeepingUnitDao;
 
     @Resource
     private CommonSpecUtil<Order> commonSpecUtil;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private LogisticsUtil logisticsUtil;
 
     /**
      * 分页查询订单
@@ -120,6 +138,40 @@ public class OrderCmsService {
         }
 
         String logisticsNumber = vo.getLogisticsNumber();
+
         order.setLogisticsNumber(logisticsNumber);
+        order.setLogisticsCompany(vo.getLogisticsCompany());
+        orderDao.saveAndFlush(order);
+    }
+
+    /**
+     * 获取物流信息
+     *
+     * @param orderId 订单id
+     * @return 物流信息
+     */
+    public String getLogisticsInfo(Integer orderId) {
+        Order order = orderDao.findOne(orderId);
+        String logisticsNumber = order.getLogisticsNumber();
+        String logisticsCompany = order.getLogisticsCompany();
+
+        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+        String logisticsInfo = valueOperations.get(RedisKeyPrefix.logisticsInfo(orderId));
+        if (StringUtils.isEmpty(logisticsInfo)) {
+            String info = logisticsUtil.getLogisticsInfo(logisticsNumber, logisticsCompany);
+            // 存入redis
+            valueOperations.set(RedisKeyPrefix.logisticsInfo(orderId), info, 1, TimeUnit.HOURS);
+            LogisticsRecord logisticsRecord = logisticsRecordDao.findByOrderIdIs(orderId);
+            if (ObjectUtils.isEmpty(logisticsRecord)) {
+                logisticsRecord = new LogisticsRecord();
+                logisticsRecord.setOrderId(orderId);
+                logisticsRecord.setLogisticsNumber(logisticsNumber);
+                logisticsRecord.setLogisticsInfo(info);
+                logisticsRecord.setLogisticsCompany(logisticsCompany);
+                logisticsRecordDao.saveAndFlush(logisticsRecord);
+            }
+            return info;
+        }
+        return logisticsInfo;
     }
 }

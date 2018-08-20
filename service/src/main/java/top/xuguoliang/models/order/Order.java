@@ -79,11 +79,11 @@ public class Order {
     @ApiModelProperty("物流编号")
     private String logisticsNumber;
 
-    @ApiModelProperty("物流公司名称")
-    private String com;
+    @ApiModelProperty("物流公司")
+    private String logisticsCompany;
 
     @ApiModelProperty("物流公司代码")
-    private String no;
+    private String logisticsNo;
 
     @ApiModelProperty("订单发货时间")
     private Date sendTime;

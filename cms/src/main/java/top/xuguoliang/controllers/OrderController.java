@@ -51,4 +51,10 @@ public class OrderController {
     public void send(@PathVariable Integer orderId, @RequestBody OrderSendParamVO vo) {
         orderCmsService.send(orderId, vo);
     }
+
+    @GetMapping("logistics/{orderId}")
+    @ApiOperation("获取物流")
+    public String getLogisticsInfo(@PathVariable Integer orderId) {
+        return orderCmsService.getLogisticsInfo(orderId);
+    }
 }

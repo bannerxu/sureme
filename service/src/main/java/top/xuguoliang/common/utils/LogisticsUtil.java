@@ -29,7 +29,7 @@ public class LogisticsUtil {
      *
      * @return 快递公司信息
      */
-    public LogisticsCompanyResult getLogisticsCompanyInfo() {
+    public String getLogisticsCompanyInfo() {
         String url = "http://v.juhe.cn/exp/com" + "?key=" + APPKEY;
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -44,12 +44,15 @@ public class LogisticsUtil {
 
         String resultJson = null;
         LogisticsCompanyResult logisticsCompanyResult = null;
+        resultJson = getString(response, resultJson);
+        return resultJson;
+    }
+
+    private String getString(CloseableHttpResponse response, String resultJson) {
         try {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 resultJson = EntityUtils.toString(entity);
-                // 将字符串转为对象
-                logisticsCompanyResult = JSONObject.parseObject(resultJson, LogisticsCompanyResult.class);
             }
         } catch (ParseException | IOException e) {
             e.printStackTrace();
@@ -62,7 +65,7 @@ public class LogisticsUtil {
                 e.printStackTrace();
             }
         }
-        return logisticsCompanyResult;
+        return resultJson;
     }
 
     /**
@@ -72,7 +75,7 @@ public class LogisticsUtil {
      * @param no  物流单号
      * @return 快递信息
      */
-    public LogisticsInfoResult getLogisticsInfo(String com, String no) {
+    public String getLogisticsInfo(String com, String no) {
         String url = "http://v.juhe.cn/exp/index" + "?com=" + com + "&no=" + no + "&dtype=&key=" + APPKEY;
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -87,25 +90,8 @@ public class LogisticsUtil {
 
         String resultJson = null;
         LogisticsInfoResult logisticsInfoResult = null;
-        try {
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                resultJson = EntityUtils.toString(entity);
-                // 将字符串转为对象
-                logisticsInfoResult = JSONObject.parseObject(resultJson, LogisticsInfoResult.class);
-            }
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (response != null) {
-                    response.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        resultJson = getString(response, resultJson);
 
-        return logisticsInfoResult;
+        return resultJson;
     }
 }
