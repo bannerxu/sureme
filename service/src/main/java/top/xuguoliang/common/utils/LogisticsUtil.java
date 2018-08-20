@@ -22,7 +22,7 @@ import java.io.IOException;
 @Component
 public class LogisticsUtil {
 
-    private static final String APPKEY = "9bb8811207cb4878e6db95b40d038878";
+    private String APPKEY = "9bb8811207cb4878e6db95b40d038878";
 
     /**
      * 查询快递公司信息
