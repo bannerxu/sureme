@@ -68,4 +68,10 @@ public class OrderController {
     public void received(@PathVariable @NotNull(message = "必须指定订单") Integer orderId) {
         orderWebService.received(UserHelper.getUserId(), orderId);
     }
+
+    @GetMapping("logistics/{orderId}")
+    @ApiOperation("获取物流")
+    public String getLogisticsInfo(@PathVariable Integer orderId) {
+        return orderWebService.getLogisticsInfo(orderId);
+    }
 }

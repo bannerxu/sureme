@@ -9,6 +9,7 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.comment.CommodityComment;
 import top.xuguoliang.models.comment.CommodityCommentDao;
+import top.xuguoliang.service.comment.cms.CmsReplyCommentParamVO;
 import top.xuguoliang.service.comment.cms.CommodityCommentCmsResultVO;
 
 import javax.annotation.Resource;
@@ -67,4 +68,16 @@ public class CommodityCommentCmsService {
             commodityCommentDao.saveAndFlush(commodityComment);
         }
     }
+
+    /**
+     * 回复评论
+     *
+     * @param commodityCommentId 评论id
+     */
+    public void replyComment(Integer commodityCommentId, CmsReplyCommentParamVO cmsReplyCommentParamVO) {
+        CommodityComment commodityComment = commodityCommentDao.findOne(commodityCommentId);
+        commodityComment.setCommentReply(cmsReplyCommentParamVO.getCommentReply());
+        commodityCommentDao.saveAndFlush(commodityComment);
+    }
+
 }

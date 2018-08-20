@@ -19,6 +19,9 @@ import top.xuguoliang.models.coupon.Coupon;
 import top.xuguoliang.models.coupon.CouponDao;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
+import top.xuguoliang.models.user.User;
+import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.comment.web.CommodityCommentWebResultVO;
 import top.xuguoliang.service.commodity.web.CommodityWebCouponVO;
 import top.xuguoliang.service.commodity.web.CommodityWebDetailVO;
 import top.xuguoliang.service.commodity.web.CommodityWebResultVO;
@@ -55,6 +58,9 @@ public class CommodityWebService {
 
     @Resource
     private PersonalCouponDao personalCouponDao;
+
+    @Resource
+    private UserDao userDao;
 
     /**
      * 分页查询商品
@@ -137,4 +143,23 @@ public class CommodityWebService {
         return vo;
     }
 
+    /**
+     * 分页商品评论
+     *
+     * @param commodityId 商品id
+     * @param pageable    分页信息
+     * @return 分页文章评论
+     */
+    public Page<CommodityCommentWebResultVO> findPageComment(Integer commodityId, Pageable pageable) {
+        return commodityCommentDao.findAllByCommodityIdIsAndDeletedIsFalse(commodityId, pageable).map(commodityComment -> {
+            CommodityCommentWebResultVO vo = new CommodityCommentWebResultVO();
+            BeanUtils.copyNonNullProperties(commodityComment, vo);
+            Integer userId = commodityComment.getUserId();
+            User user = userDao.findOne(userId);
+            vo.setNickname(user.getNickName());
+            vo.setAvatarUrl(user.getAvatarUrl());
+
+            return vo;
+        });
+    }
 }

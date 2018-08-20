@@ -7,14 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
-import top.xuguoliang.common.utils.BeanUtils;
-import top.xuguoliang.common.utils.CommonSpecUtil;
-import top.xuguoliang.common.utils.NumberUtil;
-import top.xuguoliang.common.utils.PaymentUtil;
+import top.xuguoliang.common.utils.*;
 import top.xuguoliang.models.brokerage.Brokerage;
 import top.xuguoliang.models.brokerage.BrokerageDao;
 import top.xuguoliang.models.comment.CommodityComment;
@@ -22,6 +22,8 @@ import top.xuguoliang.models.comment.CommodityCommentDao;
 import top.xuguoliang.models.commodity.*;
 import top.xuguoliang.models.coupon.PersonalCoupon;
 import top.xuguoliang.models.coupon.PersonalCouponDao;
+import top.xuguoliang.models.logistics.LogisticsRecord;
+import top.xuguoliang.models.logistics.LogisticsRecordDao;
 import top.xuguoliang.models.order.*;
 import top.xuguoliang.models.shareitem.ShareItem;
 import top.xuguoliang.models.shareitem.ShareItemDao;
@@ -30,6 +32,7 @@ import top.xuguoliang.models.systemsetting.SystemSettingDao;
 import top.xuguoliang.models.user.Address;
 import top.xuguoliang.models.user.AddressDao;
 import top.xuguoliang.models.user.UserDao;
+import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
@@ -46,6 +49,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jinguoguo
@@ -83,6 +87,12 @@ public class OrderWebService {
     private SystemSettingDao systemSettingDao;
     @Resource
     private PaymentUtil paymentUtil;
+    @Resource
+    private LogisticsUtil logisticsUtil;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private LogisticsRecordDao logisticsRecordDao;
 
     /**
      * 创建订单
@@ -423,4 +433,34 @@ public class OrderWebService {
         }
     }
 
+    /**
+     * 获取物流信息
+     *
+     * @param orderId 订单id
+     * @return 物流信息
+     */
+    public String getLogisticsInfo(Integer orderId) {
+        Order order = orderDao.findOne(orderId);
+        String logisticsNumber = order.getLogisticsNumber();
+        String logisticsCompany = order.getLogisticsCompany();
+
+        ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
+        String logisticsInfo = valueOperations.get(RedisKeyPrefix.logisticsInfo(orderId));
+        if (StringUtils.isEmpty(logisticsInfo)) {
+            String info = logisticsUtil.getLogisticsInfo(logisticsNumber, logisticsCompany);
+            // 存入redis
+            valueOperations.set(RedisKeyPrefix.logisticsInfo(orderId), info, 1, TimeUnit.HOURS);
+            LogisticsRecord logisticsRecord = logisticsRecordDao.findByOrderIdIs(orderId);
+            if (ObjectUtils.isEmpty(logisticsRecord)) {
+                logisticsRecord = new LogisticsRecord();
+                logisticsRecord.setOrderId(orderId);
+                logisticsRecord.setLogisticsNumber(logisticsNumber);
+                logisticsRecord.setLogisticsInfo(info);
+                logisticsRecord.setLogisticsCompany(logisticsCompany);
+                logisticsRecordDao.saveAndFlush(logisticsRecord);
+            }
+            return info;
+        }
+        return logisticsInfo;
+    }
 }

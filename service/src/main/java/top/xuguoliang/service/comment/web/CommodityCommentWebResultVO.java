@@ -1,30 +1,26 @@
-package top.xuguoliang.models.comment;
+package top.xuguoliang.service.comment.web;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Date;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("商品评论")
-public class CommodityComment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CommodityCommentWebResultVO {
     @ApiModelProperty("商品评论id")
     private Integer commodityCommentId;
 
     @ApiModelProperty("发表评论的用户id")
     private Integer userId;
+
+    @ApiModelProperty("昵称")
+    private String nickname;
+
+    @ApiModelProperty("头像")
+    private String avatarUrl;
 
     @ApiModelProperty("商品id")
     private Integer commodityId;
@@ -40,8 +36,5 @@ public class CommodityComment {
 
     @ApiModelProperty("更新时间")
     private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
 
 }

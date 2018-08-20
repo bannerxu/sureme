@@ -4,8 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import top.xuguoliang.service.comment.web.CommodityCommentWebResultVO;
 import top.xuguoliang.service.commodity.CommodityWebService;
 import top.xuguoliang.service.commodity.web.CommodityWebDetailVO;
 import top.xuguoliang.service.commodity.web.CommodityWebResultVO;
@@ -35,6 +37,12 @@ public class CommodityController {
     public CommodityWebDetailVO getCommodityDetail(@PathVariable Integer commodityId) {
         Integer userId = UserHelper.getUserId();
         return commodityWebService.getCommodityDetail(userId, commodityId);
+    }
+
+    @GetMapping("comment/{commodityId}")
+    public Page<CommodityCommentWebResultVO> findPageComment(@PathVariable Integer commodityId,
+                                                             @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return commodityWebService.findPageComment(commodityId, pageable);
     }
 
 }
