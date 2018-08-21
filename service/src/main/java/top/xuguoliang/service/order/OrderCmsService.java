@@ -15,15 +15,12 @@ import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.LogisticsUtil;
-import top.xuguoliang.models.commodity.Commodity;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.logistics.LogisticsRecord;
 import top.xuguoliang.models.logistics.LogisticsRecordDao;
 import top.xuguoliang.models.order.*;
 import top.xuguoliang.service.RedisKeyPrefix;
-import top.xuguoliang.service.logistics.LogisticsResultVO;
-import top.xuguoliang.service.order.cms.OrderCmsPageParamVO;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
 import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
@@ -66,12 +63,11 @@ public class OrderCmsService {
     /**
      * 分页查询订单
      *
-     * @param orderCmsPageParamVO 分页参数
+     * @param orderStatus 订单状态
+     * @param pageable 分页信息
      * @return 分页订单
      */
-    public Page<OrderCmsResultVO> findPage(OrderCmsPageParamVO orderCmsPageParamVO) {
-        OrderStatusEnum orderStatus = orderCmsPageParamVO.getOrderStatus();
-        Pageable pageable = orderCmsPageParamVO.getPageable();
+    public Page<OrderCmsResultVO> findPage(OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("orderStatus", orderStatus);
         Page<Order> orders = orderDao.findAll(specification, pageable);
 
