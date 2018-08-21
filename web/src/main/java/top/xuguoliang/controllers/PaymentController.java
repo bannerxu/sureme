@@ -5,10 +5,12 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.payment.PaymentWebService;
 import top.xuguoliang.service.payment.web.UnifiedOrderParam;
@@ -27,9 +29,6 @@ public class PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Resource
-    private WxPayService wxService;
-
-    @Resource
     private PaymentWebService paymentWebService;
 
     @PostMapping("unifiedOrder")
@@ -46,7 +45,7 @@ public class PaymentController {
         // 解析xml回调数据，返回对象
         WxPayOrderNotifyResult wxPayOrderNotifyResult = null;
         try {
-            wxPayOrderNotifyResult = this.wxService.parseOrderNotifyResult(xmlData);
+            wxPayOrderNotifyResult = new WxPayServiceImpl().parseOrderNotifyResult(xmlData);
         } catch (WxPayException e) {
             e.printStackTrace();
         }
