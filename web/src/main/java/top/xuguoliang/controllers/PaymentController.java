@@ -1,7 +1,10 @@
 package top.xuguoliang.controllers;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -24,6 +27,9 @@ public class PaymentController {
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Resource
+    private WxPayService wxService;
+
+    @Resource
     private PaymentWebService paymentWebService;
 
     @PostMapping("unifiedOrder")
@@ -35,7 +41,20 @@ public class PaymentController {
 
     @ApiOperation("支付回调")
     @RequestMapping(value = "payOrderNotify", method = {RequestMethod.POST, RequestMethod.GET})
-    public void payOrderNotify(WxPayOrderNotifyResult wxPayOrderNotifyResult) {
+    public WxPayNotifyResponse payOrderNotify(@RequestBody String xmlData) {
+
+        // 解析xml回调数据，返回对象
+        WxPayOrderNotifyResult wxPayOrderNotifyResult = null;
+        try {
+            wxPayOrderNotifyResult = this.wxService.parseOrderNotifyResult(xmlData);
+        } catch (WxPayException e) {
+            e.printStackTrace();
+        }
+        if ("SUCCESS".equals(wxPayOrderNotifyResult.getReturnCode())) {
+
+        }
+
+
 
         // TODO: 2018-08-19 支付回调，如果成功要创建佣金记录
         paymentWebService.payOrderNotify(wxPayOrderNotifyResult);
@@ -46,5 +65,6 @@ public class PaymentController {
             logger.warn("----------------记录资金流水错误-----------------");
             e.printStackTrace();
         }
+        return null;
     }
 }

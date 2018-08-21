@@ -41,13 +41,6 @@ public class OrderController {
         return orderWebService.getDetail(userId, orderId);
     }
 
-    @PostMapping
-    @ApiOperation("下单")
-    public OrderWebResultVO createOrder(@RequestBody OrderWebCreateParamVO orderWebCreateParamVO) {
-        Integer userId = UserHelper.getUserId();
-        return orderWebService.createOrder(userId, orderWebCreateParamVO);
-    }
-
     @DeleteMapping("/{orderId}")
     @ApiOperation("取消|删除 订单")
     public void cancelOrder(@PathVariable Integer orderId) {

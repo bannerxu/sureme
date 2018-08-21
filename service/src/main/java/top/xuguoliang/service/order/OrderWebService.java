@@ -213,6 +213,7 @@ public class OrderWebService {
         Date date = new Date();
         // 商品总价
         BigDecimal total = BigDecimal.valueOf(0.0);
+        Order order = new Order();
 
         List<ItemParamVO> items = vo.getItems();
         List<OrderItem> needSaveOrderItems = new ArrayList<>(items.size());
@@ -253,28 +254,36 @@ public class OrderWebService {
                 throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
             }
         }
-        // 判断优惠券是否属于优惠范围
-        Integer personalCouponId = vo.getPersonalCouponId();
-        PersonalCoupon personalCoupon = personalCouponDao.findByPersonalCouponIdIsAndUserIdIsAndDeletedIsFalse(personalCouponId, userId);
-        if (ObjectUtils.isEmpty(personalCoupon)) {
-            logger.error("购物车下单失败：优惠券不存在（用户id:{}）", userId);
-            throw new ValidationException(MessageCodes.WEB_COUPON_NOT_EXIST);
+        BigDecimal needPayMoney;
+        if (vo.getPersonalCouponId() != null && !vo.getPersonalCouponId().equals(0)) {
+
+            // 判断优惠券是否属于优惠范围
+            Integer personalCouponId = vo.getPersonalCouponId();
+            PersonalCoupon personalCoupon = personalCouponDao.findByPersonalCouponIdIsAndUserIdIsAndDeletedIsFalse(personalCouponId, userId);
+            if (ObjectUtils.isEmpty(personalCoupon)) {
+                logger.error("购物车下单失败：优惠券不存在（用户id:{}）", userId);
+                throw new ValidationException(MessageCodes.WEB_COUPON_NOT_EXIST);
+            }
+            // 是否在优惠券使用时间内
+            Date useBeginTime = personalCoupon.getUseBeginTime();
+            Date useEndTime = personalCoupon.getUseEndTime();
+            if (useBeginTime.after(date) || useEndTime.before(date)) {
+                logger.error("购物车下单失败：优惠券不在使用时间内（用户id:{}）", userId);
+                throw new ValidationException(MessageCodes.WEB_COUPON_CAN_NOT_USE);
+            }
+            // 商品总价是否达到优惠券满减价格
+            BigDecimal minUseMoney = personalCoupon.getMinUseMoney();
+            if (minUseMoney.doubleValue() > total.doubleValue()) {
+                logger.error("购物车下单失败：商品总价未达到优惠券满减金额（用户id:{}）", userId);
+                throw new ValidationException(MessageCodes.WEB_COUPON_NOT_ENOUGH);
+            }
+            // 计算需要支付的价格
+            needPayMoney = total.subtract(personalCoupon.getOffsetMoney());
+
+            BeanUtils.copyNonNullProperties(personalCoupon, order);
+        } else {
+            needPayMoney = total;
         }
-        // 是否在优惠券使用时间内
-        Date useBeginTime = personalCoupon.getUseBeginTime();
-        Date useEndTime = personalCoupon.getUseEndTime();
-        if (useBeginTime.after(date) || useEndTime.before(date)) {
-            logger.error("购物车下单失败：优惠券不在使用时间内（用户id:{}）", userId);
-            throw new ValidationException(MessageCodes.WEB_COUPON_CAN_NOT_USE);
-        }
-        // 商品总价是否达到优惠券满减价格
-        BigDecimal minUseMoney = personalCoupon.getMinUseMoney();
-        if (minUseMoney.doubleValue() > total.doubleValue()) {
-            logger.error("购物车下单失败：商品总价未达到优惠券满减金额（用户id:{}）", userId);
-            throw new ValidationException(MessageCodes.WEB_COUPON_NOT_ENOUGH);
-        }
-        // 计算需要支付的价格 TODO 运费待议
-        BigDecimal needPayMoney = total.subtract(personalCoupon.getOffsetMoney());
 
         // 判断地址是否为空
         Integer addressId = vo.getAddressId();
@@ -285,9 +294,7 @@ public class OrderWebService {
         }
 
         // 新建订单，减少库存，如果取消订单再行恢复
-        Order order = new Order();
         BeanUtils.copyNonNullProperties(address, order);
-        BeanUtils.copyNonNullProperties(personalCoupon, order);
         order.setUserId(userId);
         order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
         order.setOrderNumber(NumberUtil.generateOrderNumber("co"));
