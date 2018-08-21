@@ -111,7 +111,7 @@ public class OrderWebResultVO {
     private String couponName;
 
     @ApiModelProperty("订单条目")
-    private List<OrderItem> orderItems;
+    private List<OrderItemVO> orderItems;
 
     @ApiModelProperty("商品id")
     private Integer commodityId;

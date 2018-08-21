@@ -37,6 +37,7 @@ import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.comment.web.CommentOrderParamVO;
+import top.xuguoliang.service.order.web.OrderItemVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author jinguoguo
@@ -189,8 +191,16 @@ public class OrderWebService {
             OrderWebResultVO vo = new OrderWebResultVO();
             BeanUtils.copyNonNullProperties(order, vo);
 
-            List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(order.getOrderId());
+            List<OrderItemVO> orderItems = orderItemDao.findByOrderIdIs(order.getOrderId()).stream().map(orderItem -> {
+                OrderItemVO orderItemVO = new OrderItemVO();
+                BeanUtils.copyNonNullProperties(orderItem, orderItemVO);
+                Integer commodityId = orderItem.getCommodityId();
+                List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+                orderItemVO.setCommodityBanners(commodityBanners);
+                return orderItemVO;
+            }).collect(Collectors.toList());
             vo.setOrderItems(orderItems);
+
             return vo;
         });
     }
