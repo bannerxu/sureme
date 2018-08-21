@@ -176,12 +176,13 @@ public class OrderWebService {
     public Page<OrderWebResultVO> findPage(Integer userId, OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("userId", userId);
         Specification<Order> status = commonSpecUtil.equal("orderStatus", orderStatus);
+        Specification<Order> deleted = commonSpecUtil.equal("deleted", false);
         Specifications<Order> where;
 
         if (orderStatus.equals(OrderStatusEnum.QUERY_ALL)) {
-            where = Specifications.where(specification);
+            where = Specifications.where(specification).and(deleted);
         } else {
-            where = Specifications.where(specification).and(status);
+            where = Specifications.where(specification).and(status).and(deleted);
         }
 
         return orderDao.findAll(where, pageable).map(order -> {

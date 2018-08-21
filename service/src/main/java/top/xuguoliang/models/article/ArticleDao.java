@@ -3,6 +3,8 @@ package top.xuguoliang.models.article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
+
 /**
  * @author jinguoguo
  */
@@ -15,5 +17,9 @@ public interface ArticleDao extends JpaSpecificationExecutor<Article>, JpaReposi
      * @param pregnancyWeek 怀孕周数，唯一
      * @return 文章
      */
-    Article findByPregnancyWeekIsAndDeletedIsFalse(Integer pregnancyWeek);
+    List<Article> findAllByPregnancyWeekIsAndDeletedIsFalse(Integer pregnancyWeek);
+
+    List<Article> findAllByArticleTypeIsAndDeletedIsFalse(ArticleTypeEnum articleType);
+
+    List<Article> findAllByBabyDayIsAndDeletedIsFalse(Integer babyDay);
 }

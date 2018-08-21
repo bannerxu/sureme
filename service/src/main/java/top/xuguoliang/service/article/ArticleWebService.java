@@ -23,6 +23,7 @@ import top.xuguoliang.models.manager.Manager;
 import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.models.relation.RelationArticleCommodity;
 import top.xuguoliang.models.relation.RelationArticleCommodityDao;
+import top.xuguoliang.models.user.PregnancyTypeEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.article.web.ArticleCommentWebResultVO;
@@ -309,24 +310,50 @@ public class ArticleWebService {
 
     /**
      * 根据用户的怀孕日期获取对应周数的推荐文章
+     *
      * @param userId 用户id
      * @return 文章
      */
     public Article getWeekly(Integer userId) {
         User user = userDao.findOne(userId);
-        // 计算用户当前是怀孕第几周
-        Date pregnantDate = user.getPregnantDate();
-        long time = pregnantDate.getTime();
-        long now = System.currentTimeMillis();
-        int weeks = (int) (Math.abs(now - time)/(1000 * 60 * 60 * 24 * 7));
+        PregnancyTypeEnum pregnancyType = user.getPregnancyType();
 
-        // 查找对应的文章
-        Article article = articleDao.findByPregnancyWeekIsAndDeletedIsFalse(weeks);
-        if (ObjectUtils.isEmpty(article)) {
-            logger.error("获取周推文章失败：文章为空");
-            throw new ValidationException(MessageCodes.WEB_ARTICLE_NOT_EXIST);
+        // 孕前文章
+        if (pregnancyType.equals(PregnancyTypeEnum.BEFORE_PREGNANT)) {
+            List<Article> articles = articleDao.findAllByArticleTypeIsAndDeletedIsFalse(ArticleTypeEnum.BEFORE_PREGNANT);
+            if (!ObjectUtils.isEmpty(articles)) {
+                int index = (int) (Math.random() * articles.size());
+                return articles.get(index);
+            }
+        }
+        // 孕后文章
+        if (pregnancyType.equals(PregnancyTypeEnum.AFTER_PREGNANT)) {
+            long babyBirthday = user.getBabyBirthday().getTime();
+            long now = System.currentTimeMillis();
+            int day = (int) (Math.abs(now - babyBirthday) / (1000 * 60 * 60 * 24));
+
+            List<Article> articles = articleDao.findAllByBabyDayIsAndDeletedIsFalse(day);
+            if (!ObjectUtils.isEmpty(articles)) {
+                int index = (int) (Math.random() * articles.size());
+                return articles.get(index);
+            }
+        }
+        // 孕中文章
+        if (pregnancyType.equals(PregnancyTypeEnum.PREGNANT)) {
+            // 计算用户当前是怀孕第几周
+            Date pregnantDate = user.getPregnantDate();
+            long time = pregnantDate.getTime();
+            long now = System.currentTimeMillis();
+            int weeks = (int) (Math.abs(now - time) / (1000 * 60 * 60 * 24 * 7));
+
+            // 查找对应的文章
+            List<Article> articles = articleDao.findAllByPregnancyWeekIsAndDeletedIsFalse(weeks);
+            if (!ObjectUtils.isEmpty(articles)) {
+                int index = (int) (Math.random() * articles.size());
+                return articles.get(index);
+            }
         }
 
-        return article;
+        return null;
     }
 }
