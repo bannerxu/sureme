@@ -281,6 +281,7 @@ public class GroupBuyingWebService {
         order.setOrderType(OrderTypeEnum.ORDER_TYPE_GROUP);
         order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
         order.setTotalMoney(groupBuying.getGroupPrice());
+        order.setRealPayMoney(groupBuying.getGroupPrice());
         order.setCreateTime(now);
         order.setUpdateTime(now);
         Order orderSave = orderDao.save(order);
