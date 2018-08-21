@@ -6,11 +6,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.payment.PaymentWebService;
+import top.xuguoliang.service.payment.web.UnifiedOrderParam;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
@@ -30,9 +28,9 @@ public class PaymentController {
 
     @PostMapping("unifiedOrder")
     @ApiOperation("订单统一下单")
-    public WxPayUnifiedOrderResult unifiedOrder(Integer orderId) {
+    public WxPayUnifiedOrderResult unifiedOrder(@RequestBody UnifiedOrderParam unifiedOrderParam) {
         Integer userId = UserHelper.getUserId();
-        return paymentWebService.unifiedOrder(userId, orderId);
+        return paymentWebService.unifiedOrder(userId, unifiedOrderParam.getOrderId());
     }
 
     @ApiOperation("支付回调")

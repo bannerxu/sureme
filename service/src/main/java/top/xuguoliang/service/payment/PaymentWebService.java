@@ -50,6 +50,12 @@ public class PaymentWebService {
     @Resource
     private MoneyWaterDao moneyWaterDao;
 
+    /**
+     * 统一下单
+     * @param userId 用户id
+     * @param orderId
+     * @return
+     */
     public WxPayUnifiedOrderResult unifiedOrder(Integer userId, Integer orderId) {
 
         // 判断用户是否存在

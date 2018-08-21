@@ -5,6 +5,7 @@ import lombok.Data;
 import top.xuguoliang.models.order.OrderItem;
 import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.models.order.OrderTypeEnum;
+import top.xuguoliang.service.order.web.OrderItemVO;
 
 import javax.persistence.Lob;
 import java.math.BigDecimal;
@@ -29,7 +30,8 @@ public class OrderCmsResultVO {
     @ApiModelProperty("订单类型")
     private OrderTypeEnum orderType;
 
-    List<OrderItem> orderItems;
+    @ApiModelProperty("订单条目")
+    private List<OrderItemVO> orderItems;
 
 
     @ApiModelProperty("商品id")

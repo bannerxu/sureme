@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.LogisticsUtil;
+import top.xuguoliang.models.commodity.CommodityBanner;
+import top.xuguoliang.models.commodity.CommodityBannerDao;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.logistics.LogisticsRecord;
@@ -23,10 +26,12 @@ import top.xuguoliang.models.order.*;
 import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
 import top.xuguoliang.service.order.cms.OrderSendParamVO;
+import top.xuguoliang.service.order.web.OrderItemVO;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author jinguoguo
@@ -44,6 +49,9 @@ public class OrderCmsService {
 
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CommodityBannerDao commodityBannerDao;
 
     @Resource
     private LogisticsRecordDao logisticsRecordDao;
@@ -69,7 +77,9 @@ public class OrderCmsService {
      */
     public Page<OrderCmsResultVO> findPage(OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("orderStatus", orderStatus);
-        Page<Order> orders = orderDao.findAll(specification, pageable);
+        Specification<Order> deleted = commonSpecUtil.equal("deleted", false);
+        Specifications<Order> specifications = Specifications.where(specification).and(deleted);
+        Page<Order> orders = orderDao.findAll(specifications, pageable);
 
         return orders.map(this::convertOrderToVO);
     }
@@ -101,7 +111,14 @@ public class OrderCmsService {
         OrderCmsResultVO vo = new OrderCmsResultVO();
         BeanUtils.copyNonNullProperties(order, vo);
         Integer orderId = order.getOrderId();
-        List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(orderId);
+        List<OrderItemVO> orderItems = orderItemDao.findByOrderIdIs(orderId).stream().map(orderItem -> {
+            OrderItemVO orderItemVO = new OrderItemVO();
+            BeanUtils.copyNonNullProperties(orderItem, orderItemVO);
+            Integer commodityId = orderItem.getCommodityId();
+            List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+            orderItemVO.setCommodityBanners(commodityBanners);
+            return orderItemVO;
+        }).collect(Collectors.toList());
         vo.setOrderItems(orderItems);
         return vo;
     }
