@@ -4,6 +4,8 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.xuguoliang.service.payment.PaymentWebService;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 /**
  * @author jinguoguo
@@ -19,6 +22,8 @@ import javax.annotation.Resource;
 @RequestMapping("api/payment")
 @Api(tags = "支付模块")
 public class PaymentController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
     @Resource
     private PaymentWebService paymentWebService;
@@ -36,5 +41,12 @@ public class PaymentController {
 
         // TODO: 2018-08-19 支付回调，如果成功要创建佣金记录
         paymentWebService.payOrderNotify(wxPayOrderNotifyResult);
+        // 记录资金流水
+        try {
+            paymentWebService.addMoneyWater(wxPayOrderNotifyResult);
+        } catch (ParseException e) {
+            logger.warn("----------------记录资金流水错误-----------------");
+            e.printStackTrace();
+        }
     }
 }

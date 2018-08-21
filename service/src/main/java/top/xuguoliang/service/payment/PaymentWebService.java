@@ -13,6 +13,9 @@ import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.PaymentUtil;
+import top.xuguoliang.models.moneywater.MoneyWater;
+import top.xuguoliang.models.moneywater.MoneyWaterDao;
+import top.xuguoliang.models.moneywater.MoneyWaterType;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
 import top.xuguoliang.models.user.User;
@@ -20,6 +23,10 @@ import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.brokerage.BrokerageWebService;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author jinguoguo
@@ -39,6 +46,9 @@ public class PaymentWebService {
 
     @Resource
     private UserDao userDao;
+
+    @Resource
+    private MoneyWaterDao moneyWaterDao;
 
     public WxPayUnifiedOrderResult unifiedOrder(Integer userId, Integer orderId) {
 
@@ -89,5 +99,29 @@ public class PaymentWebService {
         //如果成功，就创建佣金记录
 
         brokerageWebService.insert(wxPayOrderNotifyResult.getOutTradeNo());
+    }
+
+    /**
+     * 记录资金流水
+     * @param wxPayOrderNotifyResult 支付回调数据
+     */
+    public void addMoneyWater(WxPayOrderNotifyResult wxPayOrderNotifyResult) throws ParseException {
+        String outTradeNo = wxPayOrderNotifyResult.getOutTradeNo();
+        Integer totalFee = wxPayOrderNotifyResult.getTotalFee() * 100;
+
+        BigDecimal totalMoney = BigDecimal.valueOf(totalFee);
+        String timeEnd = wxPayOrderNotifyResult.getTimeEnd();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmms");
+        Date payTime = simpleDateFormat.parse(timeEnd);
+
+        // 用户
+        User user = userDao.findByOpenId(wxPayOrderNotifyResult.getOpenid());
+
+        MoneyWater moneyWater = new MoneyWater();
+        moneyWater.setTime(payTime);
+        moneyWater.setMoney(totalMoney);
+        moneyWater.setType(MoneyWaterType.PAY);
+        moneyWater.setUserId(user.getUserId());
+        moneyWaterDao.save(moneyWater);
     }
 }

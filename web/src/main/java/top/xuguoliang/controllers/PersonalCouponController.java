@@ -30,6 +30,7 @@ public class PersonalCouponController {
     }
 
     @DeleteMapping("/{personalCouponId}")
+    @ApiOperation("删除")
     public void deletePersonalCoupon(@PathVariable Integer personalCouponId) {
         Integer userId = UserHelper.getUserId();
         personalCouponWebService.deletePersonalCoupon(userId, personalCouponId);
