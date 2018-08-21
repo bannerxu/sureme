@@ -181,7 +181,7 @@ public class OrderCmsService {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         String logisticsInfo = valueOperations.get(RedisKeyPrefix.logisticsInfo(orderId));
         if (StringUtils.isEmpty(logisticsInfo)) {
-            String info = logisticsUtil.getLogisticsInfo(logisticsNumber, logisticsCompany);
+            String info = logisticsUtil.getLogisticsInfo(logisticsCompany, logisticsNumber);
             // 存入redis
             valueOperations.set(RedisKeyPrefix.logisticsInfo(orderId), info, 1, TimeUnit.HOURS);
             LogisticsRecord logisticsRecord = logisticsRecordDao.findByOrderIdIs(orderId);
