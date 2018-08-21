@@ -78,7 +78,12 @@ public class OrderCmsService {
     public Page<OrderCmsResultVO> findPage(OrderStatusEnum orderStatus, Pageable pageable) {
         Specification<Order> specification = commonSpecUtil.equal("orderStatus", orderStatus);
         Specification<Order> deleted = commonSpecUtil.equal("deleted", false);
-        Specifications<Order> specifications = Specifications.where(specification).and(deleted);
+        Specifications<Order> specifications = null;
+        if (ObjectUtils.isEmpty(orderStatus)) {
+            specifications = Specifications.where(deleted);
+        }else {
+            specifications = Specifications.where(specification).and(deleted);
+        }
         Page<Order> orders = orderDao.findAll(specifications, pageable);
 
         return orders.map(this::convertOrderToVO);

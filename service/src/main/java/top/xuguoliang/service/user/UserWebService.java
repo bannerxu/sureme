@@ -172,4 +172,9 @@ public class UserWebService {
             articleStarDao.delete(articleStarId);
         }
     }
+
+
+    public User getUser(Integer userId) {
+        return userDao.findOne(userId);
+    }
 }

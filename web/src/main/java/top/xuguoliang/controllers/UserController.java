@@ -72,6 +72,13 @@ public class UserController {
         userWebService.deleteStar(userId, articleStarId);
     }
 
+    @GetMapping
+    @ApiOperation("个人信息")
+    public User getUserInfo() {
+        Integer userId = UserHelper.getUserId();
+        return userWebService.getUser(userId);
+    }
+
 }
 
 
