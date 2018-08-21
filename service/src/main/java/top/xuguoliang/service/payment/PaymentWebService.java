@@ -53,7 +53,7 @@ public class PaymentWebService {
     /**
      * 统一下单
      * @param userId 用户id
-     * @param orderId
+     * @param orderId 订单id
      * @return
      */
     public WxPayUnifiedOrderResult unifiedOrder(Integer userId, Integer orderId) {
@@ -83,7 +83,7 @@ public class PaymentWebService {
         orderRequest.setBody("小贝真商品购买");
         orderRequest.setOpenid(user.getOpenId());
         orderRequest.setSpbillCreateIp("127.0.0.1");
-        orderRequest.setNotifyUrl("http://");
+        orderRequest.setNotifyUrl("http://sureme-web.xuguoliang.top/notify");
 
         WxPayService wxPayService = new WxPayServiceImpl();
         try {

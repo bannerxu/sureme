@@ -13,6 +13,6 @@ public class OrderSendParamVO {
     private String logisticsNumber;
 
     @ApiModelProperty("物流公司代码")
-    private String LogisticsCompany;
+    private String logisticsCompany;
 
 }

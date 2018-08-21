@@ -4,13 +4,12 @@ import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
-import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.payment.PaymentWebService;
 import top.xuguoliang.service.payment.web.UnifiedOrderParam;
@@ -49,21 +48,29 @@ public class PaymentController {
         } catch (WxPayException e) {
             e.printStackTrace();
         }
+        if (ObjectUtils.isEmpty(wxPayOrderNotifyResult)) {
+            String fail = WxPayNotifyResponse.fail("Fail");
+            logger.debug("回调返回值为null");
+//            return fail;
+            return null;
+        }
         if ("SUCCESS".equals(wxPayOrderNotifyResult.getReturnCode())) {
-
+            // 付款成功
+            paymentWebService.payOrderNotify(wxPayOrderNotifyResult);
+            // 记录资金流水
+            try {
+                paymentWebService.addMoneyWater(wxPayOrderNotifyResult);
+            } catch (ParseException e) {
+                logger.warn("----------------记录资金流水错误-----------------");
+                e.printStackTrace();
+            }
+        } else {
+            // 付款失败
+            logger.warn("用户付款失败：{}", wxPayOrderNotifyResult.getReturnMsg());
         }
-
-
-
-        // TODO: 2018-08-19 支付回调，如果成功要创建佣金记录
-        paymentWebService.payOrderNotify(wxPayOrderNotifyResult);
-        // 记录资金流水
-        try {
-            paymentWebService.addMoneyWater(wxPayOrderNotifyResult);
-        } catch (ParseException e) {
-            logger.warn("----------------记录资金流水错误-----------------");
-            e.printStackTrace();
-        }
+        String ok = WxPayNotifyResponse.success("OK");
+        logger.debug("回调返回值：{}", ok);
+//        return ok;
         return null;
     }
 }

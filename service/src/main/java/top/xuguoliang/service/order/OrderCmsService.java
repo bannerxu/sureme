@@ -72,7 +72,7 @@ public class OrderCmsService {
      * 分页查询订单
      *
      * @param orderStatus 订单状态
-     * @param pageable 分页信息
+     * @param pageable    分页信息
      * @return 分页订单
      */
     public Page<OrderCmsResultVO> findPage(OrderStatusEnum orderStatus, Pageable pageable) {
@@ -81,7 +81,7 @@ public class OrderCmsService {
         Specifications<Order> specifications = null;
         if (ObjectUtils.isEmpty(orderStatus)) {
             specifications = Specifications.where(deleted);
-        }else {
+        } else {
             specifications = Specifications.where(specification).and(deleted);
         }
         Page<Order> orders = orderDao.findAll(specifications, pageable);
@@ -163,6 +163,7 @@ public class OrderCmsService {
 
         order.setLogisticsNumber(logisticsNumber);
         order.setLogisticsCompany(vo.getLogisticsCompany());
+        order.setOrderStatus(OrderStatusEnum.ORDER_SENT);
         orderDao.saveAndFlush(order);
     }
 
