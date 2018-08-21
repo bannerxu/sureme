@@ -391,6 +391,7 @@ public class GroupBuyingWebService {
         order.setOrderNumber(NumberUtil.generateOrderNumber("gb"));
         order.setOrderType(OrderTypeEnum.ORDER_TYPE_GROUP);
         order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
+        order.setRealPayMoney(userGroupBuying.getGroupPrice());
         order.setTotalMoney(userGroupBuying.getGroupPrice());
         order.setCreateTime(now);
         order.setUpdateTime(now);
@@ -401,6 +402,8 @@ public class GroupBuyingWebService {
         BeanUtils.copyNonNullProperties(stockKeepingUnit, orderItem);
         BeanUtils.copyNonNullProperties(commodity, orderItem);
         orderItem.setOrderId(orderSave.getOrderId());
+        orderItem.setPrice(userGroupBuyingSave.getGroupPrice());
+        orderItem.setCount(1);
         orderItemDao.save(orderItem);
 
         // 构建返回值

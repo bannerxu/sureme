@@ -212,6 +212,8 @@ public class SecondWebService {
         order.setOrderType(OrderTypeEnum.ORDER_TYPE_SECOND);
         order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_PAYMENT);
         order.setSecondId(secondId);
+        order.setTotalMoney(second.getSecondPrice());
+        order.setRealPayMoney(second.getSecondPrice());
         String orderNumber = NumberUtil.generateOrderNumber("sk");
         order.setOrderNumber(orderNumber);
         Order orderSave = orderDao.saveAndFlush(order);

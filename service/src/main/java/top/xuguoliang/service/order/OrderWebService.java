@@ -41,8 +41,6 @@ import top.xuguoliang.service.order.web.OrderItemVO;
 import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
 import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
-import top.xuguoliang.service.payment.web.UnifiedOrderParam;
-import top.xuguoliang.service.payment.web.UnifiedOrderResult;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -87,8 +85,6 @@ public class OrderWebService {
     private BrokerageDao brokerageDao;
     @Resource
     private SystemSettingDao systemSettingDao;
-    @Resource
-    private PaymentUtil paymentUtil;
     @Resource
     private LogisticsUtil logisticsUtil;
     @Resource
@@ -219,6 +215,7 @@ public class OrderWebService {
         BigDecimal total = BigDecimal.valueOf(0.0);
 
         List<ItemParamVO> items = vo.getItems();
+        List<OrderItem> needSaveOrderItems = new ArrayList<>(items.size());
         for (ItemParamVO item : items) {
             Integer stockKeepingUnitId = item.getStockKeepingUnitId();
             Integer voCount = item.getSkuCount();
@@ -240,6 +237,17 @@ public class OrderWebService {
                 BigDecimal discountPrice = stockKeepingUnit.getDiscountPrice();
                 BigDecimal itemPrice = discountPrice.multiply(skuCount);
                 total = total.add(itemPrice);
+
+                Integer commodityId = stockKeepingUnit.getCommodityId();
+                Commodity commodity = commodityDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+
+                // 订单条目
+                OrderItem orderItem = new OrderItem();
+                BeanUtils.copyNonNullProperties(commodity, orderItem);
+                BeanUtils.copyNonNullProperties(stockKeepingUnit, orderItem);
+                orderItem.setPrice(stockKeepingUnit.getDiscountPrice());
+                orderItem.setCount(voCount);
+                needSaveOrderItems.add(orderItem);
             } else {
                 logger.error("购物车下单失败：商品规格不存在（用户id：{}）", userId);
                 throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
@@ -288,8 +296,18 @@ public class OrderWebService {
         order.setUpdateTime(date);
         order.setDeleted(false);
         order.setTotalMoney(total);
+        order.setRealPayMoney(needPayMoney);
+        Order orderSave = orderDao.saveAndFlush(order);
 
-        return null;
+        Integer orderId = orderSave.getOrderId();
+
+        needSaveOrderItems.forEach(orderItem -> orderItem.setOrderId(orderId));
+        orderItemDao.save(needSaveOrderItems);
+
+        OrderWebCartCreateResultVO resultVO = new OrderWebCartCreateResultVO();
+        resultVO.setOrderNumber(orderSave.getOrderNumber());
+
+        return resultVO;
     }
 
 
