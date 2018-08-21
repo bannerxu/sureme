@@ -11,8 +11,10 @@ public enum OrderStatusEnum {
     ORDER_WAITING_SEND,
     // 已发货
     ORDER_SENT,
-    // 已收货
+    // 已收货，待评价
     ORDER_RECEIVED,
+    // 已评价
+    ORDER_COMMENTED,
     // 申请退款
     ORDER_APPLY_REFUND,
     // 已退款

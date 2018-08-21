@@ -384,7 +384,7 @@ public class OrderWebService {
         }
 
         // 设置订单已评价
-        order.setIsCommented(true);
+        order.setOrderStatus(OrderStatusEnum.ORDER_COMMENTED);
         orderDao.saveAndFlush(order);
     }
 

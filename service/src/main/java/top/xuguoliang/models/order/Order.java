@@ -70,9 +70,6 @@ public class Order {
 
     // ----------------额外信息----------------
 
-    @ApiModelProperty("是否已评价")
-    private Boolean isCommented = false;
-
     @ApiModelProperty("邮费")
     private BigDecimal postage;
 
