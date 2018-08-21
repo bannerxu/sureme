@@ -16,10 +16,7 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.common.utils.NumberUtil;
 import top.xuguoliang.models.commodity.*;
-import top.xuguoliang.models.order.Order;
-import top.xuguoliang.models.order.OrderDao;
-import top.xuguoliang.models.order.OrderStatusEnum;
-import top.xuguoliang.models.order.OrderTypeEnum;
+import top.xuguoliang.models.order.*;
 import top.xuguoliang.models.second.Second;
 import top.xuguoliang.models.second.SecondDao;
 import top.xuguoliang.models.user.Address;
@@ -214,7 +211,14 @@ public class SecondWebService {
         order.setSecondId(secondId);
         String orderNumber = NumberUtil.generateOrderNumber("sk");
         order.setOrderNumber(orderNumber);
-        orderDao.saveAndFlush(order);
+        Order orderSave = orderDao.saveAndFlush(order);
+
+        // 订单条目
+        OrderItem orderItem = new OrderItem();
+        BeanUtils.copyNonNullProperties(second, orderItem);
+        orderItem.setCount(1);
+        orderItem.setPrice(second.getSecondPrice());
+        orderItem.setOrderId(orderSave.getOrderId());
 
         // 构建返回值
         SecondKillResultVO resultVO = new SecondKillResultVO();

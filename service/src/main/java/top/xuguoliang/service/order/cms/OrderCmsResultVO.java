@@ -2,12 +2,14 @@ package top.xuguoliang.service.order.cms;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.order.OrderItem;
 import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.models.order.OrderTypeEnum;
 
 import javax.persistence.Lob;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
@@ -26,6 +28,8 @@ public class OrderCmsResultVO {
 
     @ApiModelProperty("订单类型")
     private OrderTypeEnum orderType;
+
+    List<OrderItem> orderItems;
 
 
     @ApiModelProperty("商品id")

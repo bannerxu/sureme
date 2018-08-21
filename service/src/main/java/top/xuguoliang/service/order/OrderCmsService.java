@@ -20,9 +20,7 @@ import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.logistics.LogisticsRecord;
 import top.xuguoliang.models.logistics.LogisticsRecordDao;
-import top.xuguoliang.models.order.Order;
-import top.xuguoliang.models.order.OrderDao;
-import top.xuguoliang.models.order.OrderStatusEnum;
+import top.xuguoliang.models.order.*;
 import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.logistics.LogisticsResultVO;
 import top.xuguoliang.service.order.cms.OrderCmsPageParamVO;
@@ -30,6 +28,7 @@ import top.xuguoliang.service.order.cms.OrderCmsResultVO;
 import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +41,9 @@ public class OrderCmsService {
 
     @Resource
     private OrderDao orderDao;
+
+    @Resource
+    private OrderItemDao orderItemDao;
 
     @Resource
     private CommodityDao commodityDao;
@@ -86,7 +88,7 @@ public class OrderCmsService {
 
         Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order)) {
-            logger.error("调用订单单个查询业务：id对应的订单不存在");
+            logger.error("调用订单单个查询业务：id{}对应的订单不存在", orderId);
             throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST, "订单不存在");
         }
 
@@ -102,7 +104,9 @@ public class OrderCmsService {
     private OrderCmsResultVO convertOrderToVO(Order order) {
         OrderCmsResultVO vo = new OrderCmsResultVO();
         BeanUtils.copyNonNullProperties(order, vo);
-
+        Integer orderId = order.getOrderId();
+        List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(orderId);
+        vo.setOrderItems(orderItems);
         return vo;
     }
 
