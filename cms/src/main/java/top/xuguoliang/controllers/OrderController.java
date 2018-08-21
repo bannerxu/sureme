@@ -30,7 +30,8 @@ public class OrderController {
     @GetMapping("page")
     @ApiOperation("分页查询")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
-    public Page<OrderCmsResultVO> findPage(@RequestParam(required = false) OrderStatusEnum orderStatus, @RequestParam(required = false) @PageableDefault Pageable pageable) {
+    public Page<OrderCmsResultVO> findPage(@RequestParam(required = false) OrderStatusEnum orderStatus,
+                                           @RequestParam(required = false) @PageableDefault Pageable pageable) {
         return orderCmsService.findPage(orderStatus, pageable);
     }
 

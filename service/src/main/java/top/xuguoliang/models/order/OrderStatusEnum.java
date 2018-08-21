@@ -20,5 +20,7 @@ public enum OrderStatusEnum {
     // 已退款
     ORDER_REFUNDED,
     // 已退货
-    ORDER_RETURNED
+    ORDER_RETURNED,
+    // QUERY_ALL
+    QUERY_ALL
 }
