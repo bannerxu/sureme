@@ -290,6 +290,8 @@ public class GroupBuyingWebService {
         BeanUtils.copyNonNullProperties(stockKeepingUnit, orderItem);
         BeanUtils.copyNonNullProperties(commodity, orderItem);
         orderItem.setOrderId(orderSave.getOrderId());
+        orderItem.setPrice(userGroupBuyingSave.getGroupPrice());
+        orderItem.setCount(1);
         orderItemDao.save(orderItem);
 
         // 构建返回值

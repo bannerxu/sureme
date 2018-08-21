@@ -54,6 +54,9 @@ public class SecondWebService {
     private OrderDao orderDao;
 
     @Resource
+    private OrderItemDao orderItemDao;
+
+    @Resource
     private CommodityDao commodityDao;
 
     @Resource
@@ -219,6 +222,7 @@ public class SecondWebService {
         orderItem.setCount(1);
         orderItem.setPrice(second.getSecondPrice());
         orderItem.setOrderId(orderSave.getOrderId());
+        orderItemDao.saveAndFlush(orderItem);
 
         // 构建返回值
         SecondKillResultVO resultVO = new SecondKillResultVO();
