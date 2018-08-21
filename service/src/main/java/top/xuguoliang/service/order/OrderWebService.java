@@ -292,22 +292,6 @@ public class OrderWebService {
         return null;
     }
 
-    /**
-     * 统一下单
-     *
-     * @return 下单返回对象
-     */
-    private UnifiedOrderResult unifiedOrder() {
-        // 调用微信统一下单接口，返回预支付对象
-//        UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-//        unifiedOrderParam.setAppid();
-//        unifiedOrderParam.setMch_id();
-//        unifiedOrderParam.setNotify_url();
-//        unifiedOrderParam.setOpenid();
-//        UnifiedOrderResult unifiedOrderResult = paymentUtil.unifiedOrder();
-
-        return null;
-    }
 
     /**
      * 查询订单详情
@@ -327,7 +311,14 @@ public class OrderWebService {
 
         OrderWebDetailVO detailVO = new OrderWebDetailVO();
         BeanUtils.copyNonNullProperties(order, detailVO);
-        List<OrderItem> orderItems = orderItemDao.findByOrderIdIs(orderId);
+        List<OrderItemVO> orderItems = orderItemDao.findByOrderIdIs(order.getOrderId()).stream().map(orderItem -> {
+            Integer commodityId = orderItem.getCommodityId();
+            List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
+            OrderItemVO orderItemVO = new OrderItemVO();
+            BeanUtils.copyNonNullProperties(orderItem, orderItemVO);
+            orderItemVO.setCommodityBanners(commodityBanners);
+            return orderItemVO;
+        }).collect(Collectors.toList());
         detailVO.setOrderItems(orderItems);
 
         return detailVO;
