@@ -69,4 +69,6 @@ public class MessageCodes {
     public static final String WEB_SECOND_NOT_EXIST = "web.second.not.exist";
     public static final String WEB_SECOND_SOLD_OUT = "web.second.sold.out";
     public static final String WEB_ORDER_ITEMS_IS_NULL = "web.order.items.is.null";
+    public static final String WEB_ORDER_REFUNDED_OR_RETURNED = "web.order.refunded.or.returned";
+    public static final String CMS_APPLY_RECORD_NOT_EXIST = "cms.apply.record.not.exist";
 }

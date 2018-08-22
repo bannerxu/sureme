@@ -2,7 +2,9 @@ package top.xuguoliang.service.order.web;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.apply.ApplyType;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -11,12 +13,15 @@ import java.util.List;
 @Data
 public class ApplyRefundVO {
 
+    @NotNull(message = "订单id不能为空")
     @ApiModelProperty("订单id")
     private Integer orderId;
 
-    @ApiModelProperty("退款类型 1-仅退款 2-退货退款")
-    private Integer refundType;
+    @NotNull(message = "申请类型不能为空")
+    @ApiModelProperty("申请类型")
+    private ApplyType applyType;
 
+    @NotNull(message = "原因不能为空")
     @ApiModelProperty("原因")
     private String reason;
 

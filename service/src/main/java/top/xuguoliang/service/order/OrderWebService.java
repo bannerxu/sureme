@@ -15,6 +15,9 @@ import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.*;
+import top.xuguoliang.models.apply.ApplyRecord;
+import top.xuguoliang.models.apply.ApplyRecordDao;
+import top.xuguoliang.models.apply.ApplyStatus;
 import top.xuguoliang.models.brokerage.Brokerage;
 import top.xuguoliang.models.brokerage.BrokerageDao;
 import top.xuguoliang.models.comment.CommodityComment;
@@ -88,6 +91,8 @@ public class OrderWebService {
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private LogisticsRecordDao logisticsRecordDao;
+    @Resource
+    private ApplyRecordDao applyRecordDao;
 
     /**
      * 创建订单
@@ -494,9 +499,32 @@ public class OrderWebService {
      * @param applyRefundVO 申请信息
      */
     public void applyRefund(Integer userId, ApplyRefundVO applyRefundVO) {
-        Order order = orderDao.findOne(applyRefundVO.getOrderId());
+        Date now = new Date();
+
+        Integer orderId = applyRefundVO.getOrderId();
+        Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
-            logger.error("申请退款失败：订单{} 不存在");
+            logger.error("申请退款失败：订单{} 不存在", orderId);
+            return;
         }
+        OrderStatusEnum orderStatus = order.getOrderStatus();
+        if (orderStatus.equals(OrderStatusEnum.ORDER_REFUNDED) || orderStatus.equals(OrderStatusEnum.ORDER_RETURNED)) {
+            logger.error("申请退款失败：订单{} 已退过款", orderId);
+            throw new ValidationException(MessageCodes.WEB_ORDER_REFUNDED_OR_RETURNED);
+        }
+
+        // 新建一个申请
+        ApplyRecord applyRecord = new ApplyRecord();
+        applyRecord.setOrderId(orderId);
+        applyRecord.setApplyStatus(ApplyStatus.APPLYING);
+        applyRecord.setApplyTime(now);
+        applyRecord.setApplyType(applyRefundVO.getApplyType());
+        applyRecord.setApplyReason(applyRefundVO.getReason());
+        applyRecord.setUserId(userId);
+        applyRecordDao.save(applyRecord);
+
+        // 更改订单状态为申请中
+        order.setOrderStatus(OrderStatusEnum.ORDER_APPLY_REFUND);
+        orderDao.save(order);
     }
 }
