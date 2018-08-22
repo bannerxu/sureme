@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.service.comment.web.CommentOrderParamVO;
 import top.xuguoliang.service.order.OrderWebService;
+import top.xuguoliang.service.order.web.ApplyRefundVO;
 import top.xuguoliang.service.order.web.OrderWebDetailVO;
 import top.xuguoliang.service.order.web.OrderWebResultVO;
 
@@ -65,5 +66,12 @@ public class OrderController {
     @ApiOperation("获取物流")
     public String getLogisticsInfo(@PathVariable Integer orderId) {
         return orderWebService.getLogisticsInfo(orderId);
+    }
+
+    @PostMapping
+    @ApiOperation("申请退款")
+    public void applyRefund(@RequestBody ApplyRefundVO applyRefundVO) {
+        Integer userId = UserHelper.getUserId();
+        orderWebService.applyRefund(userId, applyRefundVO);
     }
 }

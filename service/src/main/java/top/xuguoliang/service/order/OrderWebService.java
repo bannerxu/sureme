@@ -37,10 +37,7 @@ import top.xuguoliang.service.cart.web.ItemParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateParamVO;
 import top.xuguoliang.service.cart.web.OrderWebCartCreateResultVO;
 import top.xuguoliang.service.comment.web.CommentOrderParamVO;
-import top.xuguoliang.service.order.web.OrderItemVO;
-import top.xuguoliang.service.order.web.OrderWebCreateParamVO;
-import top.xuguoliang.service.order.web.OrderWebDetailVO;
-import top.xuguoliang.service.order.web.OrderWebResultVO;
+import top.xuguoliang.service.order.web.*;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -474,7 +471,7 @@ public class OrderWebService {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
         String logisticsInfo = valueOperations.get(RedisKeyPrefix.logisticsInfo(orderId));
         if (StringUtils.isEmpty(logisticsInfo)) {
-            String info = logisticsUtil.getLogisticsInfo(logisticsNumber, logisticsCompany);
+            String info = logisticsUtil.getLogisticsInfo(logisticsCompany, logisticsNumber);
             // 存入redis
             valueOperations.set(RedisKeyPrefix.logisticsInfo(orderId), info, 1, TimeUnit.HOURS);
             LogisticsRecord logisticsRecord = logisticsRecordDao.findByOrderIdIs(orderId);
@@ -489,5 +486,17 @@ public class OrderWebService {
             return info;
         }
         return logisticsInfo;
+    }
+
+    /**
+     * 申请退款
+     * @param userId 用户id
+     * @param applyRefundVO 申请信息
+     */
+    public void applyRefund(Integer userId, ApplyRefundVO applyRefundVO) {
+        Order order = orderDao.findOne(applyRefundVO.getOrderId());
+        if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+            logger.error("申请退款失败：订单{} 不存在");
+        }
     }
 }
