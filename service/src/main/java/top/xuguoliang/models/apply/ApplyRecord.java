@@ -1,8 +1,10 @@
 package top.xuguoliang.models.apply;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +14,8 @@ import java.util.Date;
  * @author jinguoguo
  */
 @Data
+@Entity
+@ApiModel("申请记录")
 public class ApplyRecord {
 
     @Id
