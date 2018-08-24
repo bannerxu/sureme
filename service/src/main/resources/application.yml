@@ -60,8 +60,8 @@ logging:
 wechat:
   pay:
     appId: wxc8e6381c38f0ea0f
-    mchId: # 商户号id
-    mchKey: # 商户号秘钥
+    mchId: 1489511922 # 商户号id
+    mchKey: 0358ADC84FAA8EF8037815882EA075AD # 商户号秘钥
     keyPath: # 证书地址，项目中用 "classpath:"
     # subAppId: # 服务商模式才开启
     # subMchId: # 服务商模式才开启
