@@ -12,6 +12,8 @@ import top.xuguoliang.models.article.*;
 import top.xuguoliang.models.commodity.CommodityBanner;
 import top.xuguoliang.models.commodity.CommodityBannerDao;
 import top.xuguoliang.models.commodity.CommodityDao;
+import top.xuguoliang.models.manager.Manager;
+import top.xuguoliang.models.manager.ManagerDao;
 import top.xuguoliang.service.search.web.SearchArticleResultVO;
 import top.xuguoliang.service.search.web.SearchCommodityResultVO;
 
@@ -39,6 +41,9 @@ public class SearchService {
     @Resource
     private CommonSpecUtil<Article> commonSpecUtil;
 
+    @Resource
+    private ManagerDao managerDao;
+
 
     /**
      * 通过商品标题分页查询商品
@@ -48,6 +53,7 @@ public class SearchService {
      * @return 分页商品
      */
     public Page<SearchCommodityResultVO> searchCommodity(String commodityTitle, Pageable pageable) {
+        commodityTitle = "%" + commodityTitle + "%";
         return commodityDao.findByCommodityTitleLikeAndDeletedIsFalse(commodityTitle, pageable).map(commodity -> {
             SearchCommodityResultVO resultVO = new SearchCommodityResultVO();
             BeanUtils.copyNonNullProperties(commodity, resultVO);
@@ -84,13 +90,22 @@ public class SearchService {
 
 
     private SearchArticleResultVO toArticleVO(Article article) {
+        if (ObjectUtils.isEmpty(article)) {
+            return null;
+        }
         SearchArticleResultVO resultVO = new SearchArticleResultVO();
         BeanUtils.copyNonNullProperties(article, resultVO);
 
         Integer articleId = article.getArticleId();
         List<ArticleBanner> banners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
-        if (ObjectUtils.isEmpty(banners)) {
+        if (!ObjectUtils.isEmpty(banners)) {
             resultVO.setArticleImage(banners.get(0).getArticleBannerUrl());
+        }
+
+        Integer managerId = article.getManagerId();
+        Manager manager = managerDao.findOne(managerId);
+        if (!ObjectUtils.isEmpty(manager) && !manager.getDeleted()) {
+            resultVO.setManagerName(manager.getName());
         }
 
         return resultVO;
