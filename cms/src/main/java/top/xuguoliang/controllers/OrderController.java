@@ -15,6 +15,7 @@ import top.xuguoliang.service.order.cms.OrderCmsResultVO;
 import top.xuguoliang.service.order.cms.OrderSendParamVO;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jinguoguo
@@ -59,5 +60,11 @@ public class OrderController {
     @ApiOperation("获取物流")
     public String getLogisticsInfo(@PathVariable Integer orderId) {
         return orderCmsService.getLogisticsInfo(orderId);
+    }
+
+    @GetMapping("excel")
+    @ApiOperation("导出")
+    public void excel(HttpServletResponse response) throws Exception {
+        orderCmsService.excel(response);
     }
 }

@@ -27,8 +27,10 @@ public class CmsShiroConfig {
         filterChainDefinitionMapping.put("/", "anon");
         filterChainDefinitionMapping.put("/api/login/**", "anon");
         filterChainDefinitionMapping.put("/api/qiniu/**", "anon");
+        filterChainDefinitionMapping.put("/api/order/excel", "anon");
         filterChainDefinitionMapping.put("/api/**", "user");
         filterChainDefinitionMapping.put("/**", "anon");
+
         shiroFilter.setFilterChainDefinitionMap(filterChainDefinitionMapping);
         shiroFilter.setSecurityManager(securityManager);
         Map<String, Filter> filters = new HashMap<>();

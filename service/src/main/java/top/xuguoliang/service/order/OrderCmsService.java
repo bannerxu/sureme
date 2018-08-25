@@ -1,5 +1,6 @@
 package top.xuguoliang.service.order;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -13,15 +14,15 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
-import top.xuguoliang.common.utils.BeanUtils;
-import top.xuguoliang.common.utils.CommonSpecUtil;
-import top.xuguoliang.common.utils.LogisticsUtil;
+import top.xuguoliang.common.utils.*;
 import top.xuguoliang.models.commodity.CommodityBanner;
 import top.xuguoliang.models.commodity.CommodityBannerDao;
 import top.xuguoliang.models.commodity.CommodityDao;
 import top.xuguoliang.models.commodity.StockKeepingUnitDao;
 import top.xuguoliang.models.logistics.LogisticsRecord;
 import top.xuguoliang.models.logistics.LogisticsRecordDao;
+import top.xuguoliang.models.moneywater.MoneyWater;
+import top.xuguoliang.models.moneywater.MoneyWaterType;
 import top.xuguoliang.models.order.*;
 import top.xuguoliang.service.RedisKeyPrefix;
 import top.xuguoliang.service.order.cms.OrderCmsResultVO;
@@ -29,9 +30,19 @@ import top.xuguoliang.service.order.cms.OrderSendParamVO;
 import top.xuguoliang.service.order.web.OrderItemVO;
 
 import javax.annotation.Resource;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static top.xuguoliang.common.utils.ExcelHelper.WEBAPP_EXPORT_EXCEL;
 
 /**
  * @author jinguoguo
@@ -196,5 +207,27 @@ public class OrderCmsService {
             return info;
         }
         return logisticsInfo;
+    }
+
+    public void excel(HttpServletResponse response) throws Exception {
+
+
+        List<MoneyWater> list = new ArrayList<>();
+        MoneyWater moneyWater = new MoneyWater();
+        moneyWater.setMoney(BigDecimal.TEN);
+        moneyWater.setDeleted(false);
+        moneyWater.setTime(new Date());
+        moneyWater.setType(MoneyWaterType.PAY);
+        moneyWater.setMoneyWaterId(1);
+        moneyWater.setUserId(1);
+        moneyWater.setOrderId(1);
+        list.add(moneyWater);
+
+        List<String> titles = Arrays.asList("金钱", "是否删除", "时间", "时间", "时间", "时间", "时间");
+
+
+        ExcelHelper.writeExcel("1.xls",list,MoneyWater.class,new ArrayList<>(1),titles);
+
+        ExportUtil.exportToClient(response, "multipart/form-data", WEBAPP_EXPORT_EXCEL, "1.xls");
     }
 }
