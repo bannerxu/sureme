@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.ArticleTypeEnum;
-import top.xuguoliang.service.search.SearchService;
+import top.xuguoliang.service.search.SearchWebService;
 import top.xuguoliang.service.search.web.SearchArticleResultVO;
 import top.xuguoliang.service.search.web.SearchCommodityResultVO;
 
@@ -22,13 +22,13 @@ import javax.annotation.Resource;
 public class SearchController {
 
     @Resource
-    private SearchService searchService;
+    private SearchWebService searchWebService;
 
     @GetMapping("commodity/{commodityTitle}")
     @ApiOperation("搜索商品")
     public Page<SearchCommodityResultVO> searchCommodity(@PathVariable String commodityTitle,
                                                          @PageableDefault Pageable pageable) {
-        return searchService.searchCommodity(commodityTitle, pageable);
+        return searchWebService.searchCommodity(commodityTitle, pageable);
     }
 
     @GetMapping("article/{articleTitle}/articleType/{articleType}")
@@ -36,6 +36,6 @@ public class SearchController {
     public Page<SearchArticleResultVO> searchArticle(@PathVariable String articleTitle,
                                                      @PathVariable ArticleTypeEnum articleType,
                                                      @PageableDefault Pageable pageable) {
-        return searchService.searchArticle(articleTitle, articleType, pageable);
+        return searchWebService.searchArticle(articleTitle, articleType, pageable);
     }
 }

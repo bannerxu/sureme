@@ -1,5 +1,7 @@
 package top.xuguoliang.models.order;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +15,7 @@ public interface OrderDao extends JpaSpecificationExecutor<Order>, JpaRepository
      * @return 订单
      */
     Order findByOrderNumberEquals(String orderNumber);
+
+    Page<Order> findByOrderNumberLikeAndDeletedIsFalse(String orderNumber, Pageable pageable);
 
 }

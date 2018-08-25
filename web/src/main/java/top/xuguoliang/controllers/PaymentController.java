@@ -37,6 +37,8 @@ public class PaymentController {
         return paymentWebService.unifiedOrder(userId, unifiedOrderParam.getOrderId());
     }
 
+    // TODO 支付回调处理
+
     @ApiOperation("支付回调")
     @RequestMapping(value = "payOrderNotify", method = {RequestMethod.POST, RequestMethod.GET})
     public WxPayNotifyResponse payOrderNotify(@RequestBody String xmlData) {
@@ -70,6 +72,7 @@ public class PaymentController {
         }
         String ok = WxPayNotifyResponse.success("OK");
         logger.debug("回调返回值：{}", ok);
+        new WxPayNotifyResponse();
 //        return ok;
         return null;
     }

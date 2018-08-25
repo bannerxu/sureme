@@ -24,7 +24,7 @@ import java.util.List;
  * @author jinguoguo
  */
 @Service
-public class SearchService {
+public class SearchWebService {
 
     @Resource
     private CommodityDao commodityDao;

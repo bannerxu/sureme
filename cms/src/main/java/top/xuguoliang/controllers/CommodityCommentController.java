@@ -10,6 +10,8 @@ import top.xuguoliang.service.comment.CommodityCommentCmsService;
 import top.xuguoliang.service.comment.cms.CmsReplyCommentParamVO;
 import top.xuguoliang.service.comment.cms.CommodityCommentCmsResultVO;
 
+import javax.annotation.Resource;
+
 /**
  * @author jinguoguo
  */
@@ -18,6 +20,7 @@ import top.xuguoliang.service.comment.cms.CommodityCommentCmsResultVO;
 @Api(tags = "商品评论模块")
 public class CommodityCommentController {
 
+    @Resource
     private CommodityCommentCmsService commodityCommentCmsService;
 
     @GetMapping

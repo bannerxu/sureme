@@ -1,37 +1,38 @@
-package top.xuguoliang.models.article;
+package top.xuguoliang.service.search.cms;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.xuguoliang.models.article.ArticleTypeEnum;
 
-import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jinguoguo
  */
 @Data
-@Entity
-@ApiModel("文章")
-public class Article {
+public class SearchArticleResultVO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty("文章id")
     private Integer articleId;
 
     @ApiModelProperty("文章标题")
     private String articleTitle;
 
-    @Lob
     @ApiModelProperty("文章内容")
     private String articleContent;
 
     @ApiModelProperty("文章类型")
     private ArticleTypeEnum articleType;
 
+    @ApiModelProperty("关联商品")
+    private List<SearchArticleCommodityVO> commodities;
+
     @ApiModelProperty("发表文章的管理员id")
     private Integer managerId;
+
+    @ApiModelProperty("发表文章的管理员姓名")
+    private String managerName;
 
     @ApiModelProperty("喜欢数")
     private Integer likeCount = 0;
@@ -50,8 +51,5 @@ public class Article {
 
     @ApiModelProperty("更新时间")
     private Date updateTime;
-
-    @ApiModelProperty("删除")
-    private Boolean deleted = false;
 
 }
