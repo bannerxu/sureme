@@ -77,7 +77,6 @@ public class ApplyRecordService {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_FAIL);
         } else {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_SUCCESS);
-            // TODO 退款申请通过，发起微信退款；另外需要在退款回调中设置订单状态和添加流水记录
             Integer orderId = applyRecord.getOrderId();
             Order order = orderDao.findOne(orderId);
             if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
