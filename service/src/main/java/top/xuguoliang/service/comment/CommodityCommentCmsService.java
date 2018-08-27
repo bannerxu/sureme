@@ -3,6 +3,7 @@ package top.xuguoliang.service.comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.utils.BeanUtils;
@@ -39,12 +40,14 @@ public class CommodityCommentCmsService {
      * @return 分页商品评论
      */
     public Page<CommodityCommentCmsResultVO> findPage(Integer commodityId, Pageable pageable) {
+        Specification<CommodityComment> deleted = commonSpecUtil.equal("deleted", false);
         Page<CommodityCommentCmsResultVO> resultVOS;
         if (ObjectUtils.isEmpty(commodityId)) {
-            resultVOS = commodityCommentDao.findAll(pageable).map(this::convertCommodityCommentToVO);
+            resultVOS = commodityCommentDao.findAll(deleted, pageable).map(this::convertCommodityCommentToVO);
         } else {
             Specification<CommodityComment> specification = commonSpecUtil.equal("commodityId", commodityId);
-            resultVOS = commodityCommentDao.findAll(specification, pageable).map(this::convertCommodityCommentToVO);
+            Specifications<CommodityComment> specifications = Specifications.where(deleted).and(specification);
+            resultVOS = commodityCommentDao.findAll(specifications, pageable).map(this::convertCommodityCommentToVO);
         }
         return resultVOS;
     }
