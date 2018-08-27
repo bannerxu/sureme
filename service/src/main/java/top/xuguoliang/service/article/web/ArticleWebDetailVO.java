@@ -61,4 +61,7 @@ public class ArticleWebDetailVO {
 
     @ApiModelProperty("对应怀孕周数 0通用")
     private Integer pregnancyWeek;
+
+    @ApiModelProperty("宝宝出生天数")
+    private Integer babyDay;
 }
