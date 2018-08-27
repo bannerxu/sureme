@@ -9,6 +9,8 @@ import top.xuguoliang.common.utils.BeanUtils;
 import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.comment.CommodityComment;
 import top.xuguoliang.models.comment.CommodityCommentDao;
+import top.xuguoliang.models.user.User;
+import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.comment.cms.CmsReplyCommentParamVO;
 import top.xuguoliang.service.comment.cms.CommodityCommentCmsResultVO;
 
@@ -22,6 +24,9 @@ public class CommodityCommentCmsService {
 
     @Resource
     private CommodityCommentDao commodityCommentDao;
+
+    @Resource
+    private UserDao userDao;
 
     @Resource
     private CommonSpecUtil<CommodityComment> commonSpecUtil;
@@ -53,6 +58,11 @@ public class CommodityCommentCmsService {
     private CommodityCommentCmsResultVO convertCommodityCommentToVO(CommodityComment commodityComment) {
         CommodityCommentCmsResultVO vo = new CommodityCommentCmsResultVO();
         BeanUtils.copyNonNullProperties(commodityComment, vo);
+        Integer userId = commodityComment.getUserId();
+        User user = userDao.findOne(userId);
+        if (!ObjectUtils.isEmpty(user)) {
+            vo.setNickname(user.getNickName());
+        }
         return vo;
     }
 
