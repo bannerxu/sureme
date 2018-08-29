@@ -65,3 +65,7 @@ wechat:
     keyPath: # 证书地址，项目中用 "classpath:"
     # subAppId: # 服务商模式才开启
     # subMchId: # 服务商模式才开启
+
+
+game.apiKey: 0com19AKhMMIhBC5BDb78eVJkTCwBDSK
+game.apiSecret: XDCeR1tYFE-EYNTiCKwFIV-AXajU4Pup
