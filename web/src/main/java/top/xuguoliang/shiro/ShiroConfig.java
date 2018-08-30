@@ -31,6 +31,7 @@ public class ShiroConfig {
         filterChainDefinitionMapping.put("/", "anon");
         filterChainDefinitionMapping.put("/api/user/authorize", "anon");
         filterChainDefinitionMapping.put("/api/test/login", "anon");
+        filterChainDefinitionMapping.put("/api/qiniu/token", "anon");
         filterChainDefinitionMapping.put("/api/game", "anon");
         filterChainDefinitionMapping.put("/api/**", "cors,stateless");
         shiroFilter.setSecurityManager(securityManager);
