@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 import top.xuguoliang.service.qiniu.QiNiuService;
 import top.xuguoliang.service.qiniu.QiNiuMany;
 import top.xuguoliang.service.qiniu.QiNiuOne;
@@ -19,7 +18,6 @@ import java.util.List;
 
 @RestController
 @Api(tags = "七牛图片上传")
-@ApiIgnore
 @RequestMapping("/api/qiniu/")
 public class QiNiuController {
 

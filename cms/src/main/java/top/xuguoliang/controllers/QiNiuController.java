@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 import top.xuguoliang.service.qiniu.QiNiuMany;
 import top.xuguoliang.service.qiniu.QiNiuOne;
 import top.xuguoliang.service.qiniu.QiNiuService;

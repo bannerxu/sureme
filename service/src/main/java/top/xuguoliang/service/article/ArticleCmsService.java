@@ -27,6 +27,7 @@ import top.xuguoliang.service.article.cms.ArticleCmsResultVO;
 import top.xuguoliang.service.article.cms.ArticleCmsUpdateParamVO;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,6 +160,7 @@ public class ArticleCmsService {
      * @param articleCmsUpdateParamVO 修改信息
      * @return 修改后的文章
      */
+    @Transactional(rollbackOn = Exception.class)
     public ArticleCmsResultVO updateArticle(ArticleCmsUpdateParamVO articleCmsUpdateParamVO) {
         Date date = new Date();
         // 构建返回值
