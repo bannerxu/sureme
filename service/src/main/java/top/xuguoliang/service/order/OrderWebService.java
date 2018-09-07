@@ -332,8 +332,9 @@ public class OrderWebService {
             logger.error("查询订单详情失败：订单{} 不存在");
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
         }
-        if (order.getUserId().equals(userId)) {
-            logger.error("查询订单详情失败：当前用户{} 不是订单{} 的所有者");
+        if (!order.getUserId().equals(userId)) {
+            logger.error("查询订单详情失败：当前用户{} 不是订单{} 的所有者", userId, orderId);
+            throw new ValidationException(MessageCodes.USER_NOT_MATCH);
         }
 
         OrderWebDetailVO detailVO = new OrderWebDetailVO();
