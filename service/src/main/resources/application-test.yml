@@ -44,12 +44,13 @@ image:
 
 wx:
   url: https://api.weixin.qq.com/sns/jscode2session
-
+  app-id: wxdc687c02f0e7b24d
+  app-secret: 6b61574dbaff3684dd5c4b0c43e4a720
 
 # 微信支付
 wechat:
   pay:
-    appId: wxc8e6381c38f0ea0f
+    appId: wxdc687c02f0e7b24d
     mchId: 1489511922
     mchKey: 0358ADC84FAA8EF8037815882EA075AD
     keyPath: classpath:apiclient_cert.p12
@@ -58,3 +59,7 @@ logging:
   level:
     com.github.binarywang.demo.wx.pay: DEBUG
     com.github.binarywang.wxpay: DEBUG
+
+
+game.apiKey: 0com19AKhMMIhBC5BDb78eVJkTCwBDSK
+game.apiSecret: XDCeR1tYFE-EYNTiCKwFIV-AXajU4Pup
