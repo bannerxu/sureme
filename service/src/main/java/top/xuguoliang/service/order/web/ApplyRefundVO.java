@@ -25,7 +25,4 @@ public class ApplyRefundVO {
     @ApiModelProperty("原因")
     private String reason;
 
-    @ApiModelProperty("图片")
-    private List<String> images;
-
 }
