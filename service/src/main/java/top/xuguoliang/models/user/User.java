@@ -58,7 +58,7 @@ public class User {
     private String receiveAddress;
 
     @ApiModelProperty("积分")
-    private String integral;
+    private Integer integral = 0;
 
     @ApiModelProperty("孕期")
     private PregnancyTypeEnum pregnancyType;

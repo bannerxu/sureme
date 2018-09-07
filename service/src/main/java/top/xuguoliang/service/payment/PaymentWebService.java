@@ -1,7 +1,11 @@
 package top.xuguoliang.service.payment;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
+import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -18,11 +22,14 @@ import top.xuguoliang.models.moneywater.MoneyWaterDao;
 import top.xuguoliang.models.moneywater.MoneyWaterType;
 import top.xuguoliang.models.order.Order;
 import top.xuguoliang.models.order.OrderDao;
+import top.xuguoliang.models.order.OrderStatusEnum;
 import top.xuguoliang.models.user.User;
 import top.xuguoliang.models.user.UserDao;
 import top.xuguoliang.service.brokerage.BrokerageWebService;
+import top.xuguoliang.service.payment.web.RefundParam;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,20 +46,20 @@ public class PaymentWebService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentWebService.class);
 
     @Resource
-    private PaymentUtil paymentUtil;
-
-    @Resource
     private OrderDao orderDao;
-
     @Resource
     private UserDao userDao;
-
     @Resource
     private MoneyWaterDao moneyWaterDao;
 
+    private WxPayService wxPayService = new WxPayServiceImpl();
+
+    private static final String SUCCESS = "SUCCESS";
+
     /**
      * 统一下单
-     * @param userId 用户id
+     *
+     * @param userId  用户id
      * @param orderId 订单id
      * @return
      */
@@ -83,9 +90,9 @@ public class PaymentWebService {
         orderRequest.setBody("小贝真商品购买");
         orderRequest.setOpenid(user.getOpenId());
         orderRequest.setSpbillCreateIp("127.0.0.1");
-        orderRequest.setNotifyUrl("http://sureme-web.xuguoliang.top/notify");
+        orderRequest.setNotifyUrl("https://sureme-web.suremeshop.com/api/payment/unifiedOrderNotify");
 
-        WxPayService wxPayService = new WxPayServiceImpl();
+
         try {
             return wxPayService.unifiedOrder(orderRequest);
         } catch (WxPayException e) {
@@ -109,6 +116,7 @@ public class PaymentWebService {
 
     /**
      * 记录资金流水
+     *
      * @param wxPayOrderNotifyResult 支付回调数据
      */
     public void addMoneyWater(WxPayOrderNotifyResult wxPayOrderNotifyResult) throws ParseException {
@@ -129,5 +137,126 @@ public class PaymentWebService {
         moneyWater.setType(MoneyWaterType.PAY);
         moneyWater.setUserId(user.getUserId());
         moneyWaterDao.save(moneyWater);
+    }
+
+    /**
+     * 微信申请退款
+     *
+     * @param refundParam 订单id
+     */
+    public WxPayRefundResult refund(RefundParam refundParam) {
+        Order order = orderDao.findOne(refundParam.getOrderId());
+        WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
+        String orderNumber = order.getOrderNumber();
+
+        // 退款参数组装
+        wxPayRefundRequest.setOutRefundNo(orderNumber);
+        wxPayRefundRequest.setOutTradeNo(orderNumber);
+        wxPayRefundRequest.setRefundFee(order.getRealPayMoney().multiply(BigDecimal.valueOf(100L)).intValue());
+        wxPayRefundRequest.setNotifyUrl("https://sureme-web.suremeshop.com/api/payment/refundNotify");
+
+        try {
+            return wxPayService.refund(wxPayRefundRequest);
+        } catch (WxPayException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 微信申请退款回调
+     *
+     * @param xmlData 回调参数
+     * @return 处理结果
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public String refundNotify(String xmlData) {
+        Date date = new Date();
+        try {
+            WxPayRefundNotifyResult result = wxPayService.parseRefundNotifyResult(xmlData);
+            if (ObjectUtils.isEmpty(result)) {
+                logger.error("退款失败：申请退款回调返回值为null");
+                return WxPayNotifyResponse.fail("Fail");
+            }
+            if (SUCCESS.equals(result.getReturnCode())) {
+                // 退款成功，处理业务
+                String outTradeNo = result.getReqInfo().getOutTradeNo();
+                Integer refundFee = result.getReqInfo().getRefundFee();
+                Order order = orderDao.findByOrderNumberEquals(outTradeNo);
+                // 订单不存在，打印错误
+                if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+                    logger.error("退款失败：订单号{} 不存在", outTradeNo);
+                    return WxPayNotifyResponse.fail("Fail");
+                }
+
+                // 记录资金流水
+                MoneyWater moneyWater = new MoneyWater();
+                moneyWater.setTime(date);
+                moneyWater.setOrderId(order.getOrderId());
+                moneyWater.setDeleted(false);
+                moneyWater.setType(MoneyWaterType.REFUND);
+                BigDecimal money = new BigDecimal(refundFee + "").divide(BigDecimal.valueOf(100L));
+                moneyWater.setMoney(money);
+                moneyWater.setUserId(order.getUserId());
+                moneyWaterDao.save(moneyWater);
+                // 设置订单状态
+                order.setOrderStatus(OrderStatusEnum.ORDER_REFUNDED);
+                orderDao.save(order);
+
+            } else {
+                // 退款失败，打印失败原因
+                logger.error("退款失败：{}", result.getReturnMsg());
+                return WxPayNotifyResponse.fail("Fail");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public String unifiedOrderNotify(String xmlData) {
+        // 解析xml回调数据，返回对象
+        try {
+            WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlData);
+            if (ObjectUtils.isEmpty(result)) {
+                String fail = WxPayNotifyResponse.fail("Fail");
+                logger.debug("回调返回值为null");
+                return fail;
+            }
+
+            if (SUCCESS.equals(result.getReturnCode())) {
+                // 付款成功，处理业务
+                payOrderNotify(result);
+                // 记录资金流水
+                addMoneyWater(result);
+
+                String outTradeNo = result.getOutTradeNo();
+                Integer totalFee = result.getTotalFee();
+                Order order = orderDao.findByOrderNumberEquals(outTradeNo);
+                // 订单不存在，打印错误
+                if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+                    logger.error("退款失败：订单号{} 不存在", outTradeNo);
+                    return WxPayNotifyResponse.fail("Fail");
+                }
+                // 添加用户积分
+                User user = userDao.findOne(order.getUserId());
+                user.setIntegral(user.getIntegral() + totalFee / 1000);
+                userDao.save(user);
+                // 返佣给上级用户（创建佣金记录）
+                brokerageWebService.insert(outTradeNo);
+            } else {
+                // 付款失败
+                logger.warn("用户付款失败：{}", result.getReturnMsg());
+                return WxPayNotifyResponse.fail("Fail");
+            }
+            String ok = WxPayNotifyResponse.success("OK");
+            logger.debug("回调返回值：{}", ok);
+
+            return ok;
+        } catch (WxPayException | ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
