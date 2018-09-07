@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.apply.ApplyRecordService;
@@ -25,7 +26,7 @@ public class AuditController {
 
     @GetMapping
     @ApiOperation("分页查询")
-    public Page<ApplyRecordVO> findPageApplyRecord(@PageableDefault Pageable pageable) {
+    public Page<ApplyRecordVO> findPageApplyRecord(@PageableDefault(sort = "applyTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return applyRecordService.findPageApplyRecord(pageable);
     }
 

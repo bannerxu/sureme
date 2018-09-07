@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.constants.RoleConstant;
@@ -37,7 +38,7 @@ public class ArticleController {
     @GetMapping("page")
     @ApiOperation("分页查询文章")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
-    public Page<ArticleCmsResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<ArticleCmsResultVO> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         logger.debug("-> 调用接口：分页查询文章");
         return articleCmsService.findPage(pageable);
     }

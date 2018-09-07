@@ -28,7 +28,7 @@ public class CommodityController {
     @GetMapping
     @ApiOperation("分页，分类id可不传")
     public Page<CommodityWebResultVO> findPage(@RequestParam(required = false) Integer categoryId,
-                                               @PageableDefault Pageable pageable) {
+                                               @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return commodityWebService.findPage(categoryId, pageable);
     }
 

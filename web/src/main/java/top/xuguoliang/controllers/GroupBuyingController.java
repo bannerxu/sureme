@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingWebService;
@@ -24,13 +25,14 @@ public class GroupBuyingController {
 
     @GetMapping("findPageGroupBuying")
     @ApiOperation("拼团列表")
-    public Page<GroupBuyingWebResultVO> findPageGroupBuying(@PageableDefault Pageable pageable) {
+    public Page<GroupBuyingWebResultVO> findPageGroupBuying(
+            @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return groupBuyingWebService.findPageGroupBuying(pageable);
     }
 
     @GetMapping("findPageUserGroupBuying")
     @ApiOperation("用户拼团列表")
-    public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(@PageableDefault Pageable pageable) {
+    public Page<UserGroupBuyingWebResultVO> findPageUserGroupBuying(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return groupBuyingWebService.findPageUserGroupBuying(pageable);
     }
 

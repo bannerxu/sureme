@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.comment.ArticleCommentCmsService;
@@ -25,7 +26,8 @@ public class ArticleCommentController {
 
     @GetMapping
     @ApiOperation("分页")
-    public Page<ArticleCommentCmsResultVO> findPage(@RequestParam(required = false) Integer articleId, @PageableDefault Pageable pageable) {
+    public Page<ArticleCommentCmsResultVO> findPage(@RequestParam(required = false) Integer articleId,
+                                                    @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return articleCommentCmsService.findPage(articleId, pageable);
     }
 

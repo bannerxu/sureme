@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.order.OrderStatusEnum;
@@ -29,7 +30,8 @@ public class OrderController {
 
     @GetMapping("status/{orderStatus}")
     @ApiOperation("分页查询")
-    public Page<OrderWebResultVO> findPage(@PathVariable OrderStatusEnum orderStatus, @PageableDefault Pageable pageable) {
+    public Page<OrderWebResultVO> findPage(@PathVariable OrderStatusEnum orderStatus,
+                                           @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         Integer userId = UserHelper.getUserId();
         return orderWebService.findPage(userId, orderStatus, pageable);
     }

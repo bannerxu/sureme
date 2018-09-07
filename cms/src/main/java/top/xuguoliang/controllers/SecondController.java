@@ -6,6 +6,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.constants.RoleConstant;
@@ -32,7 +33,7 @@ public class SecondController {
     @GetMapping
     @ApiOperation("分页")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
-    public Page<SecondCmsPageResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<SecondCmsPageResultVO> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return secondCmsService.findPage(pageable);
     }
 

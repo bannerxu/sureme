@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.second.SecondWebService;
@@ -27,7 +28,7 @@ public class SecondController {
 
     @GetMapping
     @ApiOperation("分页")
-    public Page<SecondWebPageResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<SecondWebPageResultVO> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return secondWebService.findPage(pageable);
     }
 
