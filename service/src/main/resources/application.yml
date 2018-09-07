@@ -10,7 +10,7 @@ spring:
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
   datasource:
-    url: jdbc:mysql://120.78.196.233:3306/sureme?characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/sureme?characterEncoding=UTF-8&useSSL=false
     username: root
     password: root
     tomcat:
@@ -20,7 +20,7 @@ spring:
 
 
   redis:
-    host: 120.78.196.233
+    host: 127.0.0.1
     password: root
     port: 6379
     pool.maxIdle: 8
@@ -34,7 +34,7 @@ spring:
 qiniu:
   access-key: ce9a-vgseoe6rtFL1H2EvNPy9xtcnGxhsQMYznAX
   bucket: sureme
-  link-address: http://pcimjrgt6.bkt.clouddn.com/
+  link-address: https://img.suremeshop.com/
   secret-key: hoH2iv8taGgDlmc708bTqUJDJiMbck7pw7xg2OVL
 
 
@@ -44,28 +44,17 @@ image:
 
 wx:
   url: https://api.weixin.qq.com/sns/jscode2session
-  app-id: wxc8e6381c38f0ea0f
-  app-secret: 4fd55998fd0f3d4cbeca5c4fe0cc4b8a
-  mchId:
-  mchKey:
 
-# 日志
-logging:
-  level:
-    org.springframework.web: DEBUG
-    com.github.binarywang.demo.wx.pay: DEBUG
-    com.github.binarywang.wxpay: DEBUG
 
 # 微信支付
 wechat:
   pay:
     appId: wxc8e6381c38f0ea0f
-    mchId: 1489511922 # 商户号id
-    mchKey: 0358ADC84FAA8EF8037815882EA075AD # 商户号秘钥
-    keyPath: # 证书地址，项目中用 "classpath:"
-    # subAppId: # 服务商模式才开启
-    # subMchId: # 服务商模式才开启
-
-
-game.apiKey: 0com19AKhMMIhBC5BDb78eVJkTCwBDSK
-game.apiSecret: XDCeR1tYFE-EYNTiCKwFIV-AXajU4Pup
+    mchId: 1489511922
+    mchKey: 0358ADC84FAA8EF8037815882EA075AD
+    keyPath: classpath:apiclient_cert.p12
+# 微信相关日志
+logging:
+  level:
+    com.github.binarywang.demo.wx.pay: DEBUG
+    com.github.binarywang.wxpay: DEBUG
