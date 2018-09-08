@@ -32,7 +32,7 @@ public class AuditController {
 
     @PutMapping("/{applyRecordId}")
     @ApiOperation("审核")
-    public void audit(@PathVariable Integer applyRecordId, @RequestBody @ApiParam(name = "是否通过 0-否 1-是") Integer isPass) {
+    public void audit(@PathVariable Integer applyRecordId, @RequestBody @ApiParam("是否通过 0-否 1-是") Integer isPass) {
         applyRecordService.audit(applyRecordId, isPass);
     }
 

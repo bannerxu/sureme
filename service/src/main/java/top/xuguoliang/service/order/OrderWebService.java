@@ -502,6 +502,7 @@ public class OrderWebService {
     public void applyRefund(Integer userId, ApplyRefundVO applyRefundVO) {
         Date now = new Date();
 
+        // 订单信息
         Integer orderId = applyRefundVO.getOrderId();
         Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -516,6 +517,7 @@ public class OrderWebService {
 
         // 新建一个申请
         ApplyRecord applyRecord = new ApplyRecord();
+        BeanUtils.copyNonNullProperties(order, applyRecord);
         applyRecord.setOrderId(orderId);
         applyRecord.setApplyStatus(ApplyStatus.APPLYING);
         applyRecord.setApplyTime(now);

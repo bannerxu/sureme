@@ -12,6 +12,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
@@ -52,7 +53,8 @@ public class PaymentWebService {
     @Resource
     private MoneyWaterDao moneyWaterDao;
 
-    private WxPayService wxPayService = new WxPayServiceImpl();
+    @Resource
+    private WxPayService wxPayService;
 
     private static final String SUCCESS = "SUCCESS";
 
@@ -85,13 +87,15 @@ public class PaymentWebService {
             throw new ValidationException(MessageCodes.WEB_ORDER_USER_NO_MATCH);
         }
 
-        WxPayUnifiedOrderRequest orderRequest = new WxPayUnifiedOrderRequest();
-        orderRequest.setOutTradeNo(order.getOrderNumber());
-        orderRequest.setBody("小贝真商品购买");
-        orderRequest.setOpenid(user.getOpenId());
-        orderRequest.setSpbillCreateIp("127.0.0.1");
-        orderRequest.setNotifyUrl("https://sureme-web.suremeshop.com/api/payment/unifiedOrderNotify");
-
+        WxPayUnifiedOrderRequest orderRequest = WxPayUnifiedOrderRequest.newBuilder()
+                .outTradeNo(order.getOrderNumber())
+                .body("小贝真商品购买")
+                .openid(user.getOpenId())
+                .spbillCreateIp("127.0.0.1")
+                .notifyUrl("https://sureme-web.suremeshop.com/api/payment/unifiedOrderNotify")
+                .totalFee(order.getRealPayMoney().multiply(new BigDecimal("100")).intValue())
+                .tradeType("JSAPI")
+                .build();
 
         try {
             return wxPayService.unifiedOrder(orderRequest);
