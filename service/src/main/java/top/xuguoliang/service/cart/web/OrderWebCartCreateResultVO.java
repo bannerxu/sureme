@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 public class OrderWebCartCreateResultVO {
 
-    @ApiModelProperty("订单编号")
-    private String orderNumber;
+    @ApiModelProperty("订单id")
+    private Integer orderId;
 }

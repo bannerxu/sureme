@@ -314,7 +314,7 @@ public class OrderWebService {
         orderItemDao.save(needSaveOrderItems);
 
         OrderWebCartCreateResultVO resultVO = new OrderWebCartCreateResultVO();
-        resultVO.setOrderNumber(orderSave.getOrderNumber());
+        resultVO.setOrderId(orderSave.getOrderId());
 
         return resultVO;
     }
