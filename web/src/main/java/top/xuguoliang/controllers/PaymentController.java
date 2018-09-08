@@ -36,7 +36,7 @@ public class PaymentController {
     @ApiOperation("支付回调")
     @RequestMapping(value = "unifiedOrderNotify", method = {RequestMethod.POST, RequestMethod.GET})
     public String unifiedOrderNotify(@RequestBody String xmlData) {
-
+        logger.debug("支付回调接口被调用：参数为：\n{}", xmlData);
         return paymentWebService.unifiedOrderNotify(xmlData);
 
 

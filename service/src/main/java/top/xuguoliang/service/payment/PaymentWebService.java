@@ -80,8 +80,8 @@ public class PaymentWebService {
         }
 
         // 判断订单是不是当前用户的
-        if (!userId.equals(order.getOrderId())) {
-            logger.error("统一下单失败：订单：{}和用户不匹配：{}", order, userId);
+        if (!userId.equals(order.getUserId())) {
+            logger.error("统一下单失败：订单：{}和用户不匹配：{}", orderId, userId);
             throw new ValidationException(MessageCodes.WEB_ORDER_USER_NO_MATCH);
         }
 
@@ -219,6 +219,7 @@ public class PaymentWebService {
         // 解析xml回调数据，返回对象
         try {
             WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlData);
+            logger.debug("订单回调业务方法：解析回调参数：\n{}", result);
             if (ObjectUtils.isEmpty(result)) {
                 String fail = WxPayNotifyResponse.fail("Fail");
                 logger.debug("回调返回值为null");
