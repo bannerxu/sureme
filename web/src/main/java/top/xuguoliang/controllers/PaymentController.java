@@ -33,6 +33,7 @@ public class PaymentController {
         return paymentWebService.unifiedOrder(userId, unifiedOrderParam.getOrderId());
     }
 
+    @ResponseBody
     @ApiOperation("支付回调")
     @RequestMapping(value = "unifiedOrderNotify", method = {RequestMethod.POST, RequestMethod.GET})
     public String unifiedOrderNotify(@RequestBody String xmlData) {
@@ -41,11 +42,6 @@ public class PaymentController {
 
 
     }
-
-    public void refund(@RequestBody RefundParam refundParam) {
-        paymentWebService.refund(refundParam);
-    }
-
 
     @ApiOperation("申请退款回调")
     @RequestMapping(value = "refundNotify", method = {RequestMethod.POST, RequestMethod.GET})
