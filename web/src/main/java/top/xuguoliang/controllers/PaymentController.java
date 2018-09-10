@@ -26,6 +26,7 @@ public class PaymentController {
     @Resource
     private PaymentWebService paymentWebService;
 
+    @ResponseBody
     @PostMapping("unifiedOrder")
     @ApiOperation("订单统一下单")
     public WxPayUnifiedOrderResult unifiedOrder(@RequestBody UnifiedOrderParam unifiedOrderParam) {
@@ -33,7 +34,6 @@ public class PaymentController {
         return paymentWebService.unifiedOrder(userId, unifiedOrderParam.getOrderId());
     }
 
-    @ResponseBody
     @ApiOperation("支付回调")
     @RequestMapping(value = "unifiedOrderNotify", method = {RequestMethod.POST, RequestMethod.GET})
     public String unifiedOrderNotify(@RequestBody String xmlData) {
