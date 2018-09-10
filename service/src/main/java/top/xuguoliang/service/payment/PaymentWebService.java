@@ -98,7 +98,9 @@ public class PaymentWebService {
                 .build();
 
         try {
-            return wxPayService.unifiedOrder(orderRequest);
+            WxPayUnifiedOrderResult orderResult = wxPayService.unifiedOrder(orderRequest);
+            logger.debug("WxPayUnifiedOrderResult:------->{}", orderResult);
+            return orderResult;
         } catch (WxPayException e) {
             e.printStackTrace();
         }
