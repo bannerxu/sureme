@@ -192,7 +192,7 @@ public class PaymentWebService {
             String ok = WxPayNotifyResponse.success("OK");
             logger.debug("回调返回值：{}", ok);
             if (SUCCESS.equals(result.getReturnCode())) {
-
+                Date date = new Date();
                 String outTradeNo = result.getOutTradeNo();
                 Integer totalFee = result.getTotalFee();
                 Order order = orderDao.findByOrderNumberEquals(outTradeNo);
@@ -210,6 +210,7 @@ public class PaymentWebService {
 
                 // 支付成功，设置订单状态（已支付，待发货）
                 order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_SEND);
+                order.setPayTime(date);
                 orderDao.save(order);
                 // 支付成功，设置佣金记录
                 logger.debug("-> 支付成功：设置资金流水");

@@ -107,8 +107,10 @@ public class ApplyRecordService {
         }
         if (isPass.equals(0)) {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_FAIL);
+            applyRecord.setAuditTime(now);
         } else {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_SUCCESS);
+            applyRecord.setAuditTime(now);
             Integer orderId = applyRecord.getOrderId();
             Order order = orderDao.findOne(orderId);
             if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -125,9 +127,9 @@ public class ApplyRecordService {
                     logger.error("申请退款失败：调用微信申请退款接口返回值为空");
                 }
                 if ("SUCCESS".equals(returnCode)) {
-                    logger.info("订单id{}，订单号{} 申请微信退款", orderId, orderNumber);
+                    logger.info("订单id{}，订单号{} 发起微信退款成功", orderId, orderNumber);
                 } else {
-                    logger.info("订单id{}、订单号{} 申请退款失败，原因：{}", orderId, orderNumber, refundResult.getReturnMsg());
+                    logger.info("订单id{}、订单号{} 发起微信退款失败，原因：{}", orderId, orderNumber, refundResult.getReturnMsg());
                 }
 
             } catch (WxPayException e) {
