@@ -1,5 +1,6 @@
 package top.xuguoliang.controllers;
 
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +30,7 @@ public class PaymentController {
     @ResponseBody
     @PostMapping("unifiedOrder")
     @ApiOperation("订单统一下单")
-    public WxPayUnifiedOrderResult unifiedOrder(@RequestBody UnifiedOrderParam unifiedOrderParam) {
+    public WxPayMpOrderResult unifiedOrder(@RequestBody UnifiedOrderParam unifiedOrderParam) {
         Integer userId = UserHelper.getUserId();
         return paymentWebService.unifiedOrder(userId, unifiedOrderParam.getOrderId());
     }

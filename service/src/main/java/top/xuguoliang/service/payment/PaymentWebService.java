@@ -3,6 +3,7 @@ package top.xuguoliang.service.payment;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
@@ -65,7 +66,7 @@ public class PaymentWebService {
      * @param orderId 订单id
      * @return
      */
-    public WxPayUnifiedOrderResult unifiedOrder(Integer userId, Integer orderId) {
+    public WxPayMpOrderResult unifiedOrder(Integer userId, Integer orderId) {
 
         // 判断用户是否存在
         User user = userDao.findOne(userId);
@@ -98,7 +99,7 @@ public class PaymentWebService {
                 .build();
 
         try {
-            WxPayUnifiedOrderResult orderResult = wxPayService.createOrder(orderRequest);
+            WxPayMpOrderResult orderResult = wxPayService.createOrder(orderRequest);
             logger.debug("WxPayUnifiedOrderResult:------->{}", orderResult.toString());
             return orderResult;
         } catch (WxPayException e) {
