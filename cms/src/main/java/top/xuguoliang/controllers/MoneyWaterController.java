@@ -9,8 +9,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.xuguoliang.models.moneywater.MoneyWater;
 import top.xuguoliang.service.moneywater.MoneyWaterService;
+import top.xuguoliang.service.moneywater.cms.MoneyWaterVO;
 
 import javax.annotation.Resource;
 
@@ -27,7 +27,7 @@ public class MoneyWaterController {
 
     @GetMapping
     @ApiOperation("分页查询所有")
-    public Page<MoneyWater> findAll(@PageableDefault(sort = "time", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<MoneyWaterVO> findAll(@PageableDefault(sort = "time", direction = Sort.Direction.DESC) Pageable pageable) {
         return moneyWaterService.findAll(pageable);
     }
 
