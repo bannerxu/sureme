@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.apply.ApplyRecordService;
 import top.xuguoliang.service.apply.cms.ApplyRecordVO;
+import top.xuguoliang.service.apply.cms.AuditParam;
 
 import javax.annotation.Resource;
 
@@ -32,8 +33,8 @@ public class AuditController {
 
     @PutMapping("/{applyRecordId}")
     @ApiOperation("审核")
-    public void audit(@PathVariable Integer applyRecordId, @RequestBody @ApiParam("是否通过 0-否 1-是") Integer isPass) {
-        applyRecordService.audit(applyRecordId, isPass);
+    public void audit(@PathVariable Integer applyRecordId, @RequestBody AuditParam auditParam) {
+        applyRecordService.audit(applyRecordId, auditParam.getIsPass());
     }
 
 

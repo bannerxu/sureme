@@ -499,6 +499,7 @@ public class OrderWebService {
      * @param userId 用户id
      * @param applyRefundVO 申请信息
      */
+    @Transactional(rollbackOn = Exception.class)
     public void applyRefund(Integer userId, ApplyRefundVO applyRefundVO) {
         Date now = new Date();
 

@@ -49,9 +49,6 @@ public class ApplyRecordService {
     private OrderItemDao orderItemDao;
 
     @Resource
-    private MoneyWaterDao moneyWaterDao;
-
-    @Resource
     private WxPayService wxPayService;
 
     /**
@@ -107,10 +104,8 @@ public class ApplyRecordService {
         }
         if (isPass.equals(0)) {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_FAIL);
-            applyRecord.setAuditTime(now);
         } else {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_SUCCESS);
-            applyRecord.setAuditTime(now);
             Integer orderId = applyRecord.getOrderId();
             Order order = orderDao.findOne(orderId);
             if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -137,7 +132,7 @@ public class ApplyRecordService {
             }
         }
         applyRecord.setAuditTime(now);
-        applyRecordDao.save(applyRecord);
+        applyRecordDao.saveAndFlush(applyRecord);
     }
 
     /**
