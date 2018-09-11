@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.ArticleTypeEnum;
@@ -27,7 +28,7 @@ public class SearchController {
     @GetMapping("commodity/{commodityTitle}")
     @ApiOperation("搜索商品")
     public Page<SearchCommodityResultVO> searchCommodity(@PathVariable String commodityTitle,
-                                                         @PageableDefault Pageable pageable) {
+                                                         @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchWebService.searchCommodity(commodityTitle, pageable);
     }
 
@@ -35,7 +36,7 @@ public class SearchController {
     @ApiOperation("搜索文章")
     public Page<SearchArticleResultVO> searchArticle(@PathVariable String articleTitle,
                                                      @PathVariable ArticleTypeEnum articleType,
-                                                     @PageableDefault Pageable pageable) {
+                                                     @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchWebService.searchArticle(articleTitle, articleType, pageable);
     }
 }

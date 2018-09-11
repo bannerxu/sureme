@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.category.CategoryCmsService;
@@ -26,7 +27,7 @@ public class CategoryController {
 
     @GetMapping
     @ApiOperation("分页")
-    public Page<CategoryCmsResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<CategoryCmsResultVO> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return categoryCmsService.findPage(pageable);
     }
 

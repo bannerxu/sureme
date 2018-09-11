@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.user.Address;
@@ -33,7 +34,7 @@ public class AddressController {
 
     @GetMapping("page")
     @ApiOperation("分页查询")
-    public Page<Address> findPage(@PageableDefault Pageable pageable) {
+    public Page<Address> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return addressWebService.findPage(pageable);
     }
 

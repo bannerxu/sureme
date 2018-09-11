@@ -72,4 +72,6 @@ public class MessageCodes {
     public static final String WEB_ORDER_REFUNDED_OR_RETURNED = "web.order.refunded.or.returned";
     public static final String CMS_APPLY_RECORD_NOT_EXIST = "cms.apply.record.not.exist";
     public static final String EXCEL_ERROR = "excel.error";
+    public static final String USER_NOT_MATCH = "user.not.match";
+    public static final String ORDER_STATUS_NOT_MATCH = "order.status.not.match";
 }

@@ -6,6 +6,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -31,7 +32,7 @@ public class CouponController {
     @GetMapping("page")
     @ApiOperation("分页查询")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
-    public Page<CouponCmsResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<CouponCmsResultVO> findPage(@PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return couponCmsService.findPage(pageable);
     }
 

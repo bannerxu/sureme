@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,28 +32,28 @@ public class SearchController {
     @GetMapping("manager/{name}")
     @ApiOperation("管理员搜索")
     public Page<SearchManagerResultVO> searchManager(@PathVariable String name,
-                                                     @PageableDefault Pageable pageable) {
+                                                     @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchCmsService.searchManager(name, pageable);
     }
 
     @GetMapping("order/{orderNumber}")
     @ApiOperation("订单搜索")
     public Page<SearchOrderResultVO> searchOrder(@PathVariable String orderNumber,
-                                           @PageableDefault Pageable pageable) {
+                                           @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchCmsService.searchOrder(orderNumber, pageable);
     }
 
     @GetMapping("commodity/{commodityTitle}")
     @ApiOperation("商品搜索")
     public Page<SearchCommodityResultVO> searchCommodity(@PathVariable String commodityTitle,
-                                                   @PageableDefault Pageable pageable) {
+                                                   @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchCmsService.searchCommodity(commodityTitle, pageable);
     }
 
     @GetMapping("article/{articleTitle}")
     @ApiOperation("文章搜索")
     public Page<SearchArticleResultVO> searchArticle(@PathVariable String articleTitle,
-                                                     @PageableDefault Pageable pageable) {
+                                                     @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return searchCmsService.searchArticle(articleTitle, pageable);
     }
 

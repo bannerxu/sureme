@@ -163,6 +163,7 @@ public class OrderCmsService {
      * @param vo      物流信息
      */
     public void send(Integer orderId, OrderSendParamVO vo) {
+        Date date = new Date();
         // 发货时，修改发货时间，订单状态
         Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -170,11 +171,18 @@ public class OrderCmsService {
             throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST);
         }
 
+        // 判断：只有在订单是已支付状态才能发货
+        OrderStatusEnum orderStatus = order.getOrderStatus();
+        if (!orderStatus.equals(OrderStatusEnum.ORDER_WAITING_SEND)) {
+            throw new ValidationException(MessageCodes.ORDER_STATUS_NOT_MATCH);
+        }
+
         String logisticsNumber = vo.getLogisticsNumber();
 
         order.setLogisticsNumber(logisticsNumber);
         order.setLogisticsCompany(vo.getLogisticsCompany());
         order.setOrderStatus(OrderStatusEnum.ORDER_SENT);
+        order.setSendTime(date);
         orderDao.saveAndFlush(order);
     }
 

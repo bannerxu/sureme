@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.service.groupbuying.GroupBuyingCmsService;
@@ -24,7 +25,8 @@ public class GroupBuyingController {
 
     @GetMapping
     @ApiOperation("分页")
-    public Page<GroupBuyingCmsResultVO> findPage(@PageableDefault Pageable pageable) {
+    public Page<GroupBuyingCmsResultVO> findPage(
+            @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return groupBuyingCmsService.findPage(pageable);
     }
 
@@ -42,7 +44,8 @@ public class GroupBuyingController {
 
     @PutMapping("/{groupBuyingId}")
     @ApiOperation("修改")
-    public GroupBuyingCmsResultVO updateGroupBuying(@PathVariable Integer groupBuyingId, @RequestBody GroupBuyingCmsUpdateParamVO groupBuyingCmsUpdateParamVO) {
+    public GroupBuyingCmsResultVO updateGroupBuying(@PathVariable Integer groupBuyingId,
+                                                    @RequestBody GroupBuyingCmsUpdateParamVO groupBuyingCmsUpdateParamVO) {
         return groupBuyingCmsService.updateGroupBuying(groupBuyingId, groupBuyingCmsUpdateParamVO);
     }
 
@@ -53,7 +56,8 @@ public class GroupBuyingController {
     }
 
     @GetMapping("userGroupBuying}")
-    public Page<UserGroupBuyingCmsResultVO> findPageUserGroupBuying(@PageableDefault Pageable pageable) {
+    public Page<UserGroupBuyingCmsResultVO> findPageUserGroupBuying(
+            @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return groupBuyingCmsService.findPageUserGroupBuying(pageable);
     }
 

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.models.article.Article;
@@ -31,7 +32,8 @@ public class ArticleController {
 
     @GetMapping("type/{articleType}")
     @ApiOperation("分页，类型不传默认查询所有")
-    public Page<ArticleWebResultVO> findPage(@PathVariable(required = false) ArticleTypeEnum articleType, @PageableDefault Pageable pageable) {
+    public Page<ArticleWebResultVO> findPage(@PathVariable(required = false) ArticleTypeEnum articleType,
+                                             @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         Integer userId = UserHelper.getUserId();
         return articleWebService.findPage(userId, articleType, pageable);
     }
@@ -45,7 +47,8 @@ public class ArticleController {
 
     @GetMapping("comment/{articleId}")
     @ApiOperation("分页文章评论")
-    public Page<ArticleCommentWebResultVO> findCommentPage(@PathVariable Integer articleId, @PageableDefault Pageable pageable) {
+    public Page<ArticleCommentWebResultVO> findCommentPage(@PathVariable Integer articleId,
+                                                           @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return articleWebService.findCommentPage(articleId, pageable);
     }
 

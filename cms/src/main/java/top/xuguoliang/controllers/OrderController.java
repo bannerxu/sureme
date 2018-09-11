@@ -6,6 +6,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import top.xuguoliang.common.constants.RoleConstant;
@@ -32,7 +33,7 @@ public class OrderController {
     @ApiOperation("分页查询")
     @RequiresRoles(logical = Logical.OR, value = {RoleConstant.ADMIN, RoleConstant.ROOT})
     public Page<OrderCmsResultVO> findPage(@RequestParam(required = false) OrderStatusEnum orderStatus,
-                                           @RequestParam(required = false) @PageableDefault Pageable pageable) {
+                                           @RequestParam(required = false) @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return orderCmsService.findPage(orderStatus, pageable);
     }
 

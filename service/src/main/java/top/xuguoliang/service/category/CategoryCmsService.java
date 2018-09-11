@@ -4,11 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
 import top.xuguoliang.common.utils.BeanUtils;
+import top.xuguoliang.common.utils.CommonSpecUtil;
 import top.xuguoliang.models.category.Category;
 import top.xuguoliang.models.category.CategoryDao;
 import top.xuguoliang.models.commodity.Commodity;
@@ -31,9 +33,11 @@ public class CategoryCmsService {
 
     @Resource
     private CategoryDao categoryDao;
-
     @Resource
     private CommodityDao commodityDao;
+
+    @Resource
+    private CommonSpecUtil<Category> commonSpecUtil;
 
     /**
      * 分页查询
@@ -42,7 +46,8 @@ public class CategoryCmsService {
      * @return 分页的结果
      */
     public Page<CategoryCmsResultVO> findPage(Pageable pageable) {
-        return categoryDao.findAll(pageable).map(category -> {
+        Specification<Category> deleted = commonSpecUtil.equal("deleted", false);
+        return categoryDao.findAll(deleted, pageable).map(category -> {
             CategoryCmsResultVO vo = new CategoryCmsResultVO();
             BeanUtils.copyNonNullProperties(category, vo);
             return vo;

@@ -73,7 +73,7 @@ public class WeChatUtil {
     /**
      * wx.login授权获得用户信息
      */
-    public WeChatUser login(String code) {
+    /*public WeChatUser login(String code) {
         //请求参数
         String params = "appid=" + appId + "&secret=" + appSecret + "&js_code=" + code + "&grant_type=authorization_code";
         String requestURL = url + "?" + params;
@@ -102,7 +102,7 @@ public class WeChatUtil {
             logger.error(" login get user info error {}", e);
         }
         return userInfo;
-    }
+    }*/
 
     /**
      * wx.authorize授权获得用户信息

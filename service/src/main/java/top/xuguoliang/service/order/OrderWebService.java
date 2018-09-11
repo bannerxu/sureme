@@ -283,6 +283,9 @@ public class OrderWebService {
             needPayMoney = total.subtract(personalCoupon.getOffsetMoney());
 
             BeanUtils.copyNonNullProperties(personalCoupon, order);
+            // 消费优惠券
+            personalCoupon.setDeleted(true);
+            personalCouponDao.save(personalCoupon);
         } else {
             needPayMoney = total;
         }
@@ -314,7 +317,7 @@ public class OrderWebService {
         orderItemDao.save(needSaveOrderItems);
 
         OrderWebCartCreateResultVO resultVO = new OrderWebCartCreateResultVO();
-        resultVO.setOrderNumber(orderSave.getOrderNumber());
+        resultVO.setOrderId(orderSave.getOrderId());
 
         return resultVO;
     }
@@ -332,8 +335,9 @@ public class OrderWebService {
             logger.error("查询订单详情失败：订单{} 不存在");
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
         }
-        if (order.getUserId().equals(userId)) {
-            logger.error("查询订单详情失败：当前用户{} 不是订单{} 的所有者");
+        if (!order.getUserId().equals(userId)) {
+            logger.error("查询订单详情失败：当前用户{} 不是订单{} 的所有者", userId, orderId);
+            throw new ValidationException(MessageCodes.USER_NOT_MATCH);
         }
 
         OrderWebDetailVO detailVO = new OrderWebDetailVO();
@@ -498,9 +502,11 @@ public class OrderWebService {
      * @param userId 用户id
      * @param applyRefundVO 申请信息
      */
+    @Transactional(rollbackOn = Exception.class)
     public void applyRefund(Integer userId, ApplyRefundVO applyRefundVO) {
         Date now = new Date();
 
+        // 订单信息
         Integer orderId = applyRefundVO.getOrderId();
         Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -515,6 +521,7 @@ public class OrderWebService {
 
         // 新建一个申请
         ApplyRecord applyRecord = new ApplyRecord();
+        BeanUtils.copyNonNullProperties(order, applyRecord);
         applyRecord.setOrderId(orderId);
         applyRecord.setApplyStatus(ApplyStatus.APPLYING);
         applyRecord.setApplyTime(now);
