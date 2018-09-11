@@ -283,6 +283,9 @@ public class OrderWebService {
             needPayMoney = total.subtract(personalCoupon.getOffsetMoney());
 
             BeanUtils.copyNonNullProperties(personalCoupon, order);
+            // 消费优惠券
+            personalCoupon.setDeleted(true);
+            personalCouponDao.save(personalCoupon);
         } else {
             needPayMoney = total;
         }
