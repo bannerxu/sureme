@@ -7,18 +7,14 @@ import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayRefundResult;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
-import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import top.xuguoliang.common.exception.MessageCodes;
 import top.xuguoliang.common.exception.ValidationException;
-import top.xuguoliang.common.utils.PaymentUtil;
 import top.xuguoliang.models.moneywater.MoneyWater;
 import top.xuguoliang.models.moneywater.MoneyWaterDao;
 import top.xuguoliang.models.moneywater.MoneyWaterType;
@@ -110,18 +106,6 @@ public class PaymentWebService {
     }
 
     /**
-     * 校验回调
-     *
-     * @param wxPayOrderNotifyResult
-     */
-    public void payOrderNotify(WxPayOrderNotifyResult wxPayOrderNotifyResult) {
-
-        //如果成功，就创建佣金记录
-
-        brokerageWebService.insert(wxPayOrderNotifyResult.getOutTradeNo());
-    }
-
-    /**
      * 记录资金流水
      *
      * @param wxPayOrderNotifyResult 支付回调数据
@@ -130,7 +114,7 @@ public class PaymentWebService {
         String outTradeNo = wxPayOrderNotifyResult.getOutTradeNo();
         Integer totalFee = wxPayOrderNotifyResult.getTotalFee() * 100;
 
-        BigDecimal totalMoney = BigDecimal.valueOf(totalFee);
+        BigDecimal money = new BigDecimal(totalFee + "").divide(new BigDecimal("100"));
         String timeEnd = wxPayOrderNotifyResult.getTimeEnd();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmms");
         Date payTime = simpleDateFormat.parse(timeEnd);
@@ -140,7 +124,7 @@ public class PaymentWebService {
 
         MoneyWater moneyWater = new MoneyWater();
         moneyWater.setTime(payTime);
-        moneyWater.setMoney(totalMoney);
+        moneyWater.setMoney(money);
         moneyWater.setType(MoneyWaterType.PAY);
         moneyWater.setUserId(user.getUserId());
         moneyWaterDao.save(moneyWater);
