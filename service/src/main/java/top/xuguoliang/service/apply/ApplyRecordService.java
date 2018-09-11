@@ -25,6 +25,7 @@ import top.xuguoliang.models.order.*;
 import top.xuguoliang.service.apply.cms.ApplyRecordVO;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,6 +97,7 @@ public class ApplyRecordService {
      * @param applyRecordId 申请记录id
      * @param isPass        是否通过
      */
+    @Transactional(rollbackOn = Exception.class)
     public void audit(Integer applyRecordId, Integer isPass) {
         Date now = new Date();
         ApplyRecord applyRecord = applyRecordDao.findOne(applyRecordId);
@@ -113,6 +115,7 @@ public class ApplyRecordService {
                 logger.error("退款失败：订单{} 不存在", orderId);
                 throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST);
             }
+
             String orderNumber = order.getOrderNumber();
             try {
                 // 发起退款申请
@@ -122,20 +125,9 @@ public class ApplyRecordService {
                     logger.error("申请退款失败：调用微信申请退款接口返回值为空");
                 }
                 if ("SUCCESS".equals(returnCode)) {
-                    logger.info("订单id{}，订单号{} 退款成功", orderId, orderNumber);
-                    // 退款成功，记录资金流水
-                    order.setOrderStatus(OrderStatusEnum.ORDER_REFUNDED);
-                    orderDao.save(order);
-                    MoneyWater moneyWater = new MoneyWater();
-                    moneyWater.setUserId(order.getUserId());
-                    moneyWater.setType(MoneyWaterType.REFUND);
-                    moneyWater.setMoney(order.getRealPayMoney());
-                    moneyWater.setTime(now);
-                    moneyWater.setOrderId(orderId);
-                    moneyWater.setDeleted(false);
-                    moneyWaterDao.save(moneyWater);
+                    logger.info("订单id{}，订单号{} 申请微信退款", orderId, orderNumber);
                 } else {
-                    logger.info("订单id{}，订单号{} 退款失败：{}", orderId, orderNumber, refundResult.getReturnMsg());
+                    logger.info("订单id{}、订单号{} 申请退款失败，原因：{}", orderId, orderNumber, refundResult.getReturnMsg());
                 }
 
             } catch (WxPayException e) {

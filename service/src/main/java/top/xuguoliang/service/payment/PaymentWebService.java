@@ -170,6 +170,74 @@ public class PaymentWebService {
         return null;
     }
 
+
+    /**
+     * 统一下单回调
+     *
+     * @param xmlData 回调参数
+     * @return 回调响应
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public String unifiedOrderNotify(String xmlData) {
+        // 解析xml回调数据，返回对象
+        try {
+            WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlData);
+            logger.debug("订单回调业务方法：解析回调参数：\n{}", result);
+            if (ObjectUtils.isEmpty(result)) {
+                String fail = WxPayNotifyResponse.fail("Fail");
+                logger.debug("回调返回值为null");
+                return fail;
+            }
+
+            String ok = WxPayNotifyResponse.success("OK");
+            logger.debug("回调返回值：{}", ok);
+            if (SUCCESS.equals(result.getReturnCode())) {
+
+                String outTradeNo = result.getOutTradeNo();
+                Integer totalFee = result.getTotalFee();
+                Order order = orderDao.findByOrderNumberEquals(outTradeNo);
+
+                if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
+                    // 订单不存在，打印错误
+                    logger.error("退款失败：订单号{} 不存在", outTradeNo);
+                    return WxPayNotifyResponse.fail("Fail");
+                }
+
+                if (order.getOrderStatus().equals(OrderStatusEnum.ORDER_WAITING_SEND)) {
+                    // 防止重复调用
+                    return ok;
+                }
+
+                // 支付成功，设置订单状态（已支付，待发货）
+                order.setOrderStatus(OrderStatusEnum.ORDER_WAITING_SEND);
+                orderDao.save(order);
+                // 支付成功，设置佣金记录
+                logger.debug("-> 支付成功：设置资金流水");
+                // 记录资金流水
+                addMoneyWater(result);
+
+                // 支付成功，添加用户积分
+                logger.debug("-> 支付成功：设置用户积分");
+                User user = userDao.findOne(order.getUserId());
+                user.setIntegral(user.getIntegral() + totalFee / 1000);
+                userDao.save(user);
+
+                // 返佣给上级用户（创建佣金记录）
+                logger.debug("-> 支付成功：设置佣金记录");
+                brokerageWebService.insert(outTradeNo);
+            } else {
+                // 付款失败
+                logger.warn("用户付款失败：{}", result.getReturnMsg());
+                return WxPayNotifyResponse.fail("Fail");
+            }
+
+            return ok;
+        } catch (WxPayException | ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * 微信申请退款回调
      *
@@ -186,9 +254,9 @@ public class PaymentWebService {
                 return WxPayNotifyResponse.fail("Fail");
             }
             if (SUCCESS.equals(result.getReturnCode())) {
-                // 退款成功，处理业务
                 String outTradeNo = result.getReqInfo().getOutTradeNo();
                 Integer refundFee = result.getReqInfo().getRefundFee();
+
                 Order order = orderDao.findByOrderNumberEquals(outTradeNo);
                 // 订单不存在，打印错误
                 if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
@@ -196,73 +264,36 @@ public class PaymentWebService {
                     return WxPayNotifyResponse.fail("Fail");
                 }
 
+                OrderStatusEnum orderStatus = order.getOrderStatus();
+                if (orderStatus.equals(OrderStatusEnum.ORDER_REFUNDED) || orderStatus.equals(OrderStatusEnum.ORDER_RETURNED)) {
+                    // 防止重复回调
+                    return WxPayNotifyResponse.success("ok");
+                }
+
                 // 记录资金流水
+                logger.debug("退款回调：记录资金流水");
                 MoneyWater moneyWater = new MoneyWater();
                 moneyWater.setTime(date);
                 moneyWater.setOrderId(order.getOrderId());
                 moneyWater.setDeleted(false);
                 moneyWater.setType(MoneyWaterType.REFUND);
-                BigDecimal money = new BigDecimal(refundFee + "").divide(BigDecimal.valueOf(100L));
+                BigDecimal money = new BigDecimal(refundFee + "").divide(new BigDecimal("100"));
                 moneyWater.setMoney(money);
                 moneyWater.setUserId(order.getUserId());
                 moneyWaterDao.save(moneyWater);
+
                 // 设置订单状态
+                logger.debug("退款回调：设置订单状态");
                 order.setOrderStatus(OrderStatusEnum.ORDER_REFUNDED);
                 orderDao.save(order);
 
+                return WxPayNotifyResponse.success("ok");
             } else {
                 // 退款失败，打印失败原因
                 logger.error("退款失败：{}", result.getReturnMsg());
                 return WxPayNotifyResponse.fail("Fail");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Transactional(rollbackOn = Exception.class)
-    public String unifiedOrderNotify(String xmlData) {
-        // 解析xml回调数据，返回对象
-        try {
-            WxPayOrderNotifyResult result = wxPayService.parseOrderNotifyResult(xmlData);
-            logger.debug("订单回调业务方法：解析回调参数：\n{}", result);
-            if (ObjectUtils.isEmpty(result)) {
-                String fail = WxPayNotifyResponse.fail("Fail");
-                logger.debug("回调返回值为null");
-                return fail;
-            }
-
-            if (SUCCESS.equals(result.getReturnCode())) {
-                // 付款成功，处理业务
-                payOrderNotify(result);
-                // 记录资金流水
-                addMoneyWater(result);
-
-                String outTradeNo = result.getOutTradeNo();
-                Integer totalFee = result.getTotalFee();
-                Order order = orderDao.findByOrderNumberEquals(outTradeNo);
-                // 订单不存在，打印错误
-                if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
-                    logger.error("退款失败：订单号{} 不存在", outTradeNo);
-                    return WxPayNotifyResponse.fail("Fail");
-                }
-                // 添加用户积分
-                User user = userDao.findOne(order.getUserId());
-                user.setIntegral(user.getIntegral() + totalFee / 1000);
-                userDao.save(user);
-                // 返佣给上级用户（创建佣金记录）
-                brokerageWebService.insert(outTradeNo);
-            } else {
-                // 付款失败
-                logger.warn("用户付款失败：{}", result.getReturnMsg());
-                return WxPayNotifyResponse.fail("Fail");
-            }
-            String ok = WxPayNotifyResponse.success("OK");
-            logger.debug("回调返回值：{}", ok);
-
-            return ok;
-        } catch (WxPayException | ParseException e) {
             e.printStackTrace();
         }
         return null;
