@@ -37,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -230,9 +231,9 @@ public class CommodityWebService {
             }
 
             // 本地模板文件
-            File img = ResourceUtils.getFile("classpath:Template.png");
+            InputStream is = CommodityWebService.class.getClassLoader().getResourceAsStream("Template.png");
             // 读入图片
-            Image src = ImageIO.read(img);
+            Image src = ImageIO.read(is);
             logger.debug("加载本地模板文件成功");
 
             int width = src.getWidth(null);
