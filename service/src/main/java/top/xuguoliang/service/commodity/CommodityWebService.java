@@ -209,6 +209,7 @@ public class CommodityWebService {
      */
     public String paintImage(String commodityBannerUrl, String qrCodeUrl, String commodityTitle, String money, String bottom) {
         try {
+            logger.debug("商品：{}\n 二维码：{}\n 商品标题：{}\n 金额：{}", commodityBannerUrl, qrCodeUrl, commodityTitle, money);
             // 把商品标题切分成多份
             int length = commodityTitle.length();
             int line = length / 18;

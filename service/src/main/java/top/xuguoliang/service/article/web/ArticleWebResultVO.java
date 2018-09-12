@@ -19,6 +19,9 @@ public class ArticleWebResultVO {
     @ApiModelProperty("文章内容")
     private String articleContent;
 
+    @ApiModelProperty("文章摘要")
+    private String articleIntro;
+
     @ApiModelProperty("文章类型")
     private ArticleTypeEnum articleType;
 
