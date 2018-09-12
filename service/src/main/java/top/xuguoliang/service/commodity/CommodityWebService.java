@@ -194,6 +194,10 @@ public class CommodityWebService {
 
         // 合成并上传到七牛，返回七牛url
         return paintImage(bannerUrl, qrCode, commodityTitle, money, "");
+//        return paintImage("https://img.suremeshop.com/1536400293484_TB2PTFdk0BopuFjSZPcXXc9EpXa_%21%213023778610.jpg",
+//                "https://img.suremeshop.com/FtN-pOCYNNJEiWpe5Fe6lVOFgiFF",
+//                "婴儿抱被春秋纯棉秋冬季加厚新生儿用品夏季薄款初生宝宝外出包被",
+//                "￥ 5.00", "");
     }
 
 
@@ -238,8 +242,10 @@ public class CommodityWebService {
             Graphics2D graphics2D = image.createGraphics();
             // 画模板
             PainterUtil.paintImage(src, graphics2D, 0, 0, width, height, 1F);
+            logger.debug("画模板成功");
             // 画商品图片
             PainterUtil.paintRemoteImage(graphics2D, commodityBannerUrl, 170, 50, 400, 400);
+            logger.debug("画商品成功");
             // 画二维码
             PainterUtil.paintRemoteImage(graphics2D, qrCodeUrl, 190, 750, 360, 360);
             for (int i = 0; i <= line; i++) {
@@ -248,9 +254,11 @@ public class CommodityWebService {
                 PainterUtil.paintText(graphics2D, titles[i], PainterUtil.CUSTOMER_NAME,
                         PainterUtil.CUSTOMER_NAME_COLOR, 1F, 50, 500 + 40 * i);
             }
+            logger.debug("画二维码成功");
             // 画价格
             PainterUtil.paintText(graphics2D, money, PainterUtil.CUSTOMER_WECHAT_NUMBER,
                     PainterUtil.CUSTOMER_WECHAT_NUMBER_COLOR, 1F, 50, 700);
+            logger.debug("画价格完成");
             // 画底部文字
 //            PainterUtil.paintText(graphics2D, bottom, PainterUtil.CUSTOMER_PHONE_NUMBER,
 //                    PainterUtil.CUSTOMER_PHONE_NUMBER_COLOR, 1F, 330, 200);
@@ -259,6 +267,7 @@ public class CommodityWebService {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             PainterUtil.write(graphics2D, image, out);
             byte[] bytes = out.toByteArray();
+            logger.debug("写到字节流成功");
 
             // 写出到七牛
             String url = qiNiuService.uploadByByte(bytes);
