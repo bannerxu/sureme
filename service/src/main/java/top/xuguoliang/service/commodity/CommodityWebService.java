@@ -260,6 +260,7 @@ public class CommodityWebService {
 
             // 写出到七牛
             String url = qiNiuService.uploadByByte(bytes);
+            logger.debug("图片合成七牛云连接:{}", url);
 
             return url;
         } catch (IOException | IllegalAccessException e) {
