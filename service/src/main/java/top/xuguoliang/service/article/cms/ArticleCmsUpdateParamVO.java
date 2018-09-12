@@ -44,4 +44,6 @@ public class ArticleCmsUpdateParamVO {
     @ApiModelProperty("宝宝出生天数")
     private Integer babyDay;
 
+    @ApiModelProperty("文章摘要")
+    private String articleIntro;
 }
