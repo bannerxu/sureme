@@ -233,13 +233,16 @@ public class CommodityWebService {
             File img = ResourceUtils.getFile("classpath:Template.png");
             // 读入图片
             Image src = ImageIO.read(img);
+            logger.debug("加载本地模板文件成功");
 
             int width = src.getWidth(null);
             int height = src.getHeight(null);
             // 缓冲图片对象
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            logger.debug("加载缓冲图片对象成功");
             // 图形类
             Graphics2D graphics2D = image.createGraphics();
+            logger.debug("加载图形类成功");
             // 画模板
             PainterUtil.paintImage(src, graphics2D, 0, 0, width, height, 1F);
             logger.debug("画模板成功");
