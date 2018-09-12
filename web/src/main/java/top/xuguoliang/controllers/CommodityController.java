@@ -2,6 +2,7 @@ package top.xuguoliang.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -43,6 +44,16 @@ public class CommodityController {
     public Page<CommodityCommentWebResultVO> findPageComment(@PathVariable Integer commodityId,
                                                              @PageableDefault(sort = "createTime", direction = Sort.Direction.DESC) Pageable pageable) {
         return commodityWebService.findPageComment(commodityId, pageable);
+    }
+
+    @GetMapping("/share")
+    @ApiOperation("生成分享图片")
+    public String generateShareImage(@ApiParam("大小") @RequestParam Integer width,
+                                     @ApiParam("跳转地址") @RequestParam String path,
+                                     @ApiParam("业务参数，不可以包含中文") @RequestParam String scene,
+                                     @ApiParam("规格id") @RequestParam Integer skuId) {
+
+        return commodityWebService.generateShareImage(width, path, scene, skuId);
     }
 
 }

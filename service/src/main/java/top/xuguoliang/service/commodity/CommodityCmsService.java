@@ -66,6 +66,11 @@ public class CommodityCmsService {
             if (ObjectUtils.isEmpty(categoryId) || categoryId.equals(0)) {
                 commodityCmsResultVO.setCategoryName("未分类");
             }
+            Category category = categoryDao.findOne(categoryId);
+            if (ObjectUtils.isEmpty(categoryId) || category.getDeleted()) {
+                throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
+            }
+            BeanUtils.copyNonNullProperties(category, commodityCmsResultVO);
 
             Integer commodityId = commodity.getCommodityId();
             // 根据商品id查找商品规格，并放到返回值里

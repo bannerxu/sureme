@@ -203,6 +203,20 @@ public class OrderWebService {
         });
     }
 
+    public OrderWebCartCreateResultVO createCartOrder2(Integer userId, OrderWebCartCreateParamVO vo) {
+        Integer personalCouponId = vo.getPersonalCouponId();
+        List<ItemParamVO> items = vo.getItems();
+        Integer addressId = vo.getAddressId();
+
+        // 计算条目总价并见啥规格库存
+
+        // 设置订单信息
+
+        // 购物车
+
+        return null;
+    }
+
     /**
      * 购物车下单
      *
