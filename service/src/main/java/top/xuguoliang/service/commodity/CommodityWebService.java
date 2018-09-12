@@ -174,21 +174,20 @@ public class CommodityWebService {
     /**
      * 生成分享图片
      *
-     * @param width 二维码宽度
-     * @param path  路径
-     * @param scene 业务参数
-     * @param skuId 规格id
+     * @param width       二维码宽度
+     * @param path        路径
+     * @param scene       业务参数
+     * @param commodityId 商品id
      * @return 图片二维码
      */
-    public String generateShareImage(Integer width, String path, String scene, Integer skuId) {
+    public String generateShareImage(Integer width, String path, String scene, Integer commodityId) {
         // 获取二维码
         String qrCode = weChatUtil.getQRCode(width, path, scene);
 
         // 获取规格、商品信息
-        StockKeepingUnit sku = stockKeepingUnitDao.findOne(skuId);
-        String money = "￥ " + sku.getDiscountPrice().toPlainString();
-        Integer commodityId = sku.getCommodityId();
-        String commodityTitle = commodityDao.findOne(commodityId).getCommodityTitle();
+        Commodity commodity = commodityDao.findOne(commodityId);
+        String money = "￥ " + commodity.getCommodityPrice();
+        String commodityTitle = commodity.getCommodityTitle();
         CommodityBanner banner = commodityBannerDao.findFirstByCommodityIdIsAndDeletedIsFalseOrderByCreateTimeAsc(commodityId);
         String bannerUrl = banner.getCommodityBannerUrl();
 

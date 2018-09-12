@@ -51,9 +51,9 @@ public class CommodityController {
     public String generateShareImage(@ApiParam("大小") @RequestParam Integer width,
                                      @ApiParam("跳转地址") @RequestParam String path,
                                      @ApiParam("业务参数，不可以包含中文") @RequestParam String scene,
-                                     @ApiParam("规格id") @RequestParam Integer skuId) {
+                                     @ApiParam("商品id") @RequestParam Integer commodityId) {
 
-        return commodityWebService.generateShareImage(width, path, scene, skuId);
+        return commodityWebService.generateShareImage(width, path, scene, commodityId);
     }
 
 }
