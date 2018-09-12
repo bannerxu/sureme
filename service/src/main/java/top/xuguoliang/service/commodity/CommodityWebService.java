@@ -183,6 +183,7 @@ public class CommodityWebService {
     public String generateShareImage(Integer width, String path, String scene, Integer commodityId) {
         // 获取二维码
         String qrCode = weChatUtil.getQRCode(width, path, scene);
+        logger.debug("二维码url ：{}", qrCode);
 
         // 获取规格、商品信息
         Commodity commodity = commodityDao.findOne(commodityId);
