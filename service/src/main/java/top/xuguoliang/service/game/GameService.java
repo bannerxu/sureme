@@ -76,13 +76,8 @@ public class GameService {
             } else {
                 EmotionVO emotionVO = collect.get(0);
                 MoodType key = emotionVO.getKey();
-                List<GameCopywriting> gameCopywritingList = gameCopywritingDao.findByMoodTypeAndDeletedIsFalse(key).stream().limit(1).collect(Collectors.toList());
-                if (gameCopywritingList.size() == 0) {
-                    return new GameCopywriting();
-                } else {
-                    return gameCopywritingList.get(0);
-                }
-
+                Optional<GameCopywriting> optional = gameCopywritingDao.findByMoodTypeAndDeletedIsFalse(key).stream().findAny();
+                return optional.get();
             }
         }
 
