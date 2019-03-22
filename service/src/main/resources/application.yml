@@ -4,13 +4,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-      naming:
-#        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        implicit-strategy: top.xuguoliang.common.config.CustomNamingStrategy
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
   datasource:
-    url: jdbc:mysql://111.230.42.14:3306/sureme?characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/sureme?characterEncoding=UTF-8&useSSL=false
     username: root
     password: root
     tomcat:
@@ -23,8 +20,6 @@ spring:
     host: 111.230.42.14
     password: q7FIqKnrILC98sTeb2Z2
     port: 6379
-    pool.maxIdle: 8
-    pool.minIdle: 0
     database: 5
   messages.basename: messages
   jackson:

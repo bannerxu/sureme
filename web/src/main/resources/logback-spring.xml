@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <logger name="top.xuguoliang" level="DEBUG"/>
+    <logger name="top.banner" level="DEBUG"/>
     <springProfile name="staging">
-        <logger name="top.xuguoliang" level="TRACE"/>
+        <logger name="top.banner" level="TRACE"/>
         <logger name="org.hibernate" level="DEBUG"/>
     </springProfile>
     <logger name="org.springframework.data" level="DEBUG"/>

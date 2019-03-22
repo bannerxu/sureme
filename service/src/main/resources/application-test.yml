@@ -6,7 +6,7 @@ spring:
       ddl-auto: update
       naming:
 #        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        implicit-strategy: top.xuguoliang.common.config.CustomNamingStrategy
+        implicit-strategy: top.banner.common.config.CustomNamingStrategy
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
   datasource:
