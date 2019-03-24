@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import top.banner.common.exception.ValidationException
 
 
 /**
@@ -28,6 +29,7 @@ class TestA {
     fun exampleTest() {
         this.mockMvc.perform(get("/")).andExpect(status().is2xxSuccessful)
                 .andExpect(content().string("Hello"))
+
     }
 
 }
