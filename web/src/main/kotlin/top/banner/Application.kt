@@ -2,13 +2,11 @@ package top.banner
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import springfox.documentation.swagger2.annotations.EnableSwagger2
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
-@EnableSwagger2
-open class Application {
-
-
+@EnableScheduling
+open class Application{
 
     companion object {
 

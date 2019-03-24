@@ -25,7 +25,6 @@ class TestA {
     private lateinit var mockMvc: MockMvc
 
     @Test
-    @Throws(Exception::class)
     fun exampleTest() {
         this.mockMvc.perform(get("/")).andExpect(status().is2xxSuccessful)
                 .andExpect(content().string("Hello"))
