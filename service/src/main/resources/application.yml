@@ -6,13 +6,13 @@ spring:
       ddl-auto: update
       naming:
 #        strategy: org.hibernate.cfg.ImprovedNamingStrategy
-        implicit-strategy: top.xuguoliang.common.config.CustomNamingStrategy
+        implicit-strategy: top.banner.common.config.CustomNamingStrategy
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
 
   datasource:
-    url: jdbc:mysql://111.230.42.14:3306/sureme?characterEncoding=UTF-8&useSSL=false
-    username: root
-    password: root
+    url: jdbc:mysql://120.78.196.233:3306/sureme?characterEncoding=UTF-8&useSSL=false
+    username: sureme
+    password: sureme
     tomcat:
       test-while-idle: true
       max-active: 3
@@ -20,7 +20,7 @@ spring:
 
 
   redis:
-    host: 111.230.42.14
+    host: 120.78.196.233
     password: q7FIqKnrILC98sTeb2Z2
     port: 6379
     pool.maxIdle: 8

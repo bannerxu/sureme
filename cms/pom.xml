@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sureme</artifactId>
-        <groupId>top.xuguoliang</groupId>
+        <groupId>top.banner</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>top.xuguoliang</groupId>
+            <groupId>top.banner</groupId>
             <artifactId>service</artifactId>
             <version>1.0</version>
         </dependency>
@@ -33,7 +33,7 @@
     </dependencyManagement>
     <properties>
         <!-- The main class to start by executing java -jar -->
-        <start-class>top.xuguoliang.Application</start-class>
+        <start-class>top.banner.Application</start-class>
     </properties>
 
     <build>
