@@ -106,7 +106,7 @@ public class GroupBuyingWebService {
      * @return 拼团信息
      */
     public GroupBuyingWebDetailVO getGroupBuying(Integer groupBuyingId) {
-        GroupBuying groupBuying = groupBuyingDao.getOne(groupBuyingId);
+        GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying) || groupBuying.getDeleted()) {
             logger.error("查询拼团失败：该拼团不存在");
             throw new ValidationException(MessageCodes.WEB_GROUP_BUYING_NOT_EXIST);
@@ -128,14 +128,14 @@ public class GroupBuyingWebService {
         GroupBuyingWebDetailVO resultVO = new GroupBuyingWebDetailVO();
         // 商品信息
         Integer commodityId = groupBuying.getCommodityId();
-        Commodity commodity = commodityDao.getOne(commodityId);
+        Commodity commodity = commodityDao.findOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("商品不存在");
             throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
         }
         // 规格信息
         Integer stockKeepingUnitId = groupBuying.getStockKeepingUnitId();
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("商品规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
@@ -186,7 +186,7 @@ public class GroupBuyingWebService {
 
             // 用户
             Integer userId = userGroupBuying.getSponsorUserId();
-            User user = userDao.getOne(userId);
+            User user = userDao.findOne(userId);
             if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
                 logger.error("用户不存在");
             } else {
@@ -214,7 +214,7 @@ public class GroupBuyingWebService {
         Integer stockKeepingUnitId = paramVO.getStockKeepingUnitId();
 
         // 查询是否存在拼团
-        GroupBuying groupBuying = groupBuyingDao.getOne(groupBuyingId);
+        GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying) || groupBuying.getDeleted()) {
             logger.error("开团失败：拼团不存在");
             throw new ValidationException(MessageCodes.WEB_GROUP_BUYING_NOT_EXIST);
@@ -229,14 +229,14 @@ public class GroupBuyingWebService {
         }
 
         // 查询收货地址是否存在
-        Address address = addressDao.getOne(addressId);
+        Address address = addressDao.findOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("开团失败：收货地址不存在");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
         }
 
         // 查询商品规格和商品是否存在
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("开团失败：规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
@@ -249,7 +249,7 @@ public class GroupBuyingWebService {
         }
 
         // 查询用户
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
             logger.error("开团失败：用户不存在");
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
@@ -320,7 +320,7 @@ public class GroupBuyingWebService {
         Integer stockKeepingUnitId = paramVO.getStockKeepingUnitId();
 
         // 查询是否存在用户拼团
-        UserGroupBuying userGroupBuying = userGroupBuyingDao.getOne(userGroupBuyingId);
+        UserGroupBuying userGroupBuying = userGroupBuyingDao.findOne(userGroupBuyingId);
         if (ObjectUtils.isEmpty(userGroupBuying)) {
             logger.error("加入拼团失败：拼团不存在");
             throw new ValidationException(MessageCodes.WEB_GROUP_BUYING_NOT_EXIST);
@@ -349,14 +349,14 @@ public class GroupBuyingWebService {
         }
 
         // 查询收货地址是否存在
-        Address address = addressDao.getOne(addressId);
+        Address address = addressDao.findOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("开团失败：收货地址不存在");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
         }
 
         // 查询商品规格和商品是否存在
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("开团失败：规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
@@ -369,7 +369,7 @@ public class GroupBuyingWebService {
         }
 
         // 查询用户
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
             logger.error("开团失败：用户不存在");
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
@@ -421,7 +421,7 @@ public class GroupBuyingWebService {
      * @return 用户拼团详情
      */
     public UserGroupBuyingWebDetailVO getUserGroupBuying(Integer userGroupBuyingId) {
-        UserGroupBuying userGroupBuying = userGroupBuyingDao.getOne(userGroupBuyingId);
+        UserGroupBuying userGroupBuying = userGroupBuyingDao.findOne(userGroupBuyingId);
         if (ObjectUtils.isEmpty(userGroupBuying)) {
             logger.error("用户拼团不存在");
             throw new ValidationException(MessageCodes.WEB_USER_GROUP_BUYING_NOT_EXIST);
@@ -444,14 +444,14 @@ public class GroupBuyingWebService {
         UserGroupBuyingWebDetailVO detailVO = new UserGroupBuyingWebDetailVO();
         // 商品信息
         Integer commodityId = userGroupBuying.getCommodityId();
-        Commodity commodity = commodityDao.getOne(commodityId);
+        Commodity commodity = commodityDao.findOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("商品不存在");
             throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
         }
         // 规格信息
         Integer stockKeepingUnitId = userGroupBuying.getStockKeepingUnitId();
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("商品规格不存在");
             throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);

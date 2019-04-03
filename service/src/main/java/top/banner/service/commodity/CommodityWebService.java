@@ -116,7 +116,7 @@ public class CommodityWebService {
      * @return 商品
      */
     public CommodityWebDetailVO getCommodityDetail(Integer userId, Integer commodityId) {
-        Commodity commodity = commodityDao.getOne(commodityId);
+        Commodity commodity = commodityDao.findOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("查询商品错误：商品不存在");
             throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
@@ -161,7 +161,7 @@ public class CommodityWebService {
             CommodityCommentWebResultVO vo = new CommodityCommentWebResultVO();
             BeanUtils.copyNonNullProperties(commodityComment, vo);
             Integer userId = commodityComment.getUserId();
-            User user = userDao.getOne(userId);
+            User user = userDao.findOne(userId);
             vo.setNickname(user.getNickName());
             vo.setAvatarUrl(user.getAvatarUrl());
 
@@ -184,7 +184,7 @@ public class CommodityWebService {
         logger.debug("二维码url ：{}", qrCode);
 
         // 获取规格、商品信息
-        Commodity commodity = commodityDao.getOne(commodityId);
+        Commodity commodity = commodityDao.findOne(commodityId);
         String money = "￥ " + commodity.getCommodityPrice();
         String commodityTitle = commodity.getCommodityTitle();
         CommodityBanner banner = commodityBannerDao.findFirstByCommodityIdIsAndDeletedIsFalseOrderByCreateTimeAsc(commodityId);

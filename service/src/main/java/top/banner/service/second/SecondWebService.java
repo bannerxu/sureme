@@ -99,7 +99,7 @@ public class SecondWebService {
 
             // 商品规格
             Integer stockKeepingUnitId = second.getStockKeepingUnitId();
-            StockKeepingUnit sku = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+            StockKeepingUnit sku = stockKeepingUnitDao.findOne(stockKeepingUnitId);
             if (ObjectUtils.isEmpty(sku) || sku.getDeleted()) {
                 logger.error("分页查询秒杀失败：规格{} 不存在", stockKeepingUnitId);
                 return null;
@@ -139,7 +139,7 @@ public class SecondWebService {
 
         // TODO 缓存优化先不做，后面再优化
 
-        Second second = secondDao.getOne(secondId);
+        Second second = secondDao.findOne(secondId);
         if (ObjectUtils.isEmpty(second) || second.getDeleted()) {
             logger.error("查询秒杀详情失败：秒杀{} 不存在", secondId);
             throw new ValidationException(MessageCodes.WEB_SECOND_NOT_EXIST);
@@ -172,7 +172,7 @@ public class SecondWebService {
         Integer secondId = vo.getSecondId();
         Integer addressId = vo.getAddressId();
 
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
             logger.error("秒杀失败：用户{} 不存在", userId);
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
@@ -189,7 +189,7 @@ public class SecondWebService {
         }
 
         // 秒杀信息
-        Second second = secondDao.getOne(secondId);
+        Second second = secondDao.findOne(secondId);
         if (ObjectUtils.isEmpty(second) || second.getDeleted()) {
             logger.error("秒杀失败：秒杀{} 不存在", second);
         }

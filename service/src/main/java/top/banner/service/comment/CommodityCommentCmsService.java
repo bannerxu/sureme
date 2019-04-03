@@ -62,7 +62,7 @@ public class CommodityCommentCmsService {
         CommodityCommentCmsResultVO vo = new CommodityCommentCmsResultVO();
         BeanUtils.copyNonNullProperties(commodityComment, vo);
         Integer userId = commodityComment.getUserId();
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         if (!ObjectUtils.isEmpty(user)) {
             vo.setNickname(user.getNickName());
         }
@@ -75,7 +75,7 @@ public class CommodityCommentCmsService {
      * @param commodityCommentId 商品评论id
      */
     public void deleteComment(Integer commodityCommentId) {
-        CommodityComment commodityComment = commodityCommentDao.getOne(commodityCommentId);
+        CommodityComment commodityComment = commodityCommentDao.findOne(commodityCommentId);
         if (!ObjectUtils.isEmpty(commodityComment)) {
             commodityComment.setDeleted(true);
             commodityCommentDao.saveAndFlush(commodityComment);
@@ -88,7 +88,7 @@ public class CommodityCommentCmsService {
      * @param commodityCommentId 评论id
      */
     public void replyComment(Integer commodityCommentId, CmsReplyCommentParamVO cmsReplyCommentParamVO) {
-        CommodityComment commodityComment = commodityCommentDao.getOne(commodityCommentId);
+        CommodityComment commodityComment = commodityCommentDao.findOne(commodityCommentId);
         commodityComment.setCommentReply(cmsReplyCommentParamVO.getCommentReply());
         commodityCommentDao.saveAndFlush(commodityComment);
     }

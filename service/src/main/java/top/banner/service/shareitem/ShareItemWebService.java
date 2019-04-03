@@ -91,7 +91,7 @@ public class ShareItemWebService {
      */
     private ShareItemVO toShareItemVO(ShareItem shareItem) {
         ShareItemVO shareItemVO = new ShareItemVO();
-        User user = userDao.getOne(shareItem.getBeShareUserId());
+        User user = userDao.findOne(shareItem.getBeShareUserId());
         BeanUtils.copyNonNullProperties(user, shareItemVO);
         return shareItemVO;
     }

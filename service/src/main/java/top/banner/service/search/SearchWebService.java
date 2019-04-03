@@ -103,7 +103,7 @@ public class SearchWebService {
         }
 
         Integer managerId = article.getManagerId();
-        Manager manager = managerDao.getOne(managerId);
+        Manager manager = managerDao.findOne(managerId);
         if (!ObjectUtils.isEmpty(manager) && !manager.getDeleted()) {
             resultVO.setManagerName(manager.getName());
         }

@@ -48,7 +48,7 @@ public class WithdrawCmsService {
     private WithdrawPageVO toWithdrawPageVO(Withdraw withdraw) {
         WithdrawPageVO withdrawPageVO = new WithdrawPageVO();
         BeanUtils.copyNonNullProperties(withdraw, withdrawPageVO);
-        User one = userDao.getOne(withdraw.getUserId());
+        User one = userDao.findOne(withdraw.getUserId());
         withdrawPageVO.setNickName(one.getNickName());
         return withdrawPageVO;
     }
@@ -60,7 +60,7 @@ public class WithdrawCmsService {
      * @return
      */
     public WithdrawPageVO update(WithdrawUpdateVO updateVO) {
-        Withdraw withdraw = withdrawDao.getOne(updateVO.getWithdrawId());
+        Withdraw withdraw = withdrawDao.findOne(updateVO.getWithdrawId());
         Assert.notNull(withdraw, "提现记录不存在");
 
         if (withdraw.getWithdrawStatus().equals(WithdrawStatus.WAIT)) {
@@ -68,10 +68,10 @@ public class WithdrawCmsService {
                 return toWithdrawPageVO(withdraw);
             } else if (updateVO.getWithdrawStatus().equals(WithdrawStatus.SUCCESS)) {
                 //提现成功
-                User user = userDao.getOne(withdraw.getUserId());
+                User user = userDao.findOne(withdraw.getUserId());
                 try {
                     if (weChatUtil.businessPayment(user.getOpenId(), withdraw.getMoney(), "佣金提现")) {
-                        User one = userDao.getOne(withdraw.getUserId());
+                        User one = userDao.findOne(withdraw.getUserId());
                         one.setFreezeBalance(one.getFreezeBalance().subtract(withdraw.getMoney()));
                         userDao.save(one);
 
@@ -97,7 +97,7 @@ public class WithdrawCmsService {
 
     private void withdrawFailure(WithdrawUpdateVO updateVO, Withdraw withdraw) {
         //提现失败
-        User one = userDao.getOne(withdraw.getUserId());
+        User one = userDao.findOne(withdraw.getUserId());
         one.setBalance(one.getBalance().add(withdraw.getMoney()));
         one.setFreezeBalance(one.getFreezeBalance().subtract(withdraw.getMoney()));
         userDao.save(one);

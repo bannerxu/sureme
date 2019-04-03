@@ -108,7 +108,7 @@ public class ArticleWebService {
 
                 // 发布者名称
                 Integer managerId = article.getManagerId();
-                Manager manager = managerDao.getOne(managerId);
+                Manager manager = managerDao.findOne(managerId);
                 String name = manager.getName();
                 vo.setManagerName(name);
 
@@ -182,7 +182,7 @@ public class ArticleWebService {
 
         // 发布者名称
         Integer managerId = article.getManagerId();
-        Manager manager = managerDao.getOne(managerId);
+        Manager manager = managerDao.findOne(managerId);
         String name = manager.getName();
 
         ArticleWebDetailVO resultVO = new ArticleWebDetailVO();
@@ -218,7 +218,7 @@ public class ArticleWebService {
             BeanUtils.copyNonNullProperties(articleComment, vo);
 
             Integer userId = articleComment.getUserId();
-            User user = userDao.getOne(userId);
+            User user = userDao.findOne(userId);
             vo.setNickname(user.getNickName());
             vo.setAvatarUrl(user.getAvatarUrl());
 
@@ -297,7 +297,7 @@ public class ArticleWebService {
         articleComment.setCommentContent(commentContent);
         articleComment.setCreateTime(new Date());
         articleComment.setArticleId(articleId);
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         if (!ObjectUtils.isEmpty(user)) {
             articleComment.setUserId(userId);
             articleComment.setNickname(user.getNickName());
@@ -314,7 +314,7 @@ public class ArticleWebService {
      * @return 文章
      */
     public Article getWeekly(Integer userId) {
-        User user = userDao.getOne(userId);
+        User user = userDao.findOne(userId);
         PregnancyTypeEnum pregnancyType = user.getPregnancyType();
 
         // 孕前文章

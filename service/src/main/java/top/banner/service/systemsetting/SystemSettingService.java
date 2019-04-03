@@ -23,7 +23,7 @@ public class SystemSettingService {
      * @return 系统设置
      */
     public SystemSetting getSystemSetting() {
-        SystemSetting systemSetting = systemSettingDao.getOne(1);
+        SystemSetting systemSetting = systemSettingDao.findOne(1);
         if (ObjectUtils.isEmpty(systemSetting)) {
             return initSystemSetting();
         } else {
@@ -50,7 +50,7 @@ public class SystemSettingService {
      * @return 系统设置
      */
     public SystemSetting modifySystemSetting(SystemSetting systemSetting) {
-        SystemSetting one = systemSettingDao.getOne(1);
+        SystemSetting one = systemSettingDao.findOne(1);
         BeanUtils.copyNonNullProperties(systemSetting, one);
         one.setSystemSettingId(1);
         return systemSettingDao.saveAndFlush(one);

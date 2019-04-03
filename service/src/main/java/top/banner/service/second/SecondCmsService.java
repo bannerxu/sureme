@@ -83,7 +83,7 @@ public class SecondCmsService {
      * @return 秒杀详情
      */
     public SecondCmsDetailVO getSecondDetail(Integer secondId) {
-        Second second = secondDao.getOne(secondId);
+        Second second = secondDao.findOne(secondId);
         if (ObjectUtils.isEmpty(second) || second.getDeleted()) {
             logger.error("查询秒杀详情失败：秒杀不存在");
             throw new ValidationException(MessageCodes.CMS_SECOND_NOT_EXIST);
@@ -116,7 +116,7 @@ public class SecondCmsService {
 
         // 规格信息
         Integer stockKeepingUnitId = paramVO.getStockKeepingUnitId();
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("添加秒杀失败：规格{} 不存在");
             throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
@@ -147,7 +147,7 @@ public class SecondCmsService {
      * @param secondId 秒杀id
      */
     public void deleteSecond(Integer secondId) {
-        Second second = secondDao.getOne(secondId);
+        Second second = secondDao.findOne(secondId);
         if (ObjectUtils.isEmpty(second) || second.getDeleted()) {
             logger.warn("删除秒杀失败：不存在或已删除");
             return ;

@@ -104,7 +104,7 @@ public class OrderCmsService {
      */
     public OrderCmsResultVO getOrder(Integer orderId) {
 
-        Order order = orderDao.getOne(orderId);
+        Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order)) {
             logger.error("调用订单单个查询业务：id{}对应的订单不存在", orderId);
             throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST, "订单不存在");
@@ -141,7 +141,7 @@ public class OrderCmsService {
      * @param orderId 订单id
      */
     public void deleteOrder(Integer orderId) {
-        Order order = orderDao.getOne(orderId);
+        Order order = orderDao.findOne(orderId);
         OrderStatusEnum orderStatus = order.getOrderStatus();
         // 只有订单为已退款、已退货时，才执行删除
         if (orderStatus.equals(OrderStatusEnum.ORDER_RETURNED) || orderStatus.equals(OrderStatusEnum.ORDER_REFUNDED)) {
@@ -161,7 +161,7 @@ public class OrderCmsService {
     public void send(Integer orderId, OrderSendParamVO vo) {
         Date date = new Date();
         // 发货时，修改发货时间，订单状态
-        Order order = orderDao.getOne(orderId);
+        Order order = orderDao.findOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("订单发货失败：订单{} 不存在", orderId);
             throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST);
@@ -189,7 +189,7 @@ public class OrderCmsService {
      * @return 物流信息
      */
     public String getLogisticsInfo(Integer orderId) {
-        Order order = orderDao.getOne(orderId);
+        Order order = orderDao.findOne(orderId);
         String logisticsNumber = order.getLogisticsNumber();
         String logisticsCompany = order.getLogisticsCompany();
 

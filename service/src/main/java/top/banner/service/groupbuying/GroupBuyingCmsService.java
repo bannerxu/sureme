@@ -70,7 +70,7 @@ public class GroupBuyingCmsService {
      */
     public GroupBuyingCmsDetailVO getGroupBuying(Integer groupBuyingId) {
         GroupBuyingCmsDetailVO detailVO = new GroupBuyingCmsDetailVO();
-        GroupBuying groupBuying = groupBuyingDao.getOne(groupBuyingId);
+        GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         BeanUtils.copyNonNullProperties(groupBuying, detailVO);
 
         return detailVO;
@@ -91,7 +91,7 @@ public class GroupBuyingCmsService {
             logger.error("添加拼团失败：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST);
         }
-        StockKeepingUnit sku = stockKeepingUnitDao.getOne(addVO.getStockKeepingUnitId());
+        StockKeepingUnit sku = stockKeepingUnitDao.findOne(addVO.getStockKeepingUnitId());
         if (ObjectUtils.isEmpty(sku) || sku.getDeleted()) {
             logger.error("添加拼团失败：商品规格不存在");
             throw new ValidationException(MessageCodes.CMS_STOCK_KEEPING_UNIT_NOT_EXIST);
@@ -121,7 +121,7 @@ public class GroupBuyingCmsService {
      */
     public GroupBuyingCmsResultVO updateGroupBuying(Integer groupBuyingId, GroupBuyingCmsUpdateParamVO updateVO) {
         // 修改
-        GroupBuying groupBuying = groupBuyingDao.getOne(groupBuyingId);
+        GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying) || groupBuying.getDeleted()) {
             logger.error("修改拼团失败：拼团不存在");
             throw new ValidationException(MessageCodes.CMS_GROUP_BUYING_NOT_EXIST);
@@ -142,7 +142,7 @@ public class GroupBuyingCmsService {
      * @param groupBuyingId 实体id
      */
     public void deleteGroupBuying(Integer groupBuyingId) {
-        GroupBuying groupBuying = groupBuyingDao.getOne(groupBuyingId);
+        GroupBuying groupBuying = groupBuyingDao.findOne(groupBuyingId);
         if (ObjectUtils.isEmpty(groupBuying)) {
             logger.warn("删除拼团失败：拼团不存在");
             return;

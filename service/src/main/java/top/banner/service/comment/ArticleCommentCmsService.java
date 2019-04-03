@@ -64,7 +64,7 @@ public class ArticleCommentCmsService {
      * @param articleCommentId 文章评论
      */
     public void deleteComment(Integer articleCommentId) {
-        ArticleComment articleComment = articleCommentDao.getOne(articleCommentId);
+        ArticleComment articleComment = articleCommentDao.findOne(articleCommentId);
         if (!ObjectUtils.isEmpty(articleComment)) {
             articleComment.setDeleted(true);
             articleCommentDao.saveAndFlush(articleComment);

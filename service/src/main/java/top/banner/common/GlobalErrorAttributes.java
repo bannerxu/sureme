@@ -1,10 +1,9 @@
 package top.banner.common;
 
-import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,11 +11,12 @@ import java.util.Map;
 
 @Component
 public class GlobalErrorAttributes implements ErrorAttributes {
+
     @Override
-    public Map<String, Object> getErrorAttributes(WebRequest webRequest, boolean includeStackTrace) {
+    public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
         Map<String, Object> errorAttributes = new LinkedHashMap<String, Object>();
 
-        Integer status = getAttribute(webRequest, "javax.servlet.error.status_code");
+        Integer status = getAttribute(requestAttributes, "javax.servlet.error.status_code");
         if (status == null) {
             errorAttributes.put("code", 999);
             errorAttributes.put("msg", "None");
@@ -27,14 +27,6 @@ public class GlobalErrorAttributes implements ErrorAttributes {
         return errorAttributes;
     }
 
-
-    @Override
-    public Throwable getError(WebRequest webRequest) {
-        return getAttribute(webRequest, "javax.servlet.error.exception");
-    }
-
-
-
     private String getDetail(Integer status) {
         try {
             return HttpStatus.valueOf(status).getReasonPhrase();
@@ -42,7 +34,11 @@ public class GlobalErrorAttributes implements ErrorAttributes {
             return status.toString();
         }
     }
-    
+
+    @Override
+    public Throwable getError(RequestAttributes requestAttributes) {
+        return getAttribute(requestAttributes, "javax.servlet.error.exception");
+    }
 
     @SuppressWarnings("unchecked")
     private <T> T getAttribute(RequestAttributes requestAttributes, String name) {

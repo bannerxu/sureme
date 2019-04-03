@@ -57,7 +57,7 @@ public class CouponCmsService {
      * @return 卡券信息
      */
     public CouponCmsResultVO getCoupon(Integer couponId) {
-        Coupon coupon = couponDao.getOne(couponId);
+        Coupon coupon = couponDao.findOne(couponId);
         if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券单个查询业务：id（{}）对应的卡券不存在", couponId);
         }
@@ -104,7 +104,7 @@ public class CouponCmsService {
      * @param couponId 卡券id
      */
     public void deleteCoupon(Integer couponId) {
-        Coupon coupon = couponDao.getOne(couponId);
+        Coupon coupon = couponDao.findOne(couponId);
         if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券删除业务，id（{}）对应的卡券不存在", couponId);
         }
@@ -122,7 +122,7 @@ public class CouponCmsService {
         Date date = new Date();
 
         Integer couponId = couponCmsUpdateVO.getCouponId();
-        Coupon coupon = couponDao.getOne(couponId);
+        Coupon coupon = couponDao.findOne(couponId);
 
         if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("调用卡券修改业务：id（{}）对应的卡券不存在", couponId);

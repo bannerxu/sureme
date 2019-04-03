@@ -25,7 +25,7 @@ public class MoneyWaterService {
 
     public Page<MoneyWaterVO> findAll(Pageable pageable) {
         return moneyWaterDao.findAll(pageable).map(moneyWater -> {
-            Order order = orderDao.getOne(moneyWater.getOrderId());
+            Order order = orderDao.findOne(moneyWater.getOrderId());
             MoneyWaterVO vo = new MoneyWaterVO();
             if (null != order) {
                 vo.setOrderNumber(order.getOrderNumber());

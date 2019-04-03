@@ -60,10 +60,10 @@ public class BrokerageWebService {
     private BrokerageVO toBrokerageVO(Brokerage brokerage) {
         BrokerageVO brokerageVO = new BrokerageVO();
 
-        Order order = orderDao.getOne(brokerage.getOrderId());
+        Order order = orderDao.findOne(brokerage.getOrderId());
         BeanUtils.copyNonNullProperties(order, brokerageVO);
 
-        User user = userDao.getOne(brokerage.getUserId());
+        User user = userDao.findOne(brokerage.getUserId());
         BeanUtils.copyNonNullProperties(user, brokerageVO);
 
         BeanUtils.copyNonNullProperties(brokerage, brokerageVO);
@@ -110,7 +110,7 @@ public class BrokerageWebService {
      * 修改用户余额
      */
     private void updateUserBalance(Integer userId, BigDecimal money) {
-        User one = userDao.getOne(userId);
+        User one = userDao.findOne(userId);
         one.setBalance(one.getBalance().add(money));
         userDao.save(one);
     }
@@ -137,7 +137,7 @@ public class BrokerageWebService {
      * @return 用户信息
      */
     public User withdraw(BigDecimal money, Integer userId) {
-        User one = userDao.getOne(userId);
+        User one = userDao.findOne(userId);
         one.setBalance(one.getBalance().subtract(money));
         one.setFreezeBalance(one.getFreezeBalance().add(money));
         userDao.save(one);

@@ -57,7 +57,7 @@ public class ApplyRecordService {
         return applyRecordDao.findAll(pageable).map(applyRecord -> {
             Integer orderId = applyRecord.getOrderId();
             // 查询订单信息
-            Order order = orderDao.getOne(orderId);
+            Order order = orderDao.findOne(orderId);
             if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
                 logger.error("查询申请记录时，id为{}的订单不存在", orderId);
                 return null;
@@ -93,7 +93,7 @@ public class ApplyRecordService {
     @Transactional(rollbackOn = Exception.class)
     public void audit(Integer applyRecordId, Integer isPass) {
         Date now = new Date();
-        ApplyRecord applyRecord = applyRecordDao.getOne(applyRecordId);
+        ApplyRecord applyRecord = applyRecordDao.findOne(applyRecordId);
         if (ObjectUtils.isEmpty(applyRecord)) {
             logger.error("审核失败：申请记录{} 不存在", applyRecordId);
             throw new ValidationException(MessageCodes.CMS_APPLY_RECORD_NOT_EXIST);
@@ -103,7 +103,7 @@ public class ApplyRecordService {
         } else {
             applyRecord.setApplyStatus(ApplyStatus.APPLY_SUCCESS);
             Integer orderId = applyRecord.getOrderId();
-            Order order = orderDao.getOne(orderId);
+            Order order = orderDao.findOne(orderId);
             if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
                 logger.error("退款失败：订单{} 不存在", orderId);
                 throw new ValidationException(MessageCodes.CMS_ORDER_NOT_EXIST);
