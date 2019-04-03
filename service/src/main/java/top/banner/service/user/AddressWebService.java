@@ -47,7 +47,7 @@ public class AddressWebService {
 
         // 判断传入的用户id对应的用户是否存在
         Integer userId = addressWebAddParamVO.getUserId();
-        User user = userDao.findOne(userId);
+        User user = userDao.getOne(userId);
         if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
             logger.error("调用添加地址业务错误：对应的用户不存在");
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST, "该用户不存在");
@@ -88,7 +88,7 @@ public class AddressWebService {
      * @return 修改完成后的地址信息
      */
     public Address updateAddress(Integer addressId, AddressWebUpdateParamVO vo) {
-        Address address = addressDao.findOne(addressId);
+        Address address = addressDao.getOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("调用修改地址业务错误：原地址为空");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST, "修改出错，查不到原地址");
@@ -105,7 +105,7 @@ public class AddressWebService {
      * @param addressId 地址id
      */
     public void deleteAddress(Integer addressId) {
-        Address address = addressDao.findOne(addressId);
+        Address address = addressDao.getOne(addressId);
         if (!ObjectUtils.isEmpty(address)) {
             address.setDeleted(true);
             addressDao.saveAndFlush(address);
@@ -119,7 +119,7 @@ public class AddressWebService {
      * @param addressId 地址id
      */
     public void setDefaultAddress(Integer userId, Integer addressId) {
-        Address address = addressDao.findOne(addressId);
+        Address address = addressDao.getOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("设置默认地址失败：地址不存在");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
@@ -133,7 +133,7 @@ public class AddressWebService {
             }
         });
 
-        addressDao.save(addresses);
+        addressDao.saveAll(addresses);
     }
 
 }

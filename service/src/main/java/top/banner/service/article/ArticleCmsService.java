@@ -104,11 +104,11 @@ public class ArticleCmsService {
         List<Commodity> commodities = relations.stream()
                 .map(RelationArticleCommodity::getCommodityId)
                 .filter(Objects::nonNull)
-                .map((commodityId) -> commodityDao.findOne(commodityId))
+                .map((commodityId) -> commodityDao.getOne(commodityId))
                 .collect(Collectors.toList());
 
         // 设置文章中发布者的名称
-        Manager manager = managerDao.findOne(article.getManagerId());
+        Manager manager = managerDao.getOne(article.getManagerId());
         articleCmsResultVO.setName(manager.getName());
 
         // 设置商品到VO
@@ -132,7 +132,7 @@ public class ArticleCmsService {
             throw new ValidationException(MessageCodes.CMS_ID_EMPTY, "文章id不能为空");
         }
 
-        Article article = articleDao.findOne(articleId);
+        Article article = articleDao.getOne(articleId);
 
         List<ArticleBanner> articleBanners = articleBannerDao.findByArticleIdIsAndDeletedIsFalseOrderByArticleBannerIdAsc(articleId);
 
@@ -147,7 +147,7 @@ public class ArticleCmsService {
         List<Commodity> commodities = relations.stream()
                 .map(RelationArticleCommodity::getCommodityId)
                 .filter(Objects::nonNull)
-                .map((commodityId) -> commodityDao.findOne(commodityId))
+                .map((commodityId) -> commodityDao.getOne(commodityId))
                 .collect(Collectors.toList());
         articleCmsResultVO.setCommodities(commodities);
 
@@ -171,7 +171,7 @@ public class ArticleCmsService {
         vo.setCommodities(resultCommodities);
 
         Integer articleId = articleCmsUpdateParamVO.getArticleId();
-        Article article = articleDao.findOne(articleId);
+        Article article = articleDao.getOne(articleId);
         if (ObjectUtils.isEmpty(article)) {
             logger.error("调用文章修改业务：id对应的文章不存在");
             throw new ValidationException(MessageCodes.CMS_ARTICLE_NOT_EXIST, "文章不存在");
@@ -197,7 +197,7 @@ public class ArticleCmsService {
                 resultArticleBanner.add(articleBanner);
             } else {
                 // id不为空，修改文章轮播
-                ArticleBanner update = articleBannerDao.findOne(articleBannerId);
+                ArticleBanner update = articleBannerDao.getOne(articleBannerId);
                 update.setUpdateTime(date);
                 update.setArticleId(articleId);
                 // 加入保存列表
@@ -209,7 +209,7 @@ public class ArticleCmsService {
 
         // 遍历商品id列表，生成文章与商品的关联
         commodityIds.forEach(commodityId -> {
-            Commodity commodity = commodityDao.findOne(commodityId);
+            Commodity commodity = commodityDao.getOne(commodityId);
             if (ObjectUtils.isEmpty(commodity)) {
                 logger.error("调用修改文章业务：id对应的商品不存在");
                 throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "id对应的商品不存在");
@@ -235,8 +235,8 @@ public class ArticleCmsService {
 
         // 统一保存
         articleDao.save(article);
-        articleBannerDao.save(needSaveArticleBanner);
-        relationArticleCommodityDao.save(needSaveRelation);
+        articleBannerDao.saveAll(needSaveArticleBanner);
+        relationArticleCommodityDao.saveAll(needSaveRelation);
 
         return vo;
     }
@@ -284,7 +284,7 @@ public class ArticleCmsService {
         commodityIds.forEach(commodityId -> {
 
             // 通过id查找商品，如果商品不存在直接跳过，商品存在才执行后面操作
-            Commodity commodity = commodityDao.findOne(commodityId);
+            Commodity commodity = commodityDao.getOne(commodityId);
             if (!ObjectUtils.isEmpty(commodity)) {
                 commodities.add(commodity);
 
@@ -304,7 +304,7 @@ public class ArticleCmsService {
         });
 
         // 获取管理员姓名
-        Manager manager = managerDao.findOne(managerId);
+        Manager manager = managerDao.getOne(managerId);
         String name = manager.getName();
 
         // 设置返回的VO
@@ -322,7 +322,7 @@ public class ArticleCmsService {
      * @param articleId 文章id
      */
     public void deleteArticle(Integer articleId) {
-        Article article = articleDao.findOne(articleId);
+        Article article = articleDao.getOne(articleId);
         if (ObjectUtils.isEmpty(article)) {
             logger.error("---> 调用文章删除业务：参数id对应的文章不存在");
             throw new ValidationException(MessageCodes.CMS_ARTICLE_NOT_EXIST, "文章id对应文章不存在");
@@ -338,7 +338,7 @@ public class ArticleCmsService {
      * @return 是否成功
      */
     public boolean deleteArticleBanner(Integer articleBannerId) {
-        ArticleBanner articleBanner = articleBannerDao.findOne(articleBannerId);
+        ArticleBanner articleBanner = articleBannerDao.getOne(articleBannerId);
         if (ObjectUtils.isEmpty(articleBanner)) {
             logger.error("调用删除文章轮播业务，id对应的文章轮播不存在");
             return false;

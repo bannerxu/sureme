@@ -78,7 +78,7 @@ public class CouponWebService {
             throw new ValidationException(MessageCodes.WEB_COUPON_HAS_BEEN_PULLED);
         }
 
-        Coupon coupon = couponDao.findOne(couponId);
+        Coupon coupon = couponDao.getOne(couponId);
         if (ObjectUtils.isEmpty(coupon) || coupon.getDeleted()) {
             logger.error("领券优惠券失败：优惠券不存在");
             throw new ValidationException(MessageCodes.WEB_COUPON_NOT_EXIST);

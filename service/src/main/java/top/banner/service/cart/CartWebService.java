@@ -54,13 +54,13 @@ public class CartWebService {
         CartItem cartItem = cartItemDao.findByUserIdIsAndStockKeepingUnitIdIsAndDeletedIsFalse(userId, stockKeepingUnitId);
         if (ObjectUtils.isEmpty(cartItem)) {
             // 如果为空则表示当前购物车没有该商品，直接添加
-            StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+            StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
             if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
                 logger.error("添加商品到购物车失败：商品规格不存在");
                 throw new ValidationException(MessageCodes.WEB_SKU_NOT_EXIST);
             }
             Integer commodityId = stockKeepingUnit.getCommodityId();
-            Commodity commodity = commodityDao.findOne(commodityId);
+            Commodity commodity = commodityDao.getOne(commodityId);
             if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
                 logger.error("添加商品到购物车失败：商品不存在");
                 throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST);
@@ -90,7 +90,7 @@ public class CartWebService {
      * @return 是否小于
      */
     private Boolean isCountLessThanStock(Integer count, Integer stockKeepingUnitId) {
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
         if (ObjectUtils.isEmpty(stockKeepingUnit) || stockKeepingUnit.getDeleted()) {
             logger.error("判断数量是否小于规格库存失败：规格不存在");
             return false;

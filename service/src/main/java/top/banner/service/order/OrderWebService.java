@@ -112,13 +112,13 @@ public class OrderWebService {
         Integer addressId = orderWebCreateParamVO.getAddressId();
         Integer commodityId = orderWebCreateParamVO.getCommodityId();
 
-        Address address = addressDao.findOne(addressId);
+        Address address = addressDao.getOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("调用创建订单业务失败：找不到对应的地址");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST, "地址不存在，请重新选择地址");
         }
 
-        Commodity commodity = commodityDao.findOne(commodityId);
+        Commodity commodity = commodityDao.getOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用创建订单业务失败：找不到对应的商品");
             throw new ValidationException(MessageCodes.WEB_COMMODITY_NOT_EXIST, "商品不存在，请重新下单");
@@ -237,7 +237,7 @@ public class OrderWebService {
             Integer stockKeepingUnitId = item.getStockKeepingUnitId();
             Integer voCount = item.getSkuCount();
             BigDecimal skuCount = BigDecimal.valueOf(voCount);
-            StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+            StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(stockKeepingUnitId);
             // 非空判断
             if (!ObjectUtils.isEmpty(stockKeepingUnit)) {
                 // 判断库存是否足够
@@ -306,7 +306,7 @@ public class OrderWebService {
 
         // 判断地址是否为空
         Integer addressId = vo.getAddressId();
-        Address address = addressDao.findOne(addressId);
+        Address address = addressDao.getOne(addressId);
         if (ObjectUtils.isEmpty(address) || address.getDeleted()) {
             logger.error("购物车下单失败：地址不存在");
             throw new ValidationException(MessageCodes.WEB_ADDRESS_NOT_EXIST);
@@ -328,7 +328,7 @@ public class OrderWebService {
         Integer orderId = orderSave.getOrderId();
 
         needSaveOrderItems.forEach(orderItem -> orderItem.setOrderId(orderId));
-        orderItemDao.save(needSaveOrderItems);
+        orderItemDao.saveAll(needSaveOrderItems);
 
         OrderWebCartCreateResultVO resultVO = new OrderWebCartCreateResultVO();
         resultVO.setOrderId(orderSave.getOrderId());
@@ -344,7 +344,7 @@ public class OrderWebService {
      * @return 订单详情
      */
     public OrderWebDetailVO getDetail(Integer userId, Integer orderId) {
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("查询订单详情失败：订单{} 不存在");
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
@@ -376,7 +376,7 @@ public class OrderWebService {
      * @param orderId 订单id
      */
     public void deleteOrder(Integer userId, Integer orderId) {
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.warn("删除订单失败：订单不存在或已经被删除");
             return;
@@ -402,7 +402,7 @@ public class OrderWebService {
 
         Integer orderId = vo.getOrderId();
         String commentContent = vo.getCommentContent();
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("评价订单失败：订单{}不存在", orderId);
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
@@ -426,7 +426,7 @@ public class OrderWebService {
             needSave.add(commodityComment);
         });
         if (needSave.size() > 0) {
-            commodityCommentDao.save(needSave);
+            commodityCommentDao.saveAll(needSave);
         }
 
         // 设置订单已评价
@@ -441,7 +441,7 @@ public class OrderWebService {
      * @param orderId 订单id
      */
     public void received(Integer userId, Integer orderId) {
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("确认收货失败：订单{} 不存在", orderId);
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
@@ -455,7 +455,7 @@ public class OrderWebService {
         order.setReceiveTime(now);
         orderDao.saveAndFlush(order);
 
-        SystemSetting systemSetting = systemSettingDao.findOne(1);
+        SystemSetting systemSetting = systemSettingDao.getOne(1);
         addBrokerage(now, order, userId, systemSetting.getFirstScale(), systemSetting.getSecondScale(), systemSetting.getThirdScale());
 
     }
@@ -487,7 +487,7 @@ public class OrderWebService {
      * @return 物流信息
      */
     public String getLogisticsInfo(Integer orderId) {
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         String logisticsNumber = order.getLogisticsNumber();
         String logisticsCompany = order.getLogisticsCompany();
 
@@ -522,7 +522,7 @@ public class OrderWebService {
 
         // 订单信息
         Integer orderId = applyRefundVO.getOrderId();
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("申请退款失败：订单{} 不存在", orderId);
             return;

@@ -68,11 +68,11 @@ public class BannerCmsService {
             BannerCmsResultVO vo = new BannerCmsResultVO();
             BeanUtils.copyNonNullProperties(banner, vo);
             if (bannerType == BannerTypeEnum.ARTICLE_BANNER) {
-                ArticleBanner articleBanner = articleBannerDao.findOne(banner.getArticleBannerId());
+                ArticleBanner articleBanner = articleBannerDao.getOne(banner.getArticleBannerId());
                 vo.setArticleBannerUrl(articleBanner.getArticleBannerUrl());
                 return vo;
             } else {
-                CommodityBanner commodityBanner = commodityBannerDao.findOne(banner.getCommodityBannerId());
+                CommodityBanner commodityBanner = commodityBannerDao.getOne(banner.getCommodityBannerId());
                 vo.setCommodityBannerUrl(commodityBanner.getCommodityBannerUrl());
                 return vo;
             }
@@ -106,8 +106,8 @@ public class BannerCmsService {
         CommodityBanner commodityBanner;
 
         if (bannerType == BannerTypeEnum.ARTICLE_BANNER) {
-            article = articleDao.findOne(addVO.getArticleId());
-            articleBanner = articleBannerDao.findOne(addVO.getArticleBannerId());
+            article = articleDao.getOne(addVO.getArticleId());
+            articleBanner = articleBannerDao.getOne(addVO.getArticleBannerId());
             if (ObjectUtils.isEmpty(article)
                     || article.getDeleted()
                     || ObjectUtils.isEmpty(articleBanner)
@@ -118,8 +118,8 @@ public class BannerCmsService {
             // 设置url
             vo.setArticleBannerUrl(articleBanner.getArticleBannerUrl());
         } else if (bannerType == BannerTypeEnum.COMMODITY_BANNER) {
-            commodity = commodityDao.findOne(addVO.getCommodityId());
-            commodityBanner = commodityBannerDao.findOne(addVO.getCommodityBannerId());
+            commodity = commodityDao.getOne(addVO.getCommodityId());
+            commodityBanner = commodityBannerDao.getOne(addVO.getCommodityBannerId());
             if (ObjectUtils.isEmpty(commodity)
                     || commodity.getDeleted()
                     || ObjectUtils.isEmpty(commodityBanner)
@@ -147,7 +147,7 @@ public class BannerCmsService {
      * @param bannerId 轮播id
      */
     public void deleteBanner(Integer bannerId) {
-        bannerDao.delete(bannerId);
+        bannerDao.deleteById(bannerId);
     }
 
 }

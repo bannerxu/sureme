@@ -1,4 +1,3 @@
-
 spring:
   jpa:
     show-sql: true
@@ -23,9 +22,11 @@ spring:
     host: 120.78.196.233
     password: q7FIqKnrILC98sTeb2Z2
     port: 6379
-    pool.maxIdle: 8
-    pool.minIdle: 0
     database: 5
+    jedis:
+      pool:
+        max-idle: 8
+        min-idle: 0
   messages.basename: messages
   jackson:
     default-property-inclusion: always

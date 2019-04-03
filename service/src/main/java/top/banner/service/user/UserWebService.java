@@ -86,7 +86,7 @@ public class UserWebService {
 
 
     public User authorize() {
-        User user = userDao.findOne(1);
+        User user = userDao.getOne(1);
 
         Integer userId = user.getUserId();
 
@@ -113,7 +113,7 @@ public class UserWebService {
      */
     public Boolean setPregnancyType(Integer userId, UserSetPregnancyVO userSetPregnancyVO) {
         PregnancyTypeEnum pregnancyType = userSetPregnancyVO.getPregnancyType();
-        User user = userDao.findOne(userId);
+        User user = userDao.getOne(userId);
         if (ObjectUtils.isEmpty(user)) {
             logger.error("设置孕期失败：用户不存在");
             return false;
@@ -169,12 +169,12 @@ public class UserWebService {
     public void deleteStar(Integer userId, Integer articleStarId) {
         ArticleStar articleStar = articleStarDao.findByArticleStarIdIsAndUserIdIs(articleStarId, userId);
         if (!ObjectUtils.isEmpty(articleStar)) {
-            articleStarDao.delete(articleStarId);
+            articleStarDao.deleteById(articleStarId);
         }
     }
 
 
     public User getUser(Integer userId) {
-        return userDao.findOne(userId);
+        return userDao.getOne(userId);
     }
 }

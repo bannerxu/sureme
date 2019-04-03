@@ -46,7 +46,7 @@ public class UserCmsService {
     public User updateUser(User user) {
         Integer userId = user.getUserId();
         if (!ObjectUtils.isEmpty(userId)) {
-            User oldUser = userDao.findOne(userId);
+            User oldUser = userDao.getOne(userId);
             if (ObjectUtils.isEmpty(oldUser)) {
                 throw new ValidationException(MessageCodes.OLD_USER_EMPTY, "原用户信息不存在");
             }
@@ -64,7 +64,7 @@ public class UserCmsService {
      */
     public void deleteUser(Integer userId) {
         if (!ObjectUtils.isEmpty(userId)) {
-            userDao.delete(userId);
+            userDao.deleteById(userId);
         }
     }
 }
