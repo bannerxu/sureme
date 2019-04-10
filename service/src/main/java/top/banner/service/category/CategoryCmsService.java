@@ -62,7 +62,7 @@ public class CategoryCmsService {
      */
     public CategoryCmsResultVO getCategory(Integer categoryId) {
         CategoryCmsResultVO resultVO = new CategoryCmsResultVO();
-        Category category = categoryDao.findOne(categoryId);
+        Category category = categoryDao.getOne(categoryId);
         BeanUtils.copyNonNullProperties(category, resultVO);
         // todo 执行业务
 
@@ -100,7 +100,7 @@ public class CategoryCmsService {
     public CategoryCmsResultVO updateCategory(Integer categoryId, CategoryCmsUpdateParamVO updateVO) {
         Date date = new Date();
         // 修改
-        Category category = categoryDao.findOne(categoryId);
+        Category category = categoryDao.getOne(categoryId);
         if (ObjectUtils.isEmpty(category) || category.getDeleted()) {
             // 实体已被删除
             throw new ValidationException(MessageCodes.CMS_GROUP_BUYING_NOT_EXIST);
@@ -122,7 +122,7 @@ public class CategoryCmsService {
      * @param categoryId 实体id
      */
     public void deleteCategory(Integer categoryId) {
-        Category category = categoryDao.findOne(categoryId);
+        Category category = categoryDao.getOne(categoryId);
         if (ObjectUtils.isEmpty(category)) {
             logger.warn("实体不存在");
             return;
@@ -130,7 +130,7 @@ public class CategoryCmsService {
         // 删除前取消掉商品的关联
         List<Commodity> commodities = commodityDao.findByCategoryIdIs(categoryId);
         commodities.forEach(commodity -> commodity.setCategoryId(0));
-        commodityDao.save(commodities);
+        commodityDao.saveAll(commodities);
 
         category.setDeleted(true);
         categoryDao.saveAndFlush(category);

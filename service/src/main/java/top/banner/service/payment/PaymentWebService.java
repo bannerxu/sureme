@@ -65,14 +65,14 @@ public class PaymentWebService {
     public WxPayMpOrderResult unifiedOrder(Integer userId, Integer orderId) {
 
         // 判断用户是否存在
-        User user = userDao.findOne(userId);
+        User user = userDao.getOne(userId);
         if (ObjectUtils.isEmpty(user) || user.getDeleted()) {
             logger.error("统一下单失败：用户不存在：{}", userId);
             throw new ValidationException(MessageCodes.WEB_USER_NOT_EXIST);
         }
 
         // 判断订单是否存在
-        Order order = orderDao.findOne(orderId);
+        Order order = orderDao.getOne(orderId);
         if (ObjectUtils.isEmpty(order) || order.getDeleted()) {
             logger.error("统一下单失败：订单不存在：{} | 当前用户：{}", orderId, userId);
             throw new ValidationException(MessageCodes.WEB_ORDER_NOT_EXIST);
@@ -136,7 +136,7 @@ public class PaymentWebService {
      * @param refundParam 订单id
      */
     public WxPayRefundResult refund(RefundParam refundParam) {
-        Order order = orderDao.findOne(refundParam.getOrderId());
+        Order order = orderDao.getOne(refundParam.getOrderId());
         WxPayRefundRequest wxPayRefundRequest = new WxPayRefundRequest();
         String orderNumber = order.getOrderNumber();
 
@@ -203,7 +203,7 @@ public class PaymentWebService {
 
                 // 支付成功，添加用户积分
                 logger.debug("-> 支付成功：设置用户积分");
-                User user = userDao.findOne(order.getUserId());
+                User user = userDao.getOne(order.getUserId());
                 user.setIntegral(user.getIntegral() + totalFee / 1000);
                 userDao.save(user);
 

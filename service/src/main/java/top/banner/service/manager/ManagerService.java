@@ -72,7 +72,7 @@ public class ManagerService {
     public Manager update(ManagerEditVO editVO) {
         logger.debug("调用接口：修改管理员");
         Integer managerId = editVO.getManagerId();
-        Manager manager = managerDao.findOne(managerId);
+        Manager manager = managerDao.getOne(managerId);
         BeanUtils.copyProperties(editVO, manager);
         return managerDao.save(manager);
     }
@@ -84,7 +84,7 @@ public class ManagerService {
      */
     public void delete(int managerId) {
         logger.debug("调用接口：删除管理员");
-        Manager manager = managerDao.findOne(managerId);
+        Manager manager = managerDao.getOne(managerId);
         manager.setDeleted(true);
         managerDao.save(manager);
     }

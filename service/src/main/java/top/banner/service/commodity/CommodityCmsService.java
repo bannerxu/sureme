@@ -66,7 +66,7 @@ public class CommodityCmsService {
             if (ObjectUtils.isEmpty(categoryId) || categoryId.equals(0)) {
                 commodityCmsResultVO.setCategoryName("未分类");
             }
-            Category category = categoryDao.findOne(categoryId);
+            Category category = categoryDao.getOne(categoryId);
             if (ObjectUtils.isEmpty(categoryId) || category.getDeleted()) {
                 throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
             }
@@ -91,7 +91,7 @@ public class CommodityCmsService {
      * @param commodityId 商品id
      */
     public void deleteCommodity(Integer commodityId) {
-        Commodity commodity = commodityDao.findOne(commodityId);
+        Commodity commodity = commodityDao.getOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品删除业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
@@ -102,12 +102,12 @@ public class CommodityCmsService {
         List<CommodityBanner> commodityBanners = commodityBannerDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
         if (!ObjectUtils.isEmpty(commodityBanners)) {
             commodityBanners.forEach(commodityBanner -> commodityBanner.setDeleted(true));
-            commodityBannerDao.save(commodityBanners);
+            commodityBannerDao.saveAll(commodityBanners);
         }
         List<StockKeepingUnit> stockKeepingUnits = stockKeepingUnitDao.findByCommodityIdIsAndDeletedIsFalse(commodityId);
         if (!ObjectUtils.isEmpty(stockKeepingUnits)) {
             stockKeepingUnits.forEach(stockKeepingUnit -> stockKeepingUnit.setDeleted(true));
-            stockKeepingUnitDao.save(stockKeepingUnits);
+            stockKeepingUnitDao.saveAll(stockKeepingUnits);
         }
     }
 
@@ -128,7 +128,7 @@ public class CommodityCmsService {
 
         // 判断商品分类是否存在
         Integer categoryId = commodityCmsAddParamVO.getCategoryId();
-        Category category = categoryDao.findOne(categoryId);
+        Category category = categoryDao.getOne(categoryId);
         if (ObjectUtils.isEmpty(category) || category.getDeleted()) {
             logger.error("添加商品错误：分类不存在");
             throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
@@ -183,7 +183,7 @@ public class CommodityCmsService {
 
         Integer commodityId = commodityCmsUpdateParamVO.getCommodityId();
 
-        Commodity commodity = commodityDao.findOne(commodityId);
+        Commodity commodity = commodityDao.getOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品修改业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
@@ -191,7 +191,7 @@ public class CommodityCmsService {
         Integer categoryId = commodityCmsUpdateParamVO.getCategoryId();
         String categoryName = null;
         if (!categoryId.equals(commodity.getCategoryId())) {
-            Category category = categoryDao.findOne(categoryId);
+            Category category = categoryDao.getOne(categoryId);
             if (ObjectUtils.isEmpty(category) || category.getDeleted()) {
                 logger.error("修改商品错误：分类不存在");
                 throw new ValidationException(MessageCodes.CMS_CATEGORY_NOT_EXIST);
@@ -218,7 +218,7 @@ public class CommodityCmsService {
                 needSaveCommodityBanners.add(commodityBanner);
             } else {
                 // id非空，修改
-                CommodityBanner update = commodityBannerDao.findOne(commodityBannerId);
+                CommodityBanner update = commodityBannerDao.getOne(commodityBannerId);
                 BeanUtils.copyNonNullProperties(commodityBanner, update);
                 update.setUpdateTime(date);
                 update.setCommodityId(commodityId);
@@ -238,7 +238,7 @@ public class CommodityCmsService {
                 needSaveStockKeepingUnits.add(stockKeepingUnit);
             } else {
                 // id非空，修改
-                StockKeepingUnit update = stockKeepingUnitDao.findOne(stockKeepingUnitId);
+                StockKeepingUnit update = stockKeepingUnitDao.getOne(stockKeepingUnitId);
                 BeanUtils.copyNonNullProperties(stockKeepingUnit, update);
                 update.setUpdateTime(date);
                 update.setCommodityId(commodityId);
@@ -248,8 +248,8 @@ public class CommodityCmsService {
         });
 
         // 统一保存
-        commodityBannerDao.save(needSaveCommodityBanners);
-        stockKeepingUnitDao.save(needSaveStockKeepingUnits);
+        commodityBannerDao.saveAll(needSaveCommodityBanners);
+        stockKeepingUnitDao.saveAll(needSaveStockKeepingUnits);
 
         BeanUtils.copyNonNullProperties(commodityCmsUpdateParamVO, commodity);
         // 设置更新时间
@@ -276,7 +276,7 @@ public class CommodityCmsService {
     public CommodityCmsResultVO getCommodity(Integer commodityId) {
         CommodityCmsResultVO commodityCmsResultVO = new CommodityCmsResultVO();
         // 通过传入的id查询商品
-        Commodity commodity = commodityDao.findOne(commodityId);
+        Commodity commodity = commodityDao.getOne(commodityId);
         if (ObjectUtils.isEmpty(commodity) || commodity.getDeleted()) {
             logger.error("调用商品单个查询业务：商品不存在");
             throw new ValidationException(MessageCodes.CMS_COMMODITY_NOT_EXIST, "商品不存在");
@@ -305,7 +305,7 @@ public class CommodityCmsService {
      * @return 是否成功
      */
     public boolean deleteCommodityBanner(Integer commodityBannerId) {
-        CommodityBanner commodityBanner = commodityBannerDao.findOne(commodityBannerId);
+        CommodityBanner commodityBanner = commodityBannerDao.getOne(commodityBannerId);
         if (ObjectUtils.isEmpty(commodityBanner)) {
             logger.error("id对应的商品轮播图不存在");
             return false;
@@ -322,7 +322,7 @@ public class CommodityCmsService {
      * @return 是否成功
      */
     public boolean deleteSKU(Integer skuId) {
-        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.findOne(skuId);
+        StockKeepingUnit stockKeepingUnit = stockKeepingUnitDao.getOne(skuId);
         if (ObjectUtils.isEmpty(stockKeepingUnit)) {
             logger.error("id对应的规格不存在");
             return false;

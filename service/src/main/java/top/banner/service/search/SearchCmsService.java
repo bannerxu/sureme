@@ -115,7 +115,7 @@ public class SearchCmsService {
             if (!ObjectUtils.isEmpty(relations)) {
                 relations.forEach(relation -> {
                     Integer commodityId = relation.getCommodityId();
-                    Commodity commodity = commodityDao.findOne(commodityId);
+                    Commodity commodity = commodityDao.getOne(commodityId);
                     if (!ObjectUtils.isEmpty(commodity)) {
                         SearchArticleCommodityVO vo = new SearchArticleCommodityVO();
                         BeanUtils.copyNonNullProperties(commodity, vo);
