@@ -2,6 +2,7 @@ package top.banner.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import top.banner.common.mvc.RequestDevice
 
 
 /**
@@ -11,5 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class HelloController {
     @GetMapping
-    fun hello(): String = "Hello"
+    fun hello(device: RequestDevice): String {
+        return device.version!!
+    }
 }

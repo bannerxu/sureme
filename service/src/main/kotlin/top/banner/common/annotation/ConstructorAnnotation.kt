@@ -1,4 +1,4 @@
-package me.fortune.server.service.annotation
+package top.banner.common.annotation
 
 /**
  * kotlin allopen no-arg插件注解

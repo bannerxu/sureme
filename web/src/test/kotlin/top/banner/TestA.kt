@@ -1,40 +1,23 @@
 package top.banner
 
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultHandler
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import top.banner.utils.MockDevice
 
 
 /**
  *
  * @author xgl
  */
-@RunWith(SpringRunner::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class TestA {
 
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
+class TestA : BaseMVCTest() {
     @Test
     fun exampleTest() {
-        this.mockMvc.perform(get("/")).andExpect(status().is2xxSuccessful)
-                .andDo(print()).andExpect(content().string("Hello"))
+        mockMvc.perform(
+                clientGet(uri = "/", device = MockDevice.iOS1).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful)
+                .andDo(print()).andExpect(MockMvcResultMatchers.content().string(MockDevice.iOS1.agent))
 
-    }
-
-
-    fun print(): ResultHandler {
-        return MockMvcResultHandlers.print()
     }
 }
